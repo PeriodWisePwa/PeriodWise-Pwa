@@ -1,4 +1,5 @@
 self.addEventListener("install", event => {
+  // Cache files for offline use
   event.waitUntil(
     caches.open("periodwise-cache").then(cache => {
       return cache.addAll([
@@ -11,6 +12,7 @@ self.addEventListener("install", event => {
 });
 
 self.addEventListener("fetch", event => {
+  // Serve cached content if offline
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
