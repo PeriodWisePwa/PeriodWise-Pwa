@@ -31,8 +31,28 @@ if ("serviceWorker" in navigator) {
   <p>Your private, offline menstrual cycle companion.</p>
 </header>
 
-<main>
-  <button id="startBtn">Start Tracking</button>
+ <main>
+  <h2>Cycle Awareness Tool</h2>
+  <p><small>Estimates only. Not medical advice.</small></p>
+
+  <label>Last Period Start Date:
+    <input type="date" id="lastDate">
+  </label>
+  <br><br>
+
+  <label>Last 6 Cycle Lengths (comma separated):
+    <input type="text" id="cycles" placeholder="28,27,29,28,30,28">
+  </label>
+  <br><br>
+
+  <label>Today’s Cycle Day:
+    <input type="number" id="currentDay" placeholder="e.g. 14">
+  </label>
+  <br><br>
+
+  <button id="startBtn">Analyze Cycle</button>
+
+  <p id="result"></p>
 </main>
   <h1>PeriodWise PWA</h1>
   <p>Private. No tracking. No email collection.</p>
