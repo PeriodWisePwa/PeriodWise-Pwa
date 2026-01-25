@@ -77,7 +77,50 @@ if ("serviceWorker" in navigator) {
   </p>
 </footer>
 </script> </body <hr>
+ <script>
+document.getElementById("startBtn").addEventListener("click", function () {
+  const cyclesInput = document.getElementById("cycles").value;
+  const currentDay = parseInt(document.getElementById("currentDay").value);
 
+  if (!cyclesInput || !currentDay) {
+    document.getElementById("result").innerText = "Please enter all details.";
+    return;
+  }
+
+  const cycles = cyclesInput.split(",").map(n => parseInt(n.trim()));
+  if (cycles.length < 3) {
+    document.getElementById("result").innerText =
+      "Please enter at least 3 cycle values.";
+    return;
+  }
+
+  const avgCycle =
+    cycles.reduce((a, b) => a + b, 0) / cycles.length;
+
+  const ovulationDay = Math.round(avgCycle - 14);
+
+  const redStart = ovulationDay - 5;
+  const redEnd = ovulationDay + 1;
+
+  const yellowStart = redStart - 2;
+  const yellowEnd = redEnd + 2;
+
+  let message = "";
+
+  if (currentDay >= redStart && currentDay <= redEnd) {
+    message = "🔴 Higher fertility likelihood (estimate).";
+  } else if (currentDay >= yellowStart && currentDay <= yellowEnd) {
+    message = "🟡 Moderate fertility likelihood (estimate).";
+  } else {
+    message = "🟢 Lower fertility likelihood (estimate).";
+  }
+
+  document.getElementById("result").innerText =
+    `Average cycle: ${Math.round(avgCycle)} days.
+Estimated ovulation day: Day ${ovulationDay}.
+${message}`;
+});
+</script>
 <footer>
   <p>
     <a href="privacy.html">Privacy Policy</a> |
