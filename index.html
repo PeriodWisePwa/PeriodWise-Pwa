@@ -78,10 +78,20 @@ if ("serviceWorker" in navigator) {
 </footer>
 </script> </body <hr>
  <script>
+   const savedCycles = localStorage.getItem("cycles");
+const savedDay = localStorage.getItem("currentDay");
+
+if (savedCycles) {
+  document.getElementById("cycles").value = savedCycles;
+}
+if (savedDay) {
+  document.getElementById("currentDay").value = savedDay;
+}
 document.getElementById("startBtn").addEventListener("click", function () {
   const cyclesInput = document.getElementById("cycles").value;
   const currentDay = parseInt(document.getElementById("currentDay").value);
-
+ localStorage.setItem("cycles", cyclesInput);
+localStorage.setItem("currentDay", currentDay);
   if (!cyclesInput || !currentDay) {
     document.getElementById("result").innerText = "Please enter all details.";
     return;
