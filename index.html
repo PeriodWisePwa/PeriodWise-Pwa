@@ -2,130 +2,198 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>PeriodWise App</title>
-
+  <title>PeriodWise</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#e91e63">
-
   <link rel="manifest" href="manifest.json">
 
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 20px;
+      padding: 15px;
+    }
+
+    input, button {
+      padding: 10px;
+      width: 100%;
+      max-width: 320px;
+      margin: 8px 0;
+      font-size: 15px;
     }
 
     button {
-      padding: 12px 20px;
-      font-size: 16px;
+      background: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
     }
 
-    main {
-      max-width: 400px;
+    #monthTitle {
+      font-size: 20px;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      max-width: 420px;
       margin: auto;
+    }
+
+    .day-header {
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .cell {
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .pink { background:#ff9acb; color:#000; }
+    .red { background:#ff4d4d; color:#fff; }
+    .yellow { background:#ffd54f; color:#000; }
+    .green { background:#81c784; color:#000; }
+
+    #legend {
+      max-width: 320px;
+      margin: 15px auto;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      margin-right: 8px;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 13px;
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>PeriodWise</h1>
-  <p>Your private, offline menstrual cycle companion.</p>
-</header>
+<h1>PeriodWise</h1>
+<p><small>Private • Offline • No data collection</small></p>
 
-<main>
-  <h2>Cycle Awareness Tool</h2>
-  <p><small>Estimates only. Not medical advice.</small></p>
+<label>Last Period Start Date</label><br>
+<input type="date" id="lastPeriod">
 
-  <label>
-    Last 6 Cycle Lengths (comma separated):
-    <br>
-    <input type="text" id="cycles" placeholder="28,27,29,28,30,28">
-  </label>
+<label>Last 6 Cycle Lengths (comma separated)</label><br>
+<input type="text" id="cycles" placeholder="28,27,29,28,30,28">
 
-  <br><br>
+<button onclick="generate()">Show Calendar</button>
 
-  <label>
-    Today’s Cycle Day:
-    <br>
-    <input type="number" id="currentDay" placeholder="e.g. 14">
-  </label>
+<div id="monthTitle"></div>
 
-  <br><br>
+<div class="calendar" id="calendar"></div>
 
-  <button id="startBtn">Analyze Cycle</button>
-
-  <p id="result"></p>
-</main>
+<div id="legend">
+  <div class="legend-item">
+    <span class="legend-color pink"></span> Period days
+  </div>
+  <div class="legend-item">
+    <span class="legend-color red"></span> High pregnancy risk (ovulation)
+  </div>
+  <div class="legend-item">
+    <span class="legend-color yellow"></span> Medium risk
+  </div>
+  <div class="legend-item">
+    <span class="legend-color green"></span> Low risk
+  </div>
+</div>
 
 <footer>
-  <hr>
-  <p>
-    <a href="privacy.html">Privacy Policy</a> |
-    <a href="disclaimer.html">Disclaimer</a>
-  </p>
+  <a href="privacy.html">Privacy</a> |
+  <a href="disclaimer.html">Disclaimer</a>
 </footer>
 
 <script>
-/* Service Worker */
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("Service Worker registered"))
-    .catch(err => console.error("SW registration failed:", err));
+  navigator.serviceWorker.register("service-worker.js");
 }
 
-/* Restore saved data */
-const savedCycles = localStorage.getItem("cycles");
-const savedDay = localStorage.getItem("currentDay");
+function generate() {
+  const lastPeriod = new Date(document.getElementById("lastPeriod").value);
+  const cycles = document.getElementById("cycles").value
+    .split(",").map(n => parseInt(n.trim()));
 
-if (savedCycles) document.getElementById("cycles").value = savedCycles;
-if (savedDay) document.getElementById("currentDay").value = savedDay;
-
-/* Main logic */
-document.getElementById("startBtn").addEventListener("click", () => {
-  const cyclesInput = document.getElementById("cycles").value;
-  const currentDay = parseInt(document.getElementById("currentDay").value);
-
-  localStorage.setItem("cycles", cyclesInput);
-  localStorage.setItem("currentDay", currentDay);
-
-  if (!cyclesInput || !currentDay) {
-    document.getElementById("result").innerText =
-      "Please enter all details.";
+  if (!lastPeriod || cycles.length < 3) {
+    alert("Please enter valid details");
     return;
   }
 
-  const cycles = cyclesInput.split(",").map(n => parseInt(n.trim()));
-  if (cycles.length < 3) {
-    document.getElementById("result").innerText =
-      "Please enter at least 3 cycle values.";
-    return;
-  }
+  const avgCycle = Math.round(cycles.reduce((a,b)=>a+b,0)/cycles.length);
+  const ovulation = avgCycle - 14;
 
-  const avgCycle = cycles.reduce((a, b) => a + b, 0) / cycles.length;
-  const ovulationDay = Math.round(avgCycle - 14);
-
-  const redStart = ovulationDay - 5;
-  const redEnd = ovulationDay + 1;
+  const redStart = ovulation - 5;
+  const redEnd = ovulation + 1;
   const yellowStart = redStart - 2;
   const yellowEnd = redEnd + 2;
+  const periodLength = 5;
 
-  let message = "🟢 Lower fertility likelihood (estimate).";
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
 
-  if (currentDay >= redStart && currentDay <= redEnd) {
-    message = "🔴 Higher fertility likelihood (estimate).";
-  } else if (currentDay >= yellowStart && currentDay <= yellowEnd) {
-    message = "🟡 Moderate fertility likelihood (estimate).";
+  const monthNames = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+  ];
+
+  document.getElementById("monthTitle").innerText =
+    `${monthNames[month]} ${year}`;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const cal = document.getElementById("calendar");
+  cal.innerHTML = "";
+
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d => {
+    const h = document.createElement("div");
+    h.className = "day-header";
+    h.innerText = d;
+    cal.appendChild(h);
+  });
+
+  for (let i=0;i<firstDay;i++) {
+    cal.appendChild(document.createElement("div"));
   }
 
-  document.getElementById("result").innerText =
-`Average cycle: ${Math.round(avgCycle)} days
-Estimated ovulation day: Day ${ovulationDay}
-${message}`;
-});
+  for (let day=1; day<=daysInMonth; day++) {
+    const date = new Date(year, month, day);
+    let cycleDay = Math.floor((date - lastPeriod) / 86400000) % avgCycle;
+    if (cycleDay < 0) cycleDay += avgCycle;
+    cycleDay += 1;
+
+    let cls = "green";
+    if (cycleDay <= periodLength) cls = "pink";
+    else if (cycleDay >= redStart && cycleDay <= redEnd) cls = "red";
+    else if (cycleDay >= yellowStart && cycleDay <= yellowEnd) cls = "yellow";
+
+    const cell = document.createElement("div");
+    cell.className = `cell ${cls}`;
+    cell.innerText = day;
+    cal.appendChild(cell);
+  }
+}
 </script>
 
 </body>
