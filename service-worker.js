@@ -1,3 +1,10 @@
+ const CACHE_NAME = "periodwise-cache-v2";
+
+const urlsToCache = [
+  "/",
+  "/index.html",
+  "/manifest.json"
+];
 self.addEventListener("install", event => {
   // Cache files for offline use
   event.waitUntil(
