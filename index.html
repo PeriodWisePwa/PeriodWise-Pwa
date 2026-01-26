@@ -1,99 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-<head <style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-  }
-  button {
-    padding: 12px 20px;
-    font-size: 16px;
-  }
-</style> <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#d63384">
+<head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PeriodWise App</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e91e63">
 
   <link rel="manifest" href="manifest.json">
 
-  <meta name="theme-color" content="#e91e63">
-</head<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#d63384"> >
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script> <body>
-  <header>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    main {
+      max-width: 400px;
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
   <h1>PeriodWise</h1>
   <p>Your private, offline menstrual cycle companion.</p>
 </header>
 
- <main>
+<main>
   <h2>Cycle Awareness Tool</h2>
   <p><small>Estimates only. Not medical advice.</small></p>
 
-  <label>Last Period Start Date:
-    <input type="date" id="lastDate">
-  </label>
-  <br><br>
-
-  <label>Last 6 Cycle Lengths (comma separated):
+  <label>
+    Last 6 Cycle Lengths (comma separated):
+    <br>
     <input type="text" id="cycles" placeholder="28,27,29,28,30,28">
   </label>
+
   <br><br>
 
-  <label>Today’s Cycle Day:
+  <label>
+    Today’s Cycle Day:
+    <br>
     <input type="number" id="currentDay" placeholder="e.g. 14">
   </label>
+
   <br><br>
 
   <button id="startBtn">Analyze Cycle</button>
 
   <p id="result"></p>
 </main>
-  <h1>PeriodWise PWA</h1>
-  <p>Private. No tracking. No email collection.</p>
-
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js");
-    }
-  </script>
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("Service Worker registered"))
-    .catch(err => console.error("Service Worker failed:", err));
-}
-  <hr>
 
 <footer>
+  <hr>
   <p>
     <a href="privacy.html">Privacy Policy</a> |
     <a href="disclaimer.html">Disclaimer</a>
   </p>
 </footer>
-</script> </body <hr>
- <script>
-   const savedCycles = localStorage.getItem("cycles");
+
+<script>
+/* Service Worker */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js")
+    .then(() => console.log("Service Worker registered"))
+    .catch(err => console.error("SW registration failed:", err));
+}
+
+/* Restore saved data */
+const savedCycles = localStorage.getItem("cycles");
 const savedDay = localStorage.getItem("currentDay");
 
-if (savedCycles) {
-  document.getElementById("cycles").value = savedCycles;
-}
-if (savedDay) {
-  document.getElementById("currentDay").value = savedDay;
-}
-document.getElementById("startBtn").addEventListener("click", function () {
+if (savedCycles) document.getElementById("cycles").value = savedCycles;
+if (savedDay) document.getElementById("currentDay").value = savedDay;
+
+/* Main logic */
+document.getElementById("startBtn").addEventListener("click", () => {
   const cyclesInput = document.getElementById("cycles").value;
   const currentDay = parseInt(document.getElementById("currentDay").value);
- localStorage.setItem("cycles", cyclesInput);
-localStorage.setItem("currentDay", currentDay);
+
+  localStorage.setItem("cycles", cyclesInput);
+  localStorage.setItem("currentDay", currentDay);
+
   if (!cyclesInput || !currentDay) {
-    document.getElementById("result").innerText = "Please enter all details.";
+    document.getElementById("result").innerText =
+      "Please enter all details.";
     return;
   }
 
@@ -104,37 +105,28 @@ localStorage.setItem("currentDay", currentDay);
     return;
   }
 
-  const avgCycle =
-    cycles.reduce((a, b) => a + b, 0) / cycles.length;
-
+  const avgCycle = cycles.reduce((a, b) => a + b, 0) / cycles.length;
   const ovulationDay = Math.round(avgCycle - 14);
 
   const redStart = ovulationDay - 5;
   const redEnd = ovulationDay + 1;
-
   const yellowStart = redStart - 2;
   const yellowEnd = redEnd + 2;
 
-  let message = "";
+  let message = "🟢 Lower fertility likelihood (estimate).";
 
   if (currentDay >= redStart && currentDay <= redEnd) {
     message = "🔴 Higher fertility likelihood (estimate).";
   } else if (currentDay >= yellowStart && currentDay <= yellowEnd) {
     message = "🟡 Moderate fertility likelihood (estimate).";
-  } else {
-    message = "🟢 Lower fertility likelihood (estimate).";
   }
 
   document.getElementById("result").innerText =
-    `Average cycle: ${Math.round(avgCycle)} days.
-Estimated ovulation day: Day ${ovulationDay}.
+`Average cycle: ${Math.round(avgCycle)} days
+Estimated ovulation day: Day ${ovulationDay}
 ${message}`;
 });
 </script>
-<footer>
-  <p>
-    <a href="privacy.html">Privacy Policy</a> |
-    <a href="disclaimer.html">Disclaimer</a>
-  </p>
-</footer>
+
+</body>
 </html>
