@@ -10,79 +10,63 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      padding: 16px;
       text-align: center;
-      padding: 15px;
     }
+
+    h1 { color: #e91e63; }
 
     input, button {
       padding: 10px;
-      width: 100%;
+      margin: 6px;
+      width: 90%;
       max-width: 320px;
-      margin: 8px 0;
-      font-size: 15px;
     }
 
     button {
       background: #e91e63;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
-    }
-
-    #monthTitle {
-      font-size: 20px;
-      margin: 15px 0;
-      font-weight: bold;
     }
 
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      max-width: 420px;
-      margin: auto;
+      gap: 6px;
+      margin-top: 16px;
     }
 
-    .day-header {
-      font-weight: bold;
-      font-size: 13px;
-    }
-
-    .cell {
+    .day {
       padding: 10px;
-      border-radius: 5px;
+      border-radius: 6px;
       font-size: 14px;
     }
 
-    .pink { background:#ff9acb; color:#000; }
-    .red { background:#ff4d4d; color:#fff; }
-    .yellow { background:#ffd54f; color:#000; }
-    .green { background:#81c784; color:#000; }
+    .period { background: #f8bbd0; }
+    .high { background: #f44336; color: white; }
+    .medium { background: #ffeb3b; }
+    .low { background: #c8e6c9; }
 
-    #legend {
-      max-width: 320px;
-      margin: 15px auto;
-      text-align: left;
-      font-size: 14px;
+    .today {
+      border: 2px solid #000;
+      font-weight: bold;
     }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .legend-color {
-      width: 14px;
-      height: 14px;
-      border-radius: 3px;
-      margin-right: 8px;
+    .legend {
+      margin-top: 14px;
+      font-size: 13px;
     }
 
     footer {
       margin-top: 20px;
       font-size: 13px;
+    }
+
+    #warning {
+      color: red;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -90,32 +74,27 @@
 <body>
 
 <h1>PeriodWise</h1>
-<p><small>Private • Offline • No data collection</small></p>
+<p>Private • Offline • No tracking</p>
 
-<label>Last Period Start Date</label><br>
-<input type="date" id="lastPeriod">
+<div id="inputSection">
+  <input id="cycles" placeholder="Last cycles (e.g. 28,29,27,30,28)">
+  <input id="periodLength" type="number" placeholder="Period length (default 5)">
+  <button onclick="handleSubmit()">Save & Show Calendar</button>
+</div>
 
-<label>Last 6 Cycle Lengths (comma separated)</label><br>
-<input type="text" id="cycles" placeholder="28,27,29,28,30,28">
+<p id="warning"></p>
 
-<button onclick="generate()">Show Calendar</button>
-
-<div id="monthTitle"></div>
-
-<div class="calendar" id="calendar"></div>
-
-<div id="legend">
-  <div class="legend-item">
-    <span class="legend-color pink"></span> Period days
+<div id="calendarSection" style="display:none;">
+  <div style="margin:10px;">
+    <button onclick="changeMonth(-1)">◀</button>
+    <strong id="monthTitle"></strong>
+    <button onclick="changeMonth(1)">▶</button>
   </div>
-  <div class="legend-item">
-    <span class="legend-color red"></span> High pregnancy risk (ovulation)
-  </div>
-  <div class="legend-item">
-    <span class="legend-color yellow"></span> Medium risk
-  </div>
-  <div class="legend-item">
-    <span class="legend-color green"></span> Low risk
+
+  <div class="calendar" id="calendar"></div>
+
+  <div class="legend">
+    🩷 Period &nbsp; 🔴 High Risk &nbsp; 🟡 Medium Risk &nbsp; 🟢 Low Risk &nbsp; ⬛ Today
   </div>
 </div>
 
@@ -129,71 +108,95 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 }
 
-function generate() {
-  const lastPeriod = new Date(document.getElementById("lastPeriod").value);
-  const cycles = document.getElementById("cycles").value
-    .split(",").map(n => parseInt(n.trim()));
+let monthOffset = 0;
 
-  if (!lastPeriod || cycles.length < 3) {
-    alert("Please enter valid details");
+function handleSubmit() {
+  const cyclesInput = document.getElementById("cycles").value;
+  const periodLength = parseInt(document.getElementById("periodLength").value) || 5;
+  const cycles = cyclesInput.split(",").map(n => parseInt(n.trim())).filter(Boolean);
+
+  if (cycles.length < 3) {
+    document.getElementById("warning").innerText =
+      "Please enter at least 3 cycle values.";
     return;
   }
 
-  const avgCycle = Math.round(cycles.reduce((a,b)=>a+b,0)/cycles.length);
-  const ovulation = avgCycle - 14;
+  localStorage.setItem("pw_cycles", JSON.stringify(cycles));
+  localStorage.setItem("pw_periodLength", periodLength);
 
-  const redStart = ovulation - 5;
-  const redEnd = ovulation + 1;
-  const yellowStart = redStart - 2;
-  const yellowEnd = redEnd + 2;
-  const periodLength = 5;
+  renderCalendar(cycles, periodLength);
+}
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+function loadSavedData() {
+  const cycles = JSON.parse(localStorage.getItem("pw_cycles"));
+  const periodLength = parseInt(localStorage.getItem("pw_periodLength"));
 
-  const monthNames = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December"
-  ];
-
-  document.getElementById("monthTitle").innerText =
-    `${monthNames[month]} ${year}`;
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  const cal = document.getElementById("calendar");
-  cal.innerHTML = "";
-
-  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d => {
-    const h = document.createElement("div");
-    h.className = "day-header";
-    h.innerText = d;
-    cal.appendChild(h);
-  });
-
-  for (let i=0;i<firstDay;i++) {
-    cal.appendChild(document.createElement("div"));
-  }
-
-  for (let day=1; day<=daysInMonth; day++) {
-    const date = new Date(year, month, day);
-    let cycleDay = Math.floor((date - lastPeriod) / 86400000) % avgCycle;
-    if (cycleDay < 0) cycleDay += avgCycle;
-    cycleDay += 1;
-
-    let cls = "green";
-    if (cycleDay <= periodLength) cls = "pink";
-    else if (cycleDay >= redStart && cycleDay <= redEnd) cls = "red";
-    else if (cycleDay >= yellowStart && cycleDay <= yellowEnd) cls = "yellow";
-
-    const cell = document.createElement("div");
-    cell.className = `cell ${cls}`;
-    cell.innerText = day;
-    cal.appendChild(cell);
+  if (cycles && cycles.length >= 3) {
+    renderCalendar(cycles, periodLength || 5);
   }
 }
+
+function changeMonth(step) {
+  monthOffset += step;
+  loadSavedData();
+}
+
+function renderCalendar(cycles, periodLength) {
+  document.getElementById("inputSection").style.display = "none";
+  document.getElementById("calendarSection").style.display = "block";
+
+  const calendarEl = document.getElementById("calendar");
+  calendarEl.innerHTML = "";
+  document.getElementById("warning").innerText = "";
+
+  const avgCycle = cycles.reduce((a,b)=>a+b,0) / cycles.length;
+
+  if (avgCycle < 21 || avgCycle > 40) {
+    document.getElementById("warning").innerText =
+      "⚠️ Cycle appears irregular. Results are estimates only.";
+  }
+
+  const ovulationDay = Math.round(avgCycle - 14);
+  const redStart = ovulationDay - 5;
+  const redEnd = ovulationDay + 1;
+  const yellowStart = redStart - 2;
+  const yellowEnd = redEnd + 2;
+
+  const baseDate = new Date();
+  baseDate.setMonth(baseDate.getMonth() + monthOffset);
+
+  const year = baseDate.getFullYear();
+  const month = baseDate.getMonth();
+  const today = new Date();
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  document.getElementById("monthTitle").innerText =
+    baseDate.toLocaleString("default", { month: "long", year: "numeric" });
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const el = document.createElement("div");
+    el.className = "day";
+
+    if (day <= periodLength) el.classList.add("period");
+    else if (day >= redStart && day <= redEnd) el.classList.add("high");
+    else if (day >= yellowStart && day <= yellowEnd) el.classList.add("medium");
+    else el.classList.add("low");
+
+    if (
+      day === today.getDate() &&
+      month === today.getMonth() &&
+      year === today.getFullYear()
+    ) {
+      el.classList.add("today");
+    }
+
+    el.innerText = day;
+    calendarEl.appendChild(el);
+  }
+}
+
+window.onload = loadSavedData;
 </script>
 
 </body>
