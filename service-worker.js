@@ -1,52 +1,39 @@
-const CACHE_NAME = "periodwise-cache-v2";
+const CACHE_NAME = "periodwise-cache-v3"; // bump version
 
 const urlsToCache = [
-  "/",                   // root
-  "/index.html",         // main page
-  "/manifest.json",      // manifest
-  "/service-worker.js"   // service worker itself
-  // add more assets if you have images or CSS files
+  "/PeriodWise-Pwa/",
+  "/PeriodWise-Pwa/index.html",
+  "/PeriodWise-Pwa/manifest.json"
 ];
 
-// Install event: cache files
+// Install
 self.addEventListener("install", event => {
+  self.skipWaiting(); // 🔥 FORCE new SW to activate
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log("Opened cache");
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Activate event: clean up old caches
+// Activate
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
+    caches.keys().then(cacheNames =>
+      Promise.all(
         cacheNames.map(name => {
           if (name !== CACHE_NAME) {
-            console.log("Deleting old cache:", name);
             return caches.delete(name);
           }
         })
-      );
-    })
+      )
+    ).then(() => self.clients.claim()) // 🔥 TAKE CONTROL
   );
 });
 
-// Fetch event: respond with cache first, then network
+// Fetch
 self.addEventListener("fetch", event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
-      .catch(() => {
-        // Optional: fallback page if offline and file not cached
-        if (event.request.mode === "navigate") {
-          return caches.match("/index.html");
-        }
-      })
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
   );
 });
