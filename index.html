@@ -8,31 +8,44 @@
 <link rel="manifest" href="manifest.json">
 
 <style>
-body { font-family: Arial, sans-serif; padding:16px; text-align:center; }
-h1 { color:#e91e63; }
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 16px;
+}
+
+h1 { color: #e91e63; }
 
 input, button {
-  padding:10px; margin:6px;
-  width:90%; max-width:320px;
+  width: 90%;
+  max-width: 320px;
+  padding: 10px;
+  margin: 6px 0;
 }
 
 button {
-  background:#e91e63; color:#fff;
-  border:none; border-radius:6px;
+  background: #e91e63;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .calendar {
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:6px; margin-top:10px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.day, .weekday {
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
 }
 
 .weekday {
-  font-weight:bold; font-size:12px;
-}
-
-.day {
-  padding:10px; border-radius:6px;
+  font-weight: bold;
 }
 
 .period { background:#f8bbd0; }
@@ -42,16 +55,27 @@ button {
 
 .today {
   border:2px solid #000;
+  font-weight:bold;
 }
 
 .legend span {
+  padding:6px 8px;
+  border-radius:6px;
+  margin:2px;
   display:inline-block;
-  padding:4px 8px;
-  border-radius:4px;
-  font-size:12px;
+  font-size:13px;
 }
 
-#warning { color:red; font-size:14px; }
+.warning {
+  color:red;
+  margin-top:8px;
+  font-size:14px;
+}
+
+footer {
+  margin-top:20px;
+  font-size:13px;
+}
 </style>
 </head>
 
@@ -61,13 +85,13 @@ button {
 <p>Private • Offline • No tracking</p>
 
 <div id="inputSection">
-  <input id="lastPeriod" type="date">
-  <input id="cycles" placeholder="Last cycles (e.g. 28,29,27)">
-  <input id="periodLength" type="number" placeholder="Period length (default 5)">
-  <button onclick="saveData()">Show Calendar</button>
+  <input type="date" id="lastPeriodDate" required>
+  <input id="cycles" placeholder="Last 3 cycles (e.g. 25,26,25)">
+  <input type="number" id="periodLength" placeholder="Period length (default 5)">
+  <button onclick="saveData()">Save & Show Calendar</button>
 </div>
 
-<p id="warning"></p>
+<p id="warning" class="warning"></p>
 
 <div id="calendarSection" style="display:none;">
   <button onclick="changeMonth(-1)">◀</button>
@@ -81,95 +105,128 @@ button {
     <span class="high">High</span>
     <span class="medium">Medium</span>
     <span class="low">Low</span>
-    <span style="border:2px solid #000;">Today</span>
+    <span class="today">Today</span>
   </div>
 
   <button onclick="resetApp()">🔁 Re-enter Cycle</button>
 </div>
 
+<footer>
+  <a href="privacy.html">Privacy</a> |
+  <a href="disclaimer.html">Disclaimer</a>
+</footer>
+
 <script>
-let offset = 0;
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+
+let monthOffset = 0;
 
 function saveData() {
-  const lastPeriod = document.getElementById("lastPeriod").value;
+  const lastPeriod = document.getElementById("lastPeriodDate").value;
   const cycles = document.getElementById("cycles").value
     .split(",").map(n=>parseInt(n.trim())).filter(Boolean);
-  const length = parseInt(document.getElementById("periodLength").value)||5;
+  const periodLength = parseInt(document.getElementById("periodLength").value) || 5;
 
   if (!lastPeriod || cycles.length < 3) {
-    alert("Enter last period date and at least 3 cycles");
+    document.getElementById("warning").innerText =
+      "Please enter last period date and at least 3 cycles.";
     return;
   }
 
-  localStorage.setItem("pw_data", JSON.stringify({lastPeriod, cycles, length}));
-  render();
+  localStorage.setItem("pw_lastPeriod", lastPeriod);
+  localStorage.setItem("pw_cycles", JSON.stringify(cycles));
+  localStorage.setItem("pw_periodLength", periodLength);
+
+  renderCalendar();
+}
+
+function loadSaved() {
+  if (localStorage.getItem("pw_lastPeriod")) {
+    renderCalendar();
+  }
 }
 
 function resetApp() {
-  localStorage.removeItem("pw_data");
+  localStorage.clear();
   location.reload();
 }
 
 function changeMonth(step) {
-  offset += step;
-  render();
+  monthOffset += step;
+  renderCalendar();
 }
 
-function render() {
-  const data = JSON.parse(localStorage.getItem("pw_data"));
-  if (!data) return;
-
+function renderCalendar() {
   document.getElementById("inputSection").style.display="none";
   document.getElementById("calendarSection").style.display="block";
+  document.getElementById("calendar").innerHTML="";
+  document.getElementById("warning").innerText="";
 
-  const avg = data.cycles.reduce((a,b)=>a+b)/data.cycles.length;
-  if (avg < 21 || avg > 35) {
+  const lastPeriod = new Date(localStorage.getItem("pw_lastPeriod"));
+  const cycles = JSON.parse(localStorage.getItem("pw_cycles"));
+  const periodLength = parseInt(localStorage.getItem("pw_periodLength"));
+
+  const avgCycle = Math.round(cycles.reduce((a,b)=>a+b,0)/cycles.length);
+
+  if (avgCycle < 21 || avgCycle > 40) {
     document.getElementById("warning").innerText =
-      "⚠️ Cycle appears irregular. Estimates only.";
+      "⚠ Cycle appears irregular. Results are estimates.";
   }
 
-  const cal = document.getElementById("calendar");
-  cal.innerHTML="";
+  const ovulationDay = avgCycle - 14;
+  const fertileStart = ovulationDay - 5;
+  const fertileEnd = ovulationDay + 1;
 
-  ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(d=>{
-    const w=document.createElement("div");
-    w.className="weekday"; w.innerText=d;
-    cal.appendChild(w);
-  });
+  const viewDate = new Date();
+  viewDate.setMonth(viewDate.getMonth() + monthOffset);
 
-  const base=new Date();
-  base.setMonth(base.getMonth()+offset);
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
 
   document.getElementById("monthTitle").innerText =
-    base.toLocaleString("default",{month:"long",year:"numeric"});
+    viewDate.toLocaleString("default",{month:"long",year:"numeric"});
 
-  const firstDay=(new Date(base.getFullYear(),base.getMonth(),1).getDay()+6)%7;
-  for(let i=0;i<firstDay;i++) cal.appendChild(document.createElement("div"));
+  const firstDay = new Date(year,month,1).getDay() || 7;
+  const daysInMonth = new Date(year,month+1,0).getDate();
+  const today = new Date();
 
-  const days=new Date(base.getFullYear(),base.getMonth()+1,0).getDate();
-  const start=new Date(data.lastPeriod);
-  const today=new Date();
+  ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(d=>{
+    const el=document.createElement("div");
+    el.className="weekday";
+    el.innerText=d;
+    document.getElementById("calendar").appendChild(el);
+  });
 
-  for(let d=1;d<=days;d++){
-    const cell=document.createElement("div");
-    cell.className="day"; cell.innerText=d;
+  for(let i=1;i<firstDay;i++){
+    document.getElementById("calendar").appendChild(document.createElement("div"));
+  }
 
-    const cur=new Date(base.getFullYear(),base.getMonth(),d);
-    const diff=Math.floor((cur-start)/86400000);
-    const cycleDay=((diff%avg)+avg)%avg+1;
+  for(let d=1; d<=daysInMonth; d++){
+    const date=new Date(year,month,d);
+    const cycleDay=Math.floor((date-lastPeriod)/(1000*60*60*24))+1;
 
-    if (cycleDay <= data.length) cell.classList.add("period");
-    else if (cycleDay >= avg-19 && cycleDay <= avg-13) cell.classList.add("high");
-    else if (cycleDay >= avg-21 && cycleDay <= avg-11) cell.classList.add("medium");
-    else cell.classList.add("low");
+    const el=document.createElement("div");
+    el.className="day";
+    el.innerText=d;
 
-    if (cur.toDateString()===today.toDateString()) cell.classList.add("today");
+    if(cycleDay>=1 && cycleDay<=periodLength) el.classList.add("period");
+    else if(cycleDay>=fertileStart && cycleDay<=fertileEnd) el.classList.add("high");
+    else if(cycleDay>=fertileStart-2 && cycleDay<=fertileEnd+2) el.classList.add("medium");
+    else el.classList.add("low");
 
-    cal.appendChild(cell);
+    if(
+      d===today.getDate() &&
+      month===today.getMonth() &&
+      year===today.getFullYear()
+    ) el.classList.add("today");
+
+    document.getElementById("calendar").appendChild(el);
   }
 }
 
-window.onload = render;
+window.onload = loadSaved;
 </script>
 
 </body>
