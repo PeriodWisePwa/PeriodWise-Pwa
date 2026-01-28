@@ -83,7 +83,11 @@ button {
 <p>Private • Offline • No tracking</p>
 
 <div id="inputSection">
-  <input id="lastPeriodDate" type="date" placeholder="Last period start date">
+  <input
+    id="lastPeriodDate"
+    type="date"
+    placeholder="Enter the first day of your last period"
+  >
   <input id="cycles" placeholder="Last cycles (e.g. 25,26,25)">
   <input id="periodLength" type="number" placeholder="Period length (default 5)">
   <button onclick="handleSubmit()">Save & Show Calendar</button>
@@ -112,6 +116,8 @@ button {
   <div class="legend">
     🩷 Period &nbsp; 🔴 High fertility &nbsp; 🟡 Medium &nbsp; 🟢 Low &nbsp; ⬛ Today
   </div>
+
+  <button onclick="resetData()">Re-enter cycle data</button>
 </div>
 
 <footer>
@@ -134,7 +140,7 @@ function handleSubmit() {
 
   if (!lastPeriodDate || cycles.length < 3) {
     document.getElementById("warning").innerText =
-      "Please enter last period date and at least 3 cycles.";
+      "Please enter the first day of your last period and at least 3 cycles.";
     return;
   }
 
@@ -143,6 +149,11 @@ function handleSubmit() {
   localStorage.setItem("pw_lastPeriod", lastPeriodDate);
 
   renderCalendar();
+}
+
+function resetData() {
+  localStorage.clear();
+  location.reload();
 }
 
 function loadSavedData() {
@@ -156,10 +167,10 @@ function changeMonth(step) {
 
 function calculateConfidence(cycles) {
   const avg = cycles.reduce((a,b)=>a+b,0)/cycles.length;
-  const variation = cycles.reduce((s,c)=>s+Math.abs(c-avg),0)/cycles.length;
-  const confidence = Math.max(40, Math.round(100 - variation * 20));
-  let label = confidence >= 80 ? "High" : confidence >= 60 ? "Medium" : "Low";
-  return { confidence, label };
+  const variance = cycles.reduce((s,c)=>s+Math.abs(c-avg),0)/cycles.length;
+  const score = Math.max(40, Math.round(100 - variance * 15));
+  const label = score >= 80 ? "High" : score >= 60 ? "Medium" : "Low";
+  return { score, label };
 }
 
 function renderCalendar() {
@@ -174,16 +185,16 @@ function renderCalendar() {
     "Last period started on: " + lastPeriod.toDateString();
 
   const avgCycle = Math.round(cycles.reduce((a,b)=>a+b,0)/cycles.length);
-  const ovulationOffset = avgCycle - 14;
+  const ovulationDay = avgCycle - 14;
 
   const conf = calculateConfidence(cycles);
   document.getElementById("confidenceText").innerText =
-    `Prediction confidence: ${conf.confidence}% (${conf.label})`;
+    `Prediction confidence: ${conf.score}% (${conf.label})`;
 
-  if (conf.label === "Low") {
-    document.getElementById("warning").innerText =
-      "⚠️ Irregular cycles detected. Predictions are estimates.";
-  } else document.getElementById("warning").innerText = "";
+  document.getElementById("warning").innerText =
+    conf.label === "Low"
+      ? "⚠️ Irregular cycles detected. Predictions are estimates."
+      : "";
 
   const base = new Date();
   base.setMonth(base.getMonth() + monthOffset);
@@ -194,7 +205,7 @@ function renderCalendar() {
 
   const firstDay = new Date(year, month, 1);
   const startOffset = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   document.getElementById("monthTitle").innerText =
     base.toLocaleString("default", { month: "long", year: "numeric" });
@@ -202,27 +213,37 @@ function renderCalendar() {
   const cal = document.getElementById("calendar");
   cal.innerHTML = "";
 
-  for (let i=0;i<startOffset;i++) cal.appendChild(document.createElement("div"));
+  for (let i = 0; i < startOffset; i++) {
+    cal.appendChild(document.createElement("div"));
+  }
 
-  for (let d=1; d<=daysInMonth; d++) {
+  for (let d = 1; d <= daysInMonth; d++) {
     const cellDate = new Date(year, month, d);
-    const diffDays = Math.floor((cellDate - lastPeriod)/(1000*60*60*24));
-    const cycleDay = diffDays >= 0 ? (diffDays % avgCycle) + 1 : null;
+    const diff = Math.floor((cellDate - lastPeriod) / 86400000);
+
+    let cycleDay = diff >= 0 ? (diff % avgCycle) + 1 : null;
 
     const el = document.createElement("div");
     el.className = "day";
     el.innerText = d;
 
-    if (cycleDay && cycleDay <= periodLength) el.classList.add("period");
-    else if (cycleDay && cycleDay >= ovulationOffset-5 && cycleDay <= ovulationOffset+1) el.classList.add("high");
-    else if (cycleDay && cycleDay >= ovulationOffset-7 && cycleDay <= ovulationOffset+3) el.classList.add("medium");
-    else el.classList.add("low");
+    if (cycleDay && cycleDay <= periodLength) {
+      el.classList.add("period");
+    } else if (cycleDay && cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 1) {
+      el.classList.add("high");
+    } else if (cycleDay && cycleDay >= ovulationDay - 7 && cycleDay <= ovulationDay + 3) {
+      el.classList.add("medium");
+    } else {
+      el.classList.add("low");
+    }
 
     if (
-      d===today.getDate() &&
-      month===today.getMonth() &&
-      year===today.getFullYear()
-    ) el.classList.add("today");
+      d === today.getDate() &&
+      month === today.getMonth() &&
+      year === today.getFullYear()
+    ) {
+      el.classList.add("today");
+    }
 
     cal.appendChild(el);
   }
