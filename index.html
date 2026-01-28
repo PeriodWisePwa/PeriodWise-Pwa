@@ -48,27 +48,32 @@ button {
   padding: 10px;
   border-radius: 6px;
   font-size: 14px;
-  border: 1px solid #ccc;
 }
 
-.period { background: #f8bbd0; }
-.high { background: #f44336; color: white; }
-.medium { background: #ffeb3b; }
-.low { background: #c8e6c9; }
+.period { background: #f8bbd0; }      /* Pink for period */
+.high { background: #f44336; color: white; }  /* Red high fertility */
+.medium { background: #ffeb3b; }      /* Yellow medium fertility */
+.low { background: #c8e6c9; }         /* Green low fertility */
 
 .today {
   border: 2px solid black;
   font-weight: bold;
 }
 
-.legend, footer, #confidenceText, #warning {
+.legend, footer {
   margin-top: 14px;
   font-size: 13px;
 }
 
-#warning { color: red; }
-#confidenceText { font-weight: bold; margin-top:8px; }
+#warning {
+  color: red;
+  font-size: 14px;
+}
 
+#confidenceText {
+  font-size: 14px;
+  margin-top: 8px;
+}
 </style>
 </head>
 
@@ -78,8 +83,8 @@ button {
 <p>Private • Offline • No tracking</p>
 
 <div id="inputSection">
-  <input id="lastPeriodDate" type="date" placeholder="Enter the first day of your last period">
-  <input id="cycles" placeholder="Last 3+ cycles (e.g. 25,26,25)">
+  <input id="lastPeriodDate" type="date" placeholder="Enter the first day of your last period date">
+  <input id="cycles" placeholder="Last cycles (e.g. 25,26,25)">
   <input id="periodLength" type="number" placeholder="Period length (default 5)">
   <button onclick="handleSubmit()">Save & Show Calendar</button>
 </div>
@@ -103,10 +108,9 @@ button {
   <div class="calendar" id="calendar"></div>
 
   <p id="confidenceText"></p>
-  <button onclick="resetInput()">Re-enter Cycle</button>
 
   <div class="legend">
-    🩷 Period &nbsp; 🔴 High fertility &nbsp; 🟡 Medium fertility &nbsp; 🟢 Low fertility &nbsp; ⬛ Today
+    🩷 Period &nbsp; 🔴 High fertility &nbsp; 🟡 Medium &nbsp; 🟢 Low &nbsp; ⬛ Today
   </div>
 </div>
 
@@ -121,51 +125,35 @@ if ("serviceWorker" in navigator) {
 
 let monthOffset = 0;
 
-// Save input & render calendar
 function handleSubmit() {
-  const lastPeriodDate = document.getElementById("lastPeriodDate").value;
   const cycles = document.getElementById("cycles").value
-    .split(",").map(n=>parseInt(n.trim())).filter(Boolean);
+    .split(",").map(n => parseInt(n.trim())).filter(Boolean);
+
   const periodLength = parseInt(document.getElementById("periodLength").value) || 5;
+  const lastPeriodDate = document.getElementById("lastPeriodDate").value;
 
   if (!lastPeriodDate || cycles.length < 3) {
     document.getElementById("warning").innerText =
-      "Please enter the first day of your last period and at least 3 cycles.";
+      "Please enter last period date and at least 3 cycles.";
     return;
   }
 
-  localStorage.setItem("pw_lastPeriod", lastPeriodDate);
   localStorage.setItem("pw_cycles", JSON.stringify(cycles));
   localStorage.setItem("pw_periodLength", periodLength);
+  localStorage.setItem("pw_lastPeriod", lastPeriodDate);
 
-  monthOffset = 0;
   renderCalendar();
 }
 
-// Load saved data if available
 function loadSavedData() {
-  if (localStorage.getItem("pw_lastPeriod") && localStorage.getItem("pw_cycles")) {
-    renderCalendar();
-  }
+  if (localStorage.getItem("pw_cycles")) renderCalendar();
 }
 
-// Reset input to allow user to enter again
-function resetInput() {
-  localStorage.removeItem("pw_lastPeriod");
-  localStorage.removeItem("pw_cycles");
-  localStorage.removeItem("pw_periodLength");
-  document.getElementById("calendarSection").style.display = "none";
-  document.getElementById("inputSection").style.display = "block";
-  document.getElementById("warning").innerText = "";
-}
-
-// Change month view
 function changeMonth(step) {
   monthOffset += step;
   renderCalendar();
 }
 
-// Confidence calculation
 function calculateConfidence(cycles) {
   const avg = cycles.reduce((a,b)=>a+b,0)/cycles.length;
   const variation = cycles.reduce((s,c)=>s+Math.abs(c-avg),0)/cycles.length;
@@ -174,18 +162,19 @@ function calculateConfidence(cycles) {
   return { confidence, label };
 }
 
-// Render calendar with accurate indicators
 function renderCalendar() {
-  const lastPeriodStr = localStorage.getItem("pw_lastPeriod");
-  const cycles = JSON.parse(localStorage.getItem("pw_cycles"));
-  const periodLength = parseInt(localStorage.getItem("pw_periodLength")) || 5;
+  document.getElementById("inputSection").style.display = "none";
+  document.getElementById("calendarSection").style.display = "block";
 
-  const lastPeriod = new Date(lastPeriodStr);
+  const cycles = JSON.parse(localStorage.getItem("pw_cycles"));
+  const periodLength = parseInt(localStorage.getItem("pw_periodLength"));
+  const lastPeriod = new Date(localStorage.getItem("pw_lastPeriod"));
+
   document.getElementById("lastPeriodText").innerText =
     "Last period started on: " + lastPeriod.toDateString();
 
   const avgCycle = Math.round(cycles.reduce((a,b)=>a+b,0)/cycles.length);
-  const ovulationDay = avgCycle - 14;
+  const ovulationOffset = avgCycle - 14;
 
   const conf = calculateConfidence(cycles);
   document.getElementById("confidenceText").innerText =
@@ -193,45 +182,55 @@ function renderCalendar() {
 
   if (conf.label === "Low") {
     document.getElementById("warning").innerText =
-      "⚠️ Irregular cycles detected. Predictions are estimates only.";
+      "⚠️ Irregular cycles detected. Predictions are estimates.";
   } else document.getElementById("warning").innerText = "";
 
   const base = new Date();
   base.setMonth(base.getMonth() + monthOffset);
+
   const year = base.getFullYear();
   const month = base.getMonth();
   const today = new Date();
 
   const firstDay = new Date(year, month, 1);
-  const startOffset = (firstDay.getDay() + 6) % 7; // Monday first
-  const daysInMonth = new Date(year, month+1,0).getDate();
+  const startOffset = (firstDay.getDay() + 6) % 7;
+  const daysInMonth = new Date(year, month+1, 0).getDate();
 
   document.getElementById("monthTitle").innerText =
     base.toLocaleString("default", { month: "long", year: "numeric" });
 
   const cal = document.getElementById("calendar");
   cal.innerHTML = "";
-  document.getElementById("inputSection").style.display = "none";
-  document.getElementById("calendarSection").style.display = "block";
 
-  // Empty cells before first day
+  // Empty boxes before first day
   for (let i=0;i<startOffset;i++) cal.appendChild(document.createElement("div"));
 
-  for (let d=1; d<=daysInMonth; d++) {
+  for (let d = 1; d <= daysInMonth; d++) {
     const cellDate = new Date(year, month, d);
-    const diffDays = Math.round((cellDate - lastPeriod)/(1000*60*60*24));
-    const cycleDay = diffDays >= 0 ? (diffDays % avgCycle) +1 : null;
+    const diffDays = Math.floor((cellDate - lastPeriod) / (1000*60*60*24));
+    const cycleDay = diffDays >= 0 ? (diffDays % avgCycle) + 1 : null;
 
     const el = document.createElement("div");
     el.className = "day";
     el.innerText = d;
 
-    if (cycleDay && cycleDay <= periodLength) el.classList.add("period");
-    else if (cycleDay && cycleDay >= ovulationDay-5 && cycleDay <= ovulationDay+1) el.classList.add("high");
-    else if (cycleDay && cycleDay >= ovulationDay-7 && cycleDay <= ovulationDay+3) el.classList.add("medium");
-    else el.classList.add("low");
+    // ✅ Corrected color logic
+    if (cycleDay && cycleDay <= periodLength) {
+      el.classList.add("period");         // Pink
+    } else if (cycleDay && cycleDay >= ovulationOffset-5 && cycleDay <= ovulationOffset+1) {
+      el.classList.add("high");           // Red high fertility
+    } else if (cycleDay && cycleDay >= ovulationOffset-7 && cycleDay <= ovulationOffset+3) {
+      el.classList.add("medium");         // Yellow medium fertility
+    } else if (cycleDay) {
+      el.classList.add("low");            // Green low fertility
+    }
 
-    if (d===today.getDate() && month===today.getMonth() && year===today.getFullYear()) el.classList.add("today");
+    // Today
+    if (
+      d === today.getDate() &&
+      month === today.getMonth() &&
+      year === today.getFullYear()
+    ) el.classList.add("today");
 
     cal.appendChild(el);
   }
