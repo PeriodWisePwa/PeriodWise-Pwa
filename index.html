@@ -51,11 +51,11 @@ button {
   border: 1px solid #ccc;
 }
 
-/* FIXED COLORS FOR INDICATORS */
-.period { background: #f8bbd0; color: black; } /* pink */
-.high { background: #f44336; color: white; }   /* red */
-.medium { background: #ffeb3b; color: black; } /* yellow */
-.low { background: #c8e6c9; color: black; }    /* green */
+/* Calendar colors */
+.period { background-color: #f8bbd0; }  /* pink */
+.high { background-color: #f44336; color: white; } /* red */
+.medium { background-color: #ffeb3b; } /* yellow */
+.low { background-color: #c8e6c9; } /* green */
 
 .today {
   border: 2px solid black;
@@ -70,6 +70,14 @@ button {
 #warning { color: red; }
 #confidenceText { font-weight: bold; margin-top:8px; }
 
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  border-radius: 3px;
+  margin-right: 4px;
+}
 </style>
 </head>
 
@@ -79,7 +87,7 @@ button {
 <p>Private • Offline • No tracking</p>
 
 <div id="inputSection">
-  <input id="lastPeriodDate" type="date" placeholder="Enter the first day of your last period">
+  <input id="lastPeriodDate" type="date" placeholder="Enter the first day of your last period date">
   <input id="cycles" placeholder="Last 3+ cycles (e.g. 25,26,25)">
   <input id="periodLength" type="number" placeholder="Period length (default 5)">
   <button onclick="handleSubmit()">Save & Show Calendar</button>
@@ -107,7 +115,11 @@ button {
   <button onclick="resetInput()">Re-enter Cycle</button>
 
   <div class="legend">
-    🩷 Period &nbsp; 🔴 High fertility &nbsp; 🟡 Medium fertility &nbsp; 🟢 Low fertility &nbsp; ⬛ Today
+    <span class="legend-box" style="background-color:#f8bbd0;"></span> Period &nbsp;
+    <span class="legend-box" style="background-color:#f44336;"></span> High fertility &nbsp;
+    <span class="legend-box" style="background-color:#ffeb3b;"></span> Medium fertility &nbsp;
+    <span class="legend-box" style="background-color:#c8e6c9;"></span> Low fertility &nbsp;
+    <span class="legend-box" style="border:2px solid black; background-color:white;"></span> Today
   </div>
 </div>
 
@@ -122,7 +134,6 @@ if ("serviceWorker" in navigator) {
 
 let monthOffset = 0;
 
-// Save input & render calendar
 function handleSubmit() {
   const lastPeriodDate = document.getElementById("lastPeriodDate").value;
   const cycles = document.getElementById("cycles").value
@@ -143,14 +154,12 @@ function handleSubmit() {
   renderCalendar();
 }
 
-// Load saved data if available
 function loadSavedData() {
   if (localStorage.getItem("pw_lastPeriod") && localStorage.getItem("pw_cycles")) {
     renderCalendar();
   }
 }
 
-// Reset input to allow user to enter again
 function resetInput() {
   localStorage.removeItem("pw_lastPeriod");
   localStorage.removeItem("pw_cycles");
@@ -160,13 +169,11 @@ function resetInput() {
   document.getElementById("warning").innerText = "";
 }
 
-// Change month view
 function changeMonth(step) {
   monthOffset += step;
   renderCalendar();
 }
 
-// Confidence calculation
 function calculateConfidence(cycles) {
   const avg = cycles.reduce((a,b)=>a+b,0)/cycles.length;
   const variation = cycles.reduce((s,c)=>s+Math.abs(c-avg),0)/cycles.length;
@@ -175,7 +182,6 @@ function calculateConfidence(cycles) {
   return { confidence, label };
 }
 
-// Render calendar with accurate indicators
 function renderCalendar() {
   const lastPeriodStr = localStorage.getItem("pw_lastPeriod");
   const cycles = JSON.parse(localStorage.getItem("pw_cycles"));
@@ -204,7 +210,7 @@ function renderCalendar() {
   const today = new Date();
 
   const firstDay = new Date(year, month, 1);
-  const startOffset = (firstDay.getDay() + 6) % 7; // Monday first
+  const startOffset = (firstDay.getDay() + 6) % 7;
   const daysInMonth = new Date(year, month+1,0).getDate();
 
   document.getElementById("monthTitle").innerText =
@@ -215,7 +221,6 @@ function renderCalendar() {
   document.getElementById("inputSection").style.display = "none";
   document.getElementById("calendarSection").style.display = "block";
 
-  // Empty cells before first day
   for (let i=0;i<startOffset;i++) cal.appendChild(document.createElement("div"));
 
   for (let d=1; d<=daysInMonth; d++) {
@@ -227,11 +232,11 @@ function renderCalendar() {
     el.className = "day";
     el.innerText = d;
 
-    // FIXED: COLOR INDICATORS
-    if (cycleDay && cycleDay <= periodLength) el.classList.add("period");
-    else if (cycleDay && cycleDay >= ovulationDay-5 && cycleDay <= ovulationDay+1) el.classList.add("high");
-    else if (cycleDay && cycleDay >= ovulationDay-7 && cycleDay <= ovulationDay+3) el.classList.add("medium");
-    else el.classList.add("low");
+    // Only change color indicators here
+    if (cycleDay && cycleDay <= periodLength) el.className += " period";
+    else if (cycleDay && cycleDay >= ovulationDay-5 && cycleDay <= ovulationDay+1) el.className += " high";
+    else if (cycleDay && cycleDay >= ovulationDay-7 && cycleDay <= ovulationDay+3) el.className += " medium";
+    else if (cycleDay) el.className += " low";
 
     if (d===today.getDate() && month===today.getMonth() && year===today.getFullYear()) el.classList.add("today");
 
