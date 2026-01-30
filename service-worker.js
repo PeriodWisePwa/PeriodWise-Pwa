@@ -1,4 +1,4 @@
-const CACHE_NAME = "periodwise-cache-v12"; // bump version
+const CACHE_NAME = "periodwise-cache-v13"; // bump version
 
 const urlsToCache = [
   "/PeriodWise-Pwa/",
