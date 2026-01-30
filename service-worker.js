@@ -1,14 +1,14 @@
-versionondwise-cache-v13 CACHE_NAME = "periodwise-cversion14"; // bump version
+const CACHE_NAME = "periodwise-cache-v14";
 
 const urlsToCache = [
-  "/PeriodWise-Pwa/",
-  "/PeriodWise-Pwa/index.html",
-  "/PeriodWise-Pwa/manifest.json"
+  "./",
+  "./index.html",
+  "./manifest.json"
 ];
 
 // Install
 self.addEventListener("install", event => {
-  self.skipWaiting(); // 🔥 FORCE new SW to activate
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
@@ -25,15 +25,22 @@ self.addEventListener("activate", event => {
           }
         })
       )
-    ).then(() => self.clients.claim()) // 🔥 TAKE CONTROL
+    )
   );
+  self.clients.claim();
 });
 
-// Fetch
+// Fetch (network-first for updates)
 self.addEventListener("fetch", event => {
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
+    fetch(event.request)
+      .then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, clone);
+        });
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
