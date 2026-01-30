@@ -5,14 +5,9 @@
 <title>PeriodWise</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e91e63">
-<link rel="manifest" href="manifest.json">
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  padding: 16px;
-  text-align: center;
-}
+body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
 h1 { color: #e91e63; }
 
 input, button {
@@ -35,24 +30,15 @@ button {
   color: white;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
 }
 
-.calendar-header,
-.calendar {
+.calendar-header, .calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 }
 
-.calendar-header {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.calendar {
-  gap: 6px;
-  margin-top: 6px;
-}
+.calendar-header { margin-top: 10px; font-weight: bold; }
+.calendar { gap: 6px; margin-top: 6px; }
 
 .day {
   padding: 10px;
@@ -61,42 +47,27 @@ button {
   border: 1px solid #ccc;
 }
 
-/* Calendar colors */
-.period { background: #f8bbd0; }
-.high { background: #f44336; color: white; }
-.medium { background: #ffeb3b; }
-.low { background: #c8e6c9; }
+.period { background:#f8bbd0; }
+.high { background:#f44336; color:white; }
+.medium { background:#ffeb3b; }
+.low { background:#c8e6c9; }
 
-.today {
-  border: 2px solid black;
-  font-weight: bold;
-}
+.today { border:2px solid black; font-weight:bold; }
 
-/* 🔽 SMALL LEGEND FIX */
-.legend {
-  margin-top: 14px;
-  font-size: 12px;
-}
+/* compact legend */
+.legend { margin-top:14px; font-size:12px; }
 .legend-item {
-  display: inline-flex;
-  align-items: center;
-  margin: 4px 6px;
+  display:inline-flex;
+  align-items:center;
+  margin:4px 6px;
 }
 .legend-box {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  margin-right: 4px;
-  border: 1px solid #999;
+  width:12px;
+  height:12px;
+  border-radius:3px;
+  margin-right:4px;
+  border:1px solid #999;
 }
-
-footer, #confidenceText, #warning {
-  margin-top: 14px;
-  font-size: 13px;
-}
-
-#warning { color: red; }
-#confidenceText { font-weight: bold; }
 </style>
 </head>
 
@@ -106,19 +77,14 @@ footer, #confidenceText, #warning {
 <p>Private • Offline • No tracking</p>
 
 <div id="inputSection">
-  <label for="lastPeriodDate">Enter the first day of your last period</label>
+  <label>Enter the first day of your last period</label>
   <input id="lastPeriodDate" type="date">
-
   <input id="cycles" placeholder="Last 3+ cycles (e.g. 25,26,25)">
   <input id="periodLength" type="number" placeholder="Period length (default 5)">
   <button onclick="handleSubmit()">Save & Show Calendar</button>
 </div>
 
-<p id="warning"></p>
-
 <div id="calendarSection" style="display:none;">
-  <p id="lastPeriodText"></p>
-
   <div style="margin:10px;">
     <button onclick="changeMonth(-1)">◀</button>
     <strong id="monthTitle"></strong>
@@ -132,10 +98,6 @@ footer, #confidenceText, #warning {
 
   <div class="calendar" id="calendar"></div>
 
-  <p id="confidenceText"></p>
-  <button onclick="resetInput()">Re-enter Cycle</button>
-
-  <!-- ✅ Compact legend -->
   <div class="legend">
     <span class="legend-item"><span class="legend-box period"></span>Period</span>
     <span class="legend-item"><span class="legend-box high"></span>High</span>
@@ -145,54 +107,36 @@ footer, #confidenceText, #warning {
   </div>
 </div>
 
-<footer>Educational use only. Not medical advice.</footer>
-
 <script>
 let monthOffset = 0;
 
-function normalize(d) {
+function normalize(d){
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
-function handleSubmit() {
-  const lastPeriodDate = document.getElementById("lastPeriodDate").value;
-  const cycles = document.getElementById("cycles").value
-    .split(",").map(n=>parseInt(n.trim())).filter(Boolean);
-  const periodLength = parseInt(document.getElementById("periodLength").value) || 5;
-
-  if (!lastPeriodDate || cycles.length < 3) {
-    document.getElementById("warning").innerText =
-      "Please enter a date and at least 3 cycles.";
-    return;
-  }
-
-  localStorage.setItem("pw_lastPeriod", lastPeriodDate);
-  localStorage.setItem("pw_cycles", JSON.stringify(cycles));
-  localStorage.setItem("pw_periodLength", periodLength);
-
-  monthOffset = 0;
+function handleSubmit(){
+  localStorage.setItem("pw_lastPeriod", lastPeriodDate.value);
+  localStorage.setItem("pw_cycles", cycles.value);
+  localStorage.setItem("pw_periodLength", periodLength.value || 5);
   renderCalendar();
 }
 
-function changeMonth(step) {
+function changeMonth(step){
   monthOffset += step;
   renderCalendar();
 }
 
-function resetInput() {
-  localStorage.clear();
-  location.reload();
-}
-
-function renderCalendar() {
+function renderCalendar(){
   const lastPeriod = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
-  const cycles = JSON.parse(localStorage.getItem("pw_cycles"));
-  const periodLength = parseInt(localStorage.getItem("pw_periodLength")) || 5;
+  const cycles = localStorage.getItem("pw_cycles").split(",").map(n=>+n);
+  const periodLength = +localStorage.getItem("pw_periodLength") || 5;
 
-  const avgCycle = Math.round(cycles.reduce((a,b)=>a+b,0)/cycles.length);
+  const avgCycle = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
   const ovulationDay = avgCycle - 14;
 
+  /* ✅ FEBRUARY FIX */
   const base = new Date();
+  base.setDate(1);                         // 🔑 critical line
   base.setMonth(base.getMonth() + monthOffset);
 
   const year = base.getFullYear();
@@ -203,38 +147,34 @@ function renderCalendar() {
   const startOffset = (firstDay.getDay() + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  document.getElementById("monthTitle").innerText =
-    base.toLocaleString("default", { month: "long", year: "numeric" });
+  monthTitle.innerText = base.toLocaleString("default",{month:"long",year:"numeric"});
+  calendar.innerHTML = "";
 
-  const cal = document.getElementById("calendar");
-  cal.innerHTML = "";
+  inputSection.style.display="none";
+  calendarSection.style.display="block";
 
-  document.getElementById("inputSection").style.display = "none";
-  document.getElementById("calendarSection").style.display = "block";
+  for(let i=0;i<startOffset;i++) calendar.appendChild(document.createElement("div"));
 
-  for (let i=0;i<startOffset;i++) cal.appendChild(document.createElement("div"));
+  for(let d=1;d<=daysInMonth;d++){
+    const cellDate = normalize(new Date(year,month,d));
+    const diffDays = Math.floor((cellDate-lastPeriod)/86400000);
+    const cycleDay = diffDays>=0 ? (diffDays%avgCycle)+1 : null;
 
-  for (let d=1; d<=daysInMonth; d++) {
-    const cellDate = normalize(new Date(year, month, d));
-    const diffDays = Math.floor((cellDate - lastPeriod) / 86400000);
-    const cycleDay = diffDays >= 0 ? (diffDays % avgCycle) + 1 : null;
+    const el=document.createElement("div");
+    el.className="day";
+    el.textContent=d;
 
-    const el = document.createElement("div");
-    el.className = "day";
-    el.textContent = d;
-
-    if (cycleDay && cycleDay <= periodLength) el.classList.add("period");
-    else if (cycleDay && cycleDay >= ovulationDay-5 && cycleDay <= ovulationDay+1) el.classList.add("high");
-    else if (cycleDay && cycleDay >= ovulationDay-7 && cycleDay <= ovulationDay+3) el.classList.add("medium");
+    if(cycleDay && cycleDay<=periodLength) el.classList.add("period");
+    else if(cycleDay && cycleDay>=ovulationDay-5 && cycleDay<=ovulationDay+1) el.classList.add("high");
+    else if(cycleDay && cycleDay>=ovulationDay-7 && cycleDay<=ovulationDay+3) el.classList.add("medium");
     else el.classList.add("low");
 
-    if (+cellDate === +today) el.classList.add("today");
-
-    cal.appendChild(el);
+    if(+cellDate===+today) el.classList.add("today");
+    calendar.appendChild(el);
   }
 }
 
-if (localStorage.getItem("pw_lastPeriod")) renderCalendar();
+if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
 </script>
 
 </body>
