@@ -30,6 +30,7 @@ button {
   color: white;
   border: none;
   border-radius: 6px;
+  cursor: pointer;
 }
 
 .calendar-header, .calendar {
@@ -68,6 +69,9 @@ button {
   margin-right:4px;
   border:1px solid #999;
 }
+
+#confidenceText, #warning { margin-top: 12px; font-size: 13px; }
+#warning { color: red; }
 </style>
 </head>
 
@@ -84,6 +88,8 @@ button {
   <button onclick="handleSubmit()">Save & Show Calendar</button>
 </div>
 
+<p id="warning"></p>
+
 <div id="calendarSection" style="display:none;">
   <div style="margin:10px;">
     <button onclick="changeMonth(-1)">◀</button>
@@ -97,6 +103,9 @@ button {
   </div>
 
   <div class="calendar" id="calendar"></div>
+
+  <p id="confidenceText"></p>
+  <button onclick="resetInput()">Re-enter Cycle</button>
 
   <div class="legend">
     <span class="legend-item"><span class="legend-box period"></span>Period</span>
@@ -115,15 +124,42 @@ function normalize(d){
 }
 
 function handleSubmit(){
-  localStorage.setItem("pw_lastPeriod", lastPeriodDate.value);
-  localStorage.setItem("pw_cycles", cycles.value);
-  localStorage.setItem("pw_periodLength", periodLength.value || 5);
+  const last = document.getElementById("lastPeriodDate").value;
+  const cyclesInput = document.getElementById("cycles").value;
+  const periodLen = document.getElementById("periodLength").value || 5;
+
+  if(!last || !cyclesInput) {
+    document.getElementById("warning").innerText = "Please enter last period and cycles.";
+    return;
+  }
+
+  localStorage.setItem("pw_lastPeriod", last);
+  localStorage.setItem("pw_cycles", cyclesInput);
+  localStorage.setItem("pw_periodLength", periodLen);
+
+  monthOffset = 0;
   renderCalendar();
 }
 
 function changeMonth(step){
   monthOffset += step;
   renderCalendar();
+}
+
+function resetInput(){
+  localStorage.clear();
+  document.getElementById("calendarSection").style.display="none";
+  document.getElementById("inputSection").style.display="block";
+  document.getElementById("warning").innerText="";
+  document.getElementById("confidenceText").innerText="";
+}
+
+function calculateConfidence(cycles){
+  const avg = cycles.reduce((a,b)=>a+b,0)/cycles.length;
+  const variation = cycles.reduce((s,c)=>s+Math.abs(c-avg),0)/cycles.length;
+  const confidence = Math.max(40, Math.round(100 - variation*20));
+  const label = confidence >=80 ? "High" : confidence>=60 ? "Medium":"Low";
+  return {confidence, label};
 }
 
 function renderCalendar(){
@@ -134,33 +170,41 @@ function renderCalendar(){
   const avgCycle = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
   const ovulationDay = avgCycle - 14;
 
-  /* ✅ FEBRUARY FIX */
-  const base = new Date();
-  base.setDate(1);                         // 🔑 critical line
-  base.setMonth(base.getMonth() + monthOffset);
+  const conf = calculateConfidence(cycles);
+  document.getElementById("confidenceText").innerText =
+    `Prediction confidence: ${conf.confidence}% (${conf.label})`;
 
+  if(conf.label === "Low"){
+    document.getElementById("warning").innerText = "⚠️ Irregular cycles detected. Predictions are estimates only.";
+  } else document.getElementById("warning").innerText = "";
+
+  const base = new Date();
+  base.setDate(1); // keep February bug fixed
+  base.setMonth(base.getMonth()+monthOffset);
   const year = base.getFullYear();
   const month = base.getMonth();
   const today = normalize(new Date());
 
   const firstDay = new Date(year, month, 1);
-  const startOffset = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const startOffset = (firstDay.getDay()+6)%7;
+  const daysInMonth = new Date(year, month+1,0).getDate();
 
-  monthTitle.innerText = base.toLocaleString("default",{month:"long",year:"numeric"});
-  calendar.innerHTML = "";
+  document.getElementById("monthTitle").innerText =
+    base.toLocaleString("default",{month:"long", year:"numeric"});
 
-  inputSection.style.display="none";
-  calendarSection.style.display="block";
+  const cal = document.getElementById("calendar");
+  cal.innerHTML="";
+  document.getElementById("inputSection").style.display="none";
+  document.getElementById("calendarSection").style.display="block";
 
-  for(let i=0;i<startOffset;i++) calendar.appendChild(document.createElement("div"));
+  for(let i=0;i<startOffset;i++) cal.appendChild(document.createElement("div"));
 
-  for(let d=1;d<=daysInMonth;d++){
-    const cellDate = normalize(new Date(year,month,d));
+  for(let d=1; d<=daysInMonth; d++){
+    const cellDate = normalize(new Date(year, month, d));
     const diffDays = Math.floor((cellDate-lastPeriod)/86400000);
     const cycleDay = diffDays>=0 ? (diffDays%avgCycle)+1 : null;
 
-    const el=document.createElement("div");
+    const el = document.createElement("div");
     el.className="day";
     el.textContent=d;
 
@@ -170,11 +214,14 @@ function renderCalendar(){
     else el.classList.add("low");
 
     if(+cellDate===+today) el.classList.add("today");
-    calendar.appendChild(el);
+
+    cal.appendChild(el);
   }
 }
 
-if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
+window.onload = ()=>{
+  if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
+};
 </script>
 
 </body>
