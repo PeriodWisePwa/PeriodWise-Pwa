@@ -22,6 +22,14 @@ input, button {
   max-width: 320px;
 }
 
+label {
+  display: block;
+  text-align: left;
+  max-width: 320px;
+  margin: 8px auto 2px;
+  font-size: 14px;
+}
+
 button {
   background: #e91e63;
   color: white;
@@ -51,6 +59,7 @@ button {
   border: 1px solid #ccc;
 }
 
+/* Calendar colors */
 .period { background: #f8bbd0; }
 .high { background: #f44336; color: white; }
 .medium { background: #ffeb3b; }
@@ -61,7 +70,21 @@ button {
   font-weight: bold;
 }
 
-.legend, footer, #confidenceText, #warning {
+/* Legend fix */
+.legend {
+  margin-top: 14px;
+  font-size: 13px;
+}
+.legend span.day {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin: 0 4px;
+  vertical-align: middle;
+  border-radius: 4px;
+}
+
+footer, #confidenceText, #warning {
   margin-top: 14px;
   font-size: 13px;
 }
@@ -77,13 +100,12 @@ button {
 <p>Private • Offline • No tracking</p>
 
 <div id="inputSection">
-  <!-- FIX 1: Clear instruction -->
-  <input
-    id="lastPeriodDate"
-    type="date"
-    placeholder="Enter the first day of your last period"
-    aria-label="Enter the first day of your last period"
-  >
+
+  <!-- FIX #1: Visible instruction -->
+  <label for="lastPeriodDate">
+    Enter the first day of your last period
+  </label>
+  <input id="lastPeriodDate" type="date" aria-label="Enter the first day of your last period">
 
   <input id="cycles" placeholder="Last 3+ cycles (e.g. 25,26,25)">
   <input id="periodLength" type="number" placeholder="Period length (default 5)">
@@ -111,8 +133,13 @@ button {
   <p id="confidenceText"></p>
   <button onclick="resetInput()">Re-enter Cycle</button>
 
+  <!-- FIX #2: Legend uses same CSS colors -->
   <div class="legend">
-    🩷 Period &nbsp; 🔴 High fertility &nbsp; 🟡 Medium fertility &nbsp; 🟢 Low fertility &nbsp; ⬛ Today
+    <span class="day period"></span> Period &nbsp;
+    <span class="day high"></span> High fertility &nbsp;
+    <span class="day medium"></span> Medium fertility &nbsp;
+    <span class="day low"></span> Low fertility &nbsp;
+    <span class="day today"></span> Today
   </div>
 </div>
 
@@ -194,33 +221,29 @@ function renderCalendar() {
       "⚠️ Irregular cycles detected. Predictions are estimates only.";
   } else document.getElementById("warning").innerText = "";
 
-  /* FIX 2: Month anchoring — prevents February skip */
-  const today = new Date();
-  const base = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
-
+  const base = new Date();
+  base.setMonth(base.getMonth() + monthOffset);
   const year = base.getFullYear();
   const month = base.getMonth();
+  const today = new Date();
 
   const firstDay = new Date(year, month, 1);
   const startOffset = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInMonth = new Date(year, month+1,0).getDate();
 
   document.getElementById("monthTitle").innerText =
     base.toLocaleString("default", { month: "long", year: "numeric" });
 
   const cal = document.getElementById("calendar");
   cal.innerHTML = "";
-
   document.getElementById("inputSection").style.display = "none";
   document.getElementById("calendarSection").style.display = "block";
 
-  for (let i = 0; i < startOffset; i++) {
-    cal.appendChild(document.createElement("div"));
-  }
+  for (let i=0;i<startOffset;i++) cal.appendChild(document.createElement("div"));
 
-  for (let d = 1; d <= daysInMonth; d++) {
+  for (let d=1; d<=daysInMonth; d++) {
     const cellDate = new Date(year, month, d);
-    const diffDays = Math.round((cellDate - lastPeriod) / (1000*60*60*24));
+    const diffDays = Math.round((cellDate - lastPeriod)/(1000*60*60*24));
     const cycleDay = diffDays >= 0 ? (diffDays % avgCycle) + 1 : null;
 
     const el = document.createElement("div");
@@ -228,17 +251,15 @@ function renderCalendar() {
     el.innerText = d;
 
     if (cycleDay && cycleDay <= periodLength) el.classList.add("period");
-    else if (cycleDay && cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 1) el.classList.add("high");
-    else if (cycleDay && cycleDay >= ovulationDay - 7 && cycleDay <= ovulationDay + 3) el.classList.add("medium");
+    else if (cycleDay && cycleDay >= ovulationDay-5 && cycleDay <= ovulationDay+1) el.classList.add("high");
+    else if (cycleDay && cycleDay >= ovulationDay-7 && cycleDay <= ovulationDay+3) el.classList.add("medium");
     else el.classList.add("low");
 
     if (
       d === today.getDate() &&
       month === today.getMonth() &&
       year === today.getFullYear()
-    ) {
-      el.classList.add("today");
-    }
+    ) el.classList.add("today");
 
     cal.appendChild(el);
   }
