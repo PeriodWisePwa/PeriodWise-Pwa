@@ -1,4 +1,4 @@
-const CACHE_NAME = "periodwise-cache-v19";
+const CACHE_NAME = "periodwise-cache-v20";
 
 const urlsToCache = [
   "./",
