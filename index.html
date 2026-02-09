@@ -278,5 +278,22 @@ window.onload = ()=>{
   }
 })();
 </script>
+ <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const bell = document.getElementById('notificationBell');
+  const dot = document.getElementById('updateDot');
+
+  if (bell) {
+    bell.addEventListener('click', () => {
+      fetch('/updates.json', { cache: 'no-store' })
+        .then(r => r.json())
+        .then(data => {
+          localStorage.setItem('pw_last_seen_update', data.version);
+          if (dot) dot.style.display = 'none';
+        });
+    });
+  }
+});
+</script>
 </body>
 </html>
