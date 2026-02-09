@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (bell) {
     bell.addEventListener('click', () => {
-      fetch('/updates.json', { cache: 'no-store' })
+      fetch('https://www.periodwise.online/updates.json', { cache: 'no-store' })
         .then(r => r.json())
         .then(data => {
           localStorage.setItem('pw_last_seen_update', data.version);
