@@ -243,7 +243,7 @@ window.onload = ()=>{
  <script>
 (async function () {
   try {
-    const res = await fetch('/updates.json', { cache: 'no-store' });
+    const res = await fetch('https://www.periodwise.online/updates.json', { cache: 'no-store' });
     const data = await res.json();
 
     const lastSeen = localStorage.getItem('pw_last_update') || 0;
