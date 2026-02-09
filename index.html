@@ -230,6 +230,24 @@ window.onload = ()=>{
   if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
 };
 </script>
+ <script>
+(async function () {
+  try {
+    const res = await fetch('/updates.json', { cache: 'no-store' });
+    const data = await res.json();
 
+    const lastSeen = localStorage.getItem('pw_last_update') || 0;
+
+    if (data.version > lastSeen) {
+      const bell = document.getElementById('notificationBell');
+      if (bell) {
+        bell.classList.add('has-update'); // visual indicator
+      }
+    }
+  } catch (e) {
+    console.log('Update check failed (offline ok)');
+  }
+})();
+</script>
 </body>
 </html>
