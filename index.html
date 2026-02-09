@@ -5,9 +5,19 @@
 <title>PeriodWise</title><h1>
   PeriodWise
   <a href="notifications.html" style="text-decoration:none;">
-    <button id="notifyBtn" style="background:none;border:none;font-size:22px;cursor:pointer;">
-      🔔
-    </button>
+    <button id="notificationBell" style="background:none;border:none;font-size:22px;cursor:pointer;position:relative;">
+  🔔
+  <span id="updateDot" style="
+    display:none;
+    position:absolute;
+    top:0;
+    right:0;
+    width:8px;
+    height:8px;
+    background:red;
+    border-radius:50%;
+  "></span>
+</button>
   </a>
 </h1>
 <meta name="viewport" content="width=device-width, initial-scale=1">
