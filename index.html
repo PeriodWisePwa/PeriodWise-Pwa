@@ -259,5 +259,24 @@ window.onload = ()=>{
   }
 })();
 </script>
+ <script>
+(async function checkForUpdates() {
+  try {
+    const res = await fetch('/updates.json', { cache: 'no-store' });
+    const data = await res.json();
+
+    const latestVersion = data.version;
+    const lastSeenVersion = localStorage.getItem('pw_last_seen_update') || 0;
+
+    if (latestVersion > lastSeenVersion) {
+      const dot = document.getElementById('updateDot');
+      if (dot) dot.style.display = 'block';
+    }
+  } catch (e) {
+    // Offline? No problem.
+    console.log('Update check skipped');
+  }
+})();
+</script>
 </body>
 </html>
