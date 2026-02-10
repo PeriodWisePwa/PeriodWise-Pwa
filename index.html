@@ -2,24 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PeriodWise</title><h1>
-  PeriodWise
-  <a href="notifications.html" style="text-decoration:none;">
-    <button id="notificationBell" style="background:none;border:none;font-size:22px;cursor:pointer;position:relative;">
-  🔔
-  <span id="updateDot" style="
-    display:none;
-    position:absolute;
-    top:0;
-    right:0;
-    width:8px;
-    height:8px;
-    background:red;
-    border-radius:50%;
-  "></span>
-</button>
-  </a>
-</h1>
+<title>PeriodWise</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e91e63">
 
@@ -89,11 +72,30 @@ button {
 
 #confidenceText, #warning { margin-top: 12px; font-size: 13px; }
 #warning { color: red; }
+
+/* notification dot */
+#updateDot {
+  display:none;
+  position:absolute;
+  top:0;
+  right:0;
+  width:8px;
+  height:8px;
+  background:red;
+  border-radius:50%;
+}
 </style>
 </head>
 
 <body>
 
+<h1>
+  PeriodWise
+</h1>
+<div id="notificationBell" style="position:relative; font-size:22px; cursor:pointer;">
+  🔔
+  <span id="updateDot"></span>
+</div>
 
 <p>Private • Offline • No tracking</p>
 
@@ -196,7 +198,7 @@ function renderCalendar(){
   } else document.getElementById("warning").innerText = "";
 
   const base = new Date();
-  base.setDate(1); // keep February bug fixed
+  base.setDate(1); // February bug fix
   base.setMonth(base.getMonth()+monthOffset);
   const year = base.getFullYear();
   const month = base.getMonth();
@@ -239,70 +241,42 @@ function renderCalendar(){
 window.onload = ()=>{
   if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
 };
-</script>
- <script>
-(async function () {
-  try {
-    const res = await fetch('https://www.periodwise.online/updates.json', { cache: 'no-store' });
-    const data = await res.json();
 
-    const lastSeen = localStorage.getItem('pw_last_update') || 0;
+// -------- Notification / Red Dot Logic --------
+const bell = document.getElementById('notificationBell');
+const dot = document.getElementById('updateDot');
 
-    if (data.version > lastSeen) {
-      const bell = document.getElementById('notificationBell');
-      if (bell) {
-        bell.classList.add('has-update'); // visual indicator
-      }
-    }
-  } catch (e) {
-    console.log('Update check failed (offline ok)');
-  }
-})();
-</script>
- <script>
-(async function checkForUpdates() {
+async function checkUpdates() {
   try {
-    const res = await fetch('/updates.json', { cache: 'no-store' });
+    const res = await fetch('updates.json?ts=' + Date.now(), { cache: 'no-store' });
     const data = await res.json();
 
     const latestVersion = data.version;
-    const lastSeenVersion = localStorage.getItem('pw_last_seen_update') || 0;
+    const lastSeenVersion = parseInt(localStorage.getItem('pw_last_seen_update') || '0', 10);
 
     if (latestVersion > lastSeenVersion) {
-      const dot = document.getElementById('updateDot');
-      if (dot) dot.style.display = 'block';
+      dot.style.display = 'block';
+    } else {
+      dot.style.display = 'none';
     }
   } catch (e) {
-    // Offline? No problem.
-    console.log('Update check skipped');
+    console.log('Update check failed', e);
   }
-})();
-</script>
- <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const bell = document.getElementById('notificationBell');
-  const dot = document.getElementById('updateDot');
+}
 
-  if (bell) {
-    bell.addEventListener('click', () => {
-      fetch('https://www.periodwise.online/updates.json', { cache: 'no-store' })
-        .then(r => r.json())
-        .then(data => {
-          localStorage.setItem('pw_last_seen_update', data.version);
-          if (dot) dot.style.display = 'none';
-        });
+bell.addEventListener('click', () => {
+  window.location.href = 'notifications.html';
+  // mark updates as seen
+  fetch('updates.json?ts=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      localStorage.setItem('pw_last_seen_update', data.version);
+      dot.style.display = 'none';
     });
-  }
 });
+
+document.addEventListener('DOMContentLoaded', checkUpdates);
 </script>
- <script>
-fetch("updates.json")
-  .then(r => r.text())
-  .then(t => {
-    alert("updates.json loaded ✅");
-    console.log(t);
-  })
-  .catch(e => alert("FAILED to load updates.json ❌"));
-</script>
+
 </body>
 </html>
