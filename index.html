@@ -295,6 +295,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
- 
+ <script>
+fetch("updates.json")
+  .then(r => r.text())
+  .then(t => {
+    alert("updates.json loaded ✅");
+    console.log(t);
+  })
+  .catch(e => alert("FAILED to load updates.json ❌"));
+</script>
 </body>
 </html>
