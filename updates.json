@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-08",
+  "lastUpdated": "2026-02-09",
   "items": [
     {
       "id": 1,
@@ -14,13 +14,13 @@
       "type": "blog",
       "url": "https://www.periodwise.online/2026/02/cycle-awareness-101-understanding-your.html",
       "date": "2026-02-08"
-    }
+    },
     {
-  "id": 3,
-  "title": "Understanding the 4 Phases of the Menstrual Cycle (Complete Guide)",
-  "type": "blog",
-  "url": "https://www.periodwise.online/2026/01/understanding-4-phases-of-menstrual.html",
-  "date": "2026-02-09"
-}
+      "id": 3,
+      "title": "Understanding the 4 Phases of the Menstrual Cycle (Complete Guide)",
+      "type": "blog",
+      "url": "https://www.periodwise.online/2026/01/understanding-4-phases-of-menstrual.html",
+      "date": "2026-02-09"
+    }
   ]
 }
