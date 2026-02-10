@@ -1,4 +1,4 @@
-const CACHE_NAME = "periodwise-cache-v23";
+urlsToCachedwise-cache-v23 CACHE_NAME = "periodwiurlsToCache24";
 const urlsToCache = [
   "./",
   "./index.html",
