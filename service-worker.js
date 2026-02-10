@@ -1,9 +1,10 @@
-const CACHE_NAME = "periodwise-cache-v22";
-
+const CACHE_NAME = "periodwise-cache-v23";
 const urlsToCache = [
   "./",
   "./index.html",
-  "./manifest.json"
+  "./notifications.html",
+  "./manifest.json",
+  "./updates.json"
 ];
 
 // Install
@@ -32,21 +33,26 @@ self.addEventListener("activate", event => {
 
 // Fetch
 self.addEventListener("fetch", event => {
-
-  // 🚨 VERY IMPORTANT: always fetch updates.json from network
+  // Always fetch updates.json from network first
   if (event.request.url.includes("updates.json")) {
-    event.respondWith(fetch(event.request));
+    event.respondWith(
+      fetch(event.request, { cache: "no-store" })
+        .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
     return;
   }
 
-  // Network-first for everything else
+  // For everything else, try network first, fallback to cache
   event.respondWith(
     fetch(event.request)
       .then(response => {
         const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, clone);
-        });
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         return response;
       })
       .catch(() => caches.match(event.request))
