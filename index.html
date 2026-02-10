@@ -295,27 +295,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
- <script>
-(async function checkUpdates() {
-  try {
-    const res = await fetch('updates.json', { cache: 'no-store' });
-    const data = await res.json();
-
-    const lastSeen = localStorage.getItem('pw_lastSeenUpdate');
-    const latestDate = data.lastUpdated;
-
-    if (!lastSeen || lastSeen !== latestDate) {
-      document.getElementById('notifyDot').style.display = 'block';
-    }
-
-    document.getElementById('notifyLink').addEventListener('click', () => {
-      localStorage.setItem('pw_lastSeenUpdate', latestDate);
-    });
-
-  } catch (e) {
-    console.log('Update check failed', e);
-  }
-})();
-</script>
+ 
 </body>
 </html>
