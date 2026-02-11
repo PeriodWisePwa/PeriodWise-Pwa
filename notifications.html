@@ -34,15 +34,23 @@
     .then(response => response.json())
     .then(data => {
       const updatesList = document.getElementById('updatesList');
-      data.items.forEach(item => {
-        const updateElement = document.createElement('div');
-        updateElement.classList.add('notice');
-        updateElement.onclick = () => window.open(item.url, '_blank');
-        updateElement.innerHTML = `📝 ${item.title}`;
-        updatesList.appendChild(updateElement);
-      });
+      if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+          const updateElement = document.createElement('div');
+          updateElement.classList.add('notice');
+          updateElement.onclick = () => window.open(item.url, '_blank');
+          updateElement.innerHTML = `📝 ${item.title}`;
+          updatesList.appendChild(updateElement);
+        });
+      } else {
+        updatesList.innerHTML = "<p>No updates available.</p>";
+      }
     })
-    .catch(e => console.error('Failed to load updates:', e));
+    .catch(e => {
+      console.error('Failed to load updates:', e);
+      const updatesList = document.getElementById('updatesList');
+      updatesList.innerHTML = "<p>Error loading updates.</p>";
+    });
 </script>
 
 </body>
