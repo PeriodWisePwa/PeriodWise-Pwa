@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Notifications – PeriodWise</title>
   <style>
     body {
@@ -28,13 +27,23 @@
 
 <h2>Updates</h2>
 
- <div class="notice" onclick="window.open('https://www.periodwise.online/2026/02/understanding-your-fertile-window.html','_blank')">
-  📝 New Blog: Understanding Your Fertile Window
-</div>
+<div id="updatesList"></div>
 
-<div class="notice" onclick="window.open('https://www.periodwise.online/2026/02/cycle-awareness-101-understanding-your.html','_blank')">
-  🎓 New Course: Cycle Awareness 101
-</div>
+<script>
+  fetch('https://www.periodwise.online/updates.json?ts=' + Date.now())
+    .then(response => response.json())
+    .then(data => {
+      const updatesList = document.getElementById('updatesList');
+      data.items.forEach(item => {
+        const updateElement = document.createElement('div');
+        updateElement.classList.add('notice');
+        updateElement.onclick = () => window.open(item.url, '_blank');
+        updateElement.innerHTML = `📝 ${item.title}`;
+        updatesList.appendChild(updateElement);
+      });
+    })
+    .catch(e => console.error('Failed to load updates:', e));
+</script>
 
 </body>
 </html>
