@@ -1,91 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PeriodWise</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#e91e63">
+  <meta charset="UTF-8">
+  <title>PeriodWise</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e91e63">
 
-<style>
-body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
-h1 { color: #e91e63; }
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
+    h1 { color: #e91e63; }
 
-input, button {
-  padding: 10px;
-  margin: 6px;
-  width: 90%;
-  max-width: 320px;
-}
+    input, button {
+      padding: 10px;
+      margin: 6px;
+      width: 90%;
+      max-width: 320px;
+    }
 
-label {
-  display: block;
-  text-align: left;
-  max-width: 320px;
-  margin: 8px auto 2px;
-  font-size: 14px;
-}
+    label {
+      display: block;
+      text-align: left;
+      max-width: 320px;
+      margin: 8px auto 2px;
+      font-size: 14px;
+    }
 
-button {
-  background: #e91e63;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+    button {
+      background: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
-.calendar-header, .calendar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-}
+    /* Calendar Styles */
+    .calendar-header, .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
 
-.calendar-header { margin-top: 10px; font-weight: bold; }
-.calendar { gap: 6px; margin-top: 6px; }
+    .calendar-header { margin-top: 10px; font-weight: bold; }
+    .calendar { gap: 6px; margin-top: 6px; }
 
-.day {
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-}
+    .day {
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+    }
 
-.period { background:#f8bbd0; }
-.high { background:#f44336; color:white; }
-.medium { background:#ffeb3b; }
-.low { background:#c8e6c9; }
+    .period { background:#f8bbd0; }
+    .high { background:#f44336; color:white; }
+    .medium { background:#ffeb3b; }
+    .low { background:#c8e6c9; }
 
-.today { border:2px solid black; font-weight:bold; }
+    .today { border:2px solid black; font-weight:bold; }
 
-/* compact legend */
-.legend { margin-top:14px; font-size:12px; }
-.legend-item {
-  display:inline-flex;
-  align-items:center;
-  margin:4px 6px;
-}
-.legend-box {
-  width:12px;
-  height:12px;
-  border-radius:3px;
-  margin-right:4px;
-  border:1px solid #999;
-}
+    /* Notification Dot */
+    #updateDot {
+      display: none;
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 12px;
+      height: 12px;
+      background: red;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
 
-#confidenceText, #warning { margin-top: 12px; font-size: 13px; }
-#warning { color: red; }
-
-/* notification dot */
- #updateDot {
-  display: none;
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  width: 12px;
-  height: 12px;
-  background: red;
-  border-radius: 50%;
-  border: 2px solid white; /* Optional: for better visibility */
-}
-</style>
+  </style>
 </head>
 
 <body>
@@ -239,52 +223,45 @@ function renderCalendar(){
   }
 }
 
-window.onload = ()=>{
-  if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
-};
-
-// -------- Notification / Red Dot Logic --------
-const bell = document.getElementById('notificationBell');
-const dot = document.getElementById('updateDot');
-
+// Red dot check
 async function checkUpdates() {
   try {
-    const res = await fetch('updates.json?ts=' + Date.now(), { cache: 'no-store' });
+    const res = await fetch('https://periodwise.online/updates.json?ts=' + Date.now(), { cache: 'no-store' });
     const data = await res.json();
 
     const latestVersion = data.version;
     const lastSeenVersion = parseInt(localStorage.getItem('pw_last_seen_update') || '0', 10);
 
     if (latestVersion > lastSeenVersion) {
-      dot.style.display = 'block';
+      document.getElementById('updateDot').style.display = 'block'; // Show red dot
     } else {
-      dot.style.display = 'none';
+      document.getElementById('updateDot').style.display = 'none'; // Hide red dot
     }
   } catch (e) {
     console.log('Update check failed', e);
   }
 }
 
-bell.addEventListener('click', () => {
-  window.location.href = 'notifications.html';
-  // mark updates as seen
-  fetch('updates.json?ts=' + Date.now())
+// When the bell is clicked, open the notifications page and mark the updates as seen
+document.getElementById('notificationBell').addEventListener('click', () => {
+  window.location.href = 'notifications.html'; // Open notifications
+  fetch('https://periodwise.online/updates.json?ts=' + Date.now())
     .then(r => r.json())
     .then(data => {
-      localStorage.setItem('pw_last_seen_update', data.version);
-      dot.style.display = 'none';
+      localStorage.setItem('pw_last_seen_update', data.version); // Mark the update as seen
+      document.getElementById('updateDot').style.display = 'none'; // Hide red dot after clicking
     });
 });
 
+// Call checkUpdates on page load
 document.addEventListener('DOMContentLoaded', checkUpdates);
-</script>
- <!-- Register Service Worker -->
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(() => console.log('Service Worker registered ✅'))
-      .catch(err => console.log('Service Worker registration failed ❌', err));
-  }
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('Service Worker registered ✅'))
+    .catch(err => console.log('Service Worker registration failed ❌', err));
+}
 </script>
   
 </body>
