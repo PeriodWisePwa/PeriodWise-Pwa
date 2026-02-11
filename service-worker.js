@@ -1,21 +1,22 @@
-urlsToCachedwise-cache-v23 CACHE_NAME = "periodwiurlsToCache24";
+const CACHE_NAME = "periodwise-cache-v24";
+
 const urlsToCache = [
   "./",
   "./index.html",
   "./notifications.html",
-  "./manifest.json",
-  "./updates.json"
+  "./manifest.json"
 ];
 
-// Install
+// INSTALL
 self.addEventListener("install", event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Activate
+// ACTIVATE
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(cacheNames =>
@@ -31,15 +32,14 @@ self.addEventListener("activate", event => {
   self.clients.claim();
 });
 
-// Fetch
+// FETCH
 self.addEventListener("fetch", event => {
-  // Always fetch updates.json from network first
+
+  // 🔥 Always fetch updates.json from network first
   if (event.request.url.includes("updates.json")) {
     event.respondWith(
       fetch(event.request, { cache: "no-store" })
         .then(response => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
           return response;
         })
         .catch(() => caches.match(event.request))
@@ -47,12 +47,14 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // For everything else, try network first, fallback to cache
+  // Everything else → Network first, fallback to cache
   event.respondWith(
     fetch(event.request)
       .then(response => {
         const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, clone);
+        });
         return response;
       })
       .catch(() => caches.match(event.request))
