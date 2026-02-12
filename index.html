@@ -247,12 +247,15 @@ function renderCalendar() {
   }
 }
 
-// Fetch the latest blog title for the moving banner
-fetch('updates.json?ts=' + Date.now())
+ // Fetch the latest blog title for the moving banner
+fetch('https://www.periodwise.online/updates.json?ts=' + Date.now())
   .then(res => res.json())
   .then(data => {
-    if (data.banner) {
-      document.getElementById("bannerText").textContent = "🔥 " + data.banner.title;
+    if (data.items && data.items.length > 0) {
+      // Show the first blog title in the banner
+      document.getElementById("bannerText").textContent = "🔥 " + data.items[0].title;
+    } else {
+      document.getElementById("bannerText").textContent = "No updates available.";
     }
   })
   .catch(err => {
