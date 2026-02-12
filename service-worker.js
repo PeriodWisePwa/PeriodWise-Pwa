@@ -1,22 +1,23 @@
-const CACHE_NAME = "periodwise-cache-v24";
+const CACHE_NAME = "periodwise-cache-v26";  // Update cache version number
 
+// List of files to cache (including updates.json)
 const urlsToCache = [
   "./",
   "./index.html",
-  "./notifications.html",
-  "./manifest.json"
+  "./manifest.json",
+  "./updates.json",  // Make sure updates.json is cached
+  // You can add more assets here if needed
 ];
 
-// INSTALL
+// Install: Cache static files
 self.addEventListener("install", event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// ACTIVATE
+// Activate: Remove old caches
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(cacheNames =>
@@ -32,31 +33,29 @@ self.addEventListener("activate", event => {
   self.clients.claim();
 });
 
-// FETCH
+// Fetch: Network-first for updates.json
 self.addEventListener("fetch", event => {
-
-  // 🔥 Always fetch updates.json from network first
   if (event.request.url.includes("updates.json")) {
     event.respondWith(
-      fetch(event.request, { cache: "no-store" })
+      fetch(event.request, { cache: "no-store" })  // No cache for updates.json
         .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
           return response;
         })
-        .catch(() => caches.match(event.request))
+        .catch(() => caches.match(event.request))  // Use cached version if offline
     );
     return;
   }
 
-  // Everything else → Network first, fallback to cache
+  // Default fetch: Try network first, then fallback to cache
   event.respondWith(
     fetch(event.request)
       .then(response => {
         const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, clone);
-        });
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(event.request))  // Use cached version if offline
   );
 });
