@@ -56,6 +56,29 @@
 
     .today { border:2px solid black; font-weight:bold; }
 
+    /* Moving Banner Styles */
+    #movingBanner {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      background: #fff3f8;
+      color: #e91e63;
+      padding: 8px 0;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #movingBanner span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollText 12s linear infinite;
+    }
+
+    @keyframes scrollText {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
     /* Notification Dot */
     #updateDot {
       display: none;
@@ -74,12 +97,11 @@
 
 <body>
 
-<h1>
-  PeriodWise
-</h1>
-<div id="notificationBell" style="position:relative; font-size:22px; cursor:pointer;">
-  🔔
-  <span id="updateDot"></span>
+<h1>PeriodWise</h1>
+
+<!-- Moving Banner Section -->
+<div id="movingBanner" onclick="openBannerLink()">
+  <span id="bannerText">Loading latest article...</span>
 </div>
 
 <p>Private • Offline • No tracking</p>
@@ -123,16 +145,16 @@
 <script>
 let monthOffset = 0;
 
-function normalize(d){
+function normalize(d) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
-function handleSubmit(){
+function handleSubmit() {
   const last = document.getElementById("lastPeriodDate").value;
   const cyclesInput = document.getElementById("cycles").value;
   const periodLen = document.getElementById("periodLength").value || 5;
 
-  if(!last || !cyclesInput) {
+  if (!last || !cyclesInput) {
     document.getElementById("warning").innerText = "Please enter last period and cycles.";
     return;
   }
@@ -145,124 +167,104 @@ function handleSubmit(){
   renderCalendar();
 }
 
-function changeMonth(step){
+function changeMonth(step) {
   monthOffset += step;
   renderCalendar();
 }
 
-function resetInput(){
-  localStorage.clear();
-  document.getElementById("calendarSection").style.display="none";
-  document.getElementById("inputSection").style.display="block";
-  document.getElementById("warning").innerText="";
-  document.getElementById("confidenceText").innerText="";
+function resetInput() {
+  localStorage.removeItem("pw_lastPeriod");
+  localStorage.removeItem("pw_cycles");
+  localStorage.removeItem("pw_periodLength");
+  document.getElementById("calendarSection").style.display = "none";
+  document.getElementById("inputSection").style.display = "block";
+  document.getElementById("warning").innerText = "";
+  document.getElementById("confidenceText").innerText = "";
 }
 
-function calculateConfidence(cycles){
-  const avg = cycles.reduce((a,b)=>a+b,0)/cycles.length;
-  const variation = cycles.reduce((s,c)=>s+Math.abs(c-avg),0)/cycles.length;
-  const confidence = Math.max(40, Math.round(100 - variation*20));
-  const label = confidence >=80 ? "High" : confidence>=60 ? "Medium":"Low";
-  return {confidence, label};
+function calculateConfidence(cycles) {
+  const avg = cycles.reduce((a, b) => a + b, 0) / cycles.length;
+  const variation = cycles.reduce((s, c) => s + Math.abs(c - avg), 0) / cycles.length;
+  const confidence = Math.max(40, Math.round(100 - variation * 20));
+  const label = confidence >= 80 ? "High" : confidence >= 60 ? "Medium" : "Low";
+  return { confidence, label };
 }
 
-function renderCalendar(){
+function renderCalendar() {
   const lastPeriod = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
-  const cycles = localStorage.getItem("pw_cycles").split(",").map(n=>+n);
+  const cycles = localStorage.getItem("pw_cycles").split(",").map(n => +n);
   const periodLength = +localStorage.getItem("pw_periodLength") || 5;
 
-  const avgCycle = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
+  const avgCycle = Math.round(cycles.reduce((a, b) => a + b) / cycles.length);
   const ovulationDay = avgCycle - 14;
 
   const conf = calculateConfidence(cycles);
   document.getElementById("confidenceText").innerText =
     `Prediction confidence: ${conf.confidence}% (${conf.label})`;
 
-  if(conf.label === "Low"){
+  if (conf.label === "Low") {
     document.getElementById("warning").innerText = "⚠️ Irregular cycles detected. Predictions are estimates only.";
   } else document.getElementById("warning").innerText = "";
 
   const base = new Date();
   base.setDate(1); // February bug fix
-  base.setMonth(base.getMonth()+monthOffset);
+  base.setMonth(base.getMonth() + monthOffset);
   const year = base.getFullYear();
   const month = base.getMonth();
   const today = normalize(new Date());
 
   const firstDay = new Date(year, month, 1);
-  const startOffset = (firstDay.getDay()+6)%7;
-  const daysInMonth = new Date(year, month+1,0).getDate();
+  const startOffset = (firstDay.getDay() + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   document.getElementById("monthTitle").innerText =
-    base.toLocaleString("default",{month:"long", year:"numeric"});
+    base.toLocaleString("default", { month: "long", year: "numeric" });
 
   const cal = document.getElementById("calendar");
-  cal.innerHTML="";
-  document.getElementById("inputSection").style.display="none";
-  document.getElementById("calendarSection").style.display="block";
+  cal.innerHTML = "";
+  document.getElementById("inputSection").style.display = "none";
+  document.getElementById("calendarSection").style.display = "block";
 
-  for(let i=0;i<startOffset;i++) cal.appendChild(document.createElement("div"));
+  for (let i = 0; i < startOffset; i++) cal.appendChild(document.createElement("div"));
 
-  for(let d=1; d<=daysInMonth; d++){
+  for (let d = 1; d <= daysInMonth; d++) {
     const cellDate = normalize(new Date(year, month, d));
-    const diffDays = Math.floor((cellDate-lastPeriod)/86400000);
-    const cycleDay = diffDays>=0 ? (diffDays%avgCycle)+1 : null;
+    const diffDays = Math.floor((cellDate - lastPeriod) / 86400000);
+    const cycleDay = diffDays >= 0 ? (diffDays % avgCycle) + 1 : null;
 
     const el = document.createElement("div");
-    el.className="day";
-    el.textContent=d;
+    el.className = "day";
+    el.textContent = d;
 
-    if(cycleDay && cycleDay<=periodLength) el.classList.add("period");
-    else if(cycleDay && cycleDay>=ovulationDay-5 && cycleDay<=ovulationDay+1) el.classList.add("high");
-    else if(cycleDay && cycleDay>=ovulationDay-7 && cycleDay<=ovulationDay+3) el.classList.add("medium");
+    if (cycleDay && cycleDay <= periodLength) el.classList.add("period");
+    else if (cycleDay && cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 1) el.classList.add("high");
+    else if (cycleDay && cycleDay >= ovulationDay - 7 && cycleDay <= ovulationDay + 3) el.classList.add("medium");
     else el.classList.add("low");
 
-    if(+cellDate===+today) el.classList.add("today");
+    if (+cellDate === +today) el.classList.add("today");
 
     cal.appendChild(el);
   }
 }
 
-// Red dot check
-async function checkUpdates() {
-  try {
-    const res = await fetch('https://periodwise.online/updates.json?ts=' + Date.now(), { cache: 'no-store' });
-    const data = await res.json();
-
-    const latestVersion = data.version;
-    const lastSeenVersion = parseInt(localStorage.getItem('pw_last_seen_update') || '0', 10);
-
-    if (latestVersion > lastSeenVersion) {
-      document.getElementById('updateDot').style.display = 'block'; // Show red dot
-    } else {
-      document.getElementById('updateDot').style.display = 'none'; // Hide red dot
+// Fetch the latest blog title for the moving banner
+fetch('updates.json?ts=' + Date.now())
+  .then(res => res.json())
+  .then(data => {
+    if (data.banner) {
+      document.getElementById("bannerText").textContent = "🔥 " + data.banner.title;
     }
-  } catch (e) {
-    console.log('Update check failed', e);
-  }
-}
+  })
+  .catch(err => {
+    console.log("Banner load failed", err);
+    document.getElementById("bannerText").textContent = "No updates available.";
+  });
 
-// When the bell is clicked, open the notifications page and mark the updates as seen
-document.getElementById('notificationBell').addEventListener('click', () => {
-  window.location.href = 'notifications.html'; // Open notifications
-  fetch('https://periodwise.online/updates.json?ts=' + Date.now())
-    .then(r => r.json())
-    .then(data => {
-      localStorage.setItem('pw_last_seen_update', data.version); // Mark the update as seen
-      document.getElementById('updateDot').style.display = 'none'; // Hide red dot after clicking
-    });
-});
-
-// Call checkUpdates on page load
-document.addEventListener('DOMContentLoaded', checkUpdates);
-
-// Register Service Worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
-    .then(() => console.log('Service Worker registered ✅'))
-    .catch(err => console.log('Service Worker registration failed ❌', err));
+function openBannerLink() {
+  const bannerURL = 'https://www.periodwise.online';  // Update with dynamic URL if needed
+  window.open(bannerURL, '_blank');
 }
 </script>
-  
+
 </body>
 </html>
