@@ -1,23 +1,30 @@
 {
-  "version": 1,
+  "version": 4,
   "lastUpdated": "2026-02-09",
   "items": [
     {
       "id": 1,
+      "title": "Can Period Tracking Apps Be Trusted? What You Should Know",
+      "type": "blog",
+      "url": "https://www.periodwise.online/2026/01/can-period-tracking-apps-be-trusted.html",
+      "date": "2026-02-09"
+    },
+    {
+      "id": 2,
       "title": "Understanding Your Fertile Window",
       "type": "blog",
       "url": "https://www.periodwise.online/2026/02/understanding-your-fertile-window.html",
       "date": "2026-02-08"
     },
     {
-      "id": 2,
+      "id": 3,
       "title": "Cycle Awareness 101",
       "type": "blog",
       "url": "https://www.periodwise.online/2026/02/cycle-awareness-101-understanding-your.html",
       "date": "2026-02-08"
     },
     {
-      "id": 3,
+      "id": 4,
       "title": "Understanding the 4 Phases of the Menstrual Cycle (Complete Guide)",
       "type": "blog",
       "url": "https://www.periodwise.online/2026/01/understanding-4-phases-of-menstrual.html",
