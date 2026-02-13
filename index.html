@@ -248,7 +248,7 @@ function renderCalendar() {
 }
 
  // Fetch the latest blog title for the moving banner
- fetch('https://guileless-gumption-af7cfc.netlify.app/updates.json?ts=' + Date.now())
+fetch('https://guileless-gumption-af7cfc.netlify.app/updates.json?ts=' + Date.now())
   .then(res => res.json())
   .then(data => {
     if (data.items && data.items.length > 0) {
