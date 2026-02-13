@@ -275,5 +275,33 @@ function openBannerLink() {
 }
 </script>
 
+ <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const banner = document.getElementById("bannerText");
+  const bannerContainer = document.getElementById("movingBanner");
+
+  // Default message in case fetch fails
+  banner.textContent = "No updates available.";
+
+  fetch('https://periodwisepwa.github.io/PeriodWise-Pwa/updates.json?ts=' + Date.now())
+    .then(res => res.json())
+    .then(data => {
+      if (data.items && data.items.length > 0) {
+        const article = data.items[0]; // Show first/latest article
+        banner.textContent = "🔥 " + article.title;
+
+        // Clicking the banner opens the blog in a new tab
+        bannerContainer.onclick = function () {
+          window.open(article.url, "_blank");
+        };
+      }
+    })
+    .catch(err => {
+      console.log("Error loading banner:", err);
+      banner.textContent = "No updates available.";
+    });
+});
+</script>
+
 </body>
 </html>
