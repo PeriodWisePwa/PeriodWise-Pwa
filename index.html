@@ -66,6 +66,7 @@
       padding: 8px 0;
       font-weight: bold;
       cursor: pointer;
+      margin-bottom: 16px;
     }
 
     #movingBanner span {
@@ -79,18 +80,35 @@
       100% { transform: translateX(-100%); }
     }
 
-    /* Notification Dot */
-    #updateDot {
-      display: none;
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      width: 12px;
-      height: 12px;
-      background: red;
-      border-radius: 50%;
-      border: 2px solid white;
+    /* Legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      gap: 12px;
     }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .legend-box {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #ccc;
+      display: inline-block;
+      border-radius: 3px;
+    }
+
+    .legend-box.period { background:#f8bbd0; }
+    .legend-box.high { background:#f44336; }
+    .legend-box.medium { background:#ffeb3b; }
+    .legend-box.low { background:#c8e6c9; }
+    .legend-box.today { border:2px solid black; }
 
   </style>
 </head>
@@ -99,13 +117,14 @@
 
 <h1>PeriodWise</h1>
 
-<!-- Moving Banner Section -->
+<!-- Moving Banner -->
 <div id="movingBanner" onclick="openBannerLink()">
   <span id="bannerText">Loading latest article...</span>
 </div>
 
 <p>Private • Offline • No tracking</p>
 
+<!-- Input Section -->
 <div id="inputSection">
   <label>Enter the first day of your last period</label>
   <input id="lastPeriodDate" type="date">
@@ -116,6 +135,7 @@
 
 <p id="warning"></p>
 
+<!-- Calendar Section -->
 <div id="calendarSection" style="display:none;">
   <div style="margin:10px;">
     <button onclick="changeMonth(-1)">◀</button>
@@ -145,10 +165,10 @@
 <script>
 let monthOffset = 0;
 
-function normalize(d) {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-}
+// Utilities
+function normalize(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
 
+// Handle user input
 function handleSubmit() {
   const last = document.getElementById("lastPeriodDate").value;
   const cyclesInput = document.getElementById("cycles").value;
@@ -167,11 +187,13 @@ function handleSubmit() {
   renderCalendar();
 }
 
+// Month navigation
 function changeMonth(step) {
   monthOffset += step;
   renderCalendar();
 }
 
+// Reset
 function resetInput() {
   localStorage.removeItem("pw_lastPeriod");
   localStorage.removeItem("pw_cycles");
@@ -182,106 +204,87 @@ function resetInput() {
   document.getElementById("confidenceText").innerText = "";
 }
 
+// Confidence calculation
 function calculateConfidence(cycles) {
-  const avg = cycles.reduce((a, b) => a + b, 0) / cycles.length;
-  const variation = cycles.reduce((s, c) => s + Math.abs(c - avg), 0) / cycles.length;
+  const avg = cycles.reduce((a,b)=>a+b,0)/cycles.length;
+  const variation = cycles.reduce((s,c)=>s+Math.abs(c-avg),0)/cycles.length;
   const confidence = Math.max(40, Math.round(100 - variation * 20));
-  const label = confidence >= 80 ? "High" : confidence >= 60 ? "Medium" : "Low";
-  return { confidence, label };
+  const label = confidence >=80 ? "High" : confidence>=60 ? "Medium":"Low";
+  return {confidence, label};
 }
 
- function renderCalendar() {
+// Render Calendar
+function renderCalendar() {
+  const lastPeriod = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
+  const cycles = localStorage.getItem("pw_cycles").split(",").map(n=>+n);
+  const periodLength = +localStorage.getItem("pw_periodLength") || 5;
 
-  const storedLast = localStorage.getItem("pw_lastPeriod");
-  const storedCycles = localStorage.getItem("pw_cycles");
-  const storedLength = localStorage.getItem("pw_periodLength");
-
-  if (!storedLast || !storedCycles) {
-    return; // stop if no data yet
-  }
-
-  const lastPeriod = normalize(new Date(storedLast));
-  const cycles = storedCycles.split(",").map(n => +n);
-  const periodLength = +storedLength || 5;
-
-  const avgCycle = Math.round(cycles.reduce((a, b) => a + b) / cycles.length);
+  const avgCycle = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
   const ovulationDay = avgCycle - 14;
 
   const conf = calculateConfidence(cycles);
   document.getElementById("confidenceText").innerText =
     `Prediction confidence: ${conf.confidence}% (${conf.label})`;
 
-  if (conf.label === "Low") {
-    document.getElementById("warning").innerText = "⚠️ Irregular cycles detected. Predictions are estimates only.";
-  } else document.getElementById("warning").innerText = "";
+  document.getElementById("warning").innerText = conf.label === "Low" 
+    ? "⚠️ Irregular cycles detected. Predictions are estimates only." 
+    : "";
 
   const base = new Date();
-  base.setDate(1); // February bug fix
+  base.setDate(1);
   base.setMonth(base.getMonth() + monthOffset);
   const year = base.getFullYear();
   const month = base.getMonth();
   const today = normalize(new Date());
 
   const firstDay = new Date(year, month, 1);
-  const startOffset = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const startOffset = (firstDay.getDay()+6)%7;
+  const daysInMonth = new Date(year, month+1,0).getDate();
 
   document.getElementById("monthTitle").innerText =
-    base.toLocaleString("default", { month: "long", year: "numeric" });
+    base.toLocaleString("default",{month:"long", year:"numeric"});
 
   const cal = document.getElementById("calendar");
-  cal.innerHTML = "";
-  document.getElementById("inputSection").style.display = "none";
-  document.getElementById("calendarSection").style.display = "block";
+  cal.innerHTML="";
+  document.getElementById("inputSection").style.display="none";
+  document.getElementById("calendarSection").style.display="block";
 
-  for (let i = 0; i < startOffset; i++) cal.appendChild(document.createElement("div"));
+  for(let i=0;i<startOffset;i++) cal.appendChild(document.createElement("div"));
 
-  for (let d = 1; d <= daysInMonth; d++) {
+  for(let d=1; d<=daysInMonth; d++){
     const cellDate = normalize(new Date(year, month, d));
-    const diffDays = Math.floor((cellDate - lastPeriod) / 86400000);
-    const cycleDay = diffDays >= 0 ? (diffDays % avgCycle) + 1 : null;
+    const diffDays = Math.floor((cellDate-lastPeriod)/86400000);
+    const cycleDay = diffDays>=0 ? (diffDays%avgCycle)+1 : null;
 
     const el = document.createElement("div");
-    el.className = "day";
-    el.textContent = d;
+    el.className="day";
+    el.textContent=d;
 
-    if (cycleDay && cycleDay <= periodLength) el.classList.add("period");
-    else if (cycleDay && cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 1) el.classList.add("high");
-    else if (cycleDay && cycleDay >= ovulationDay - 7 && cycleDay <= ovulationDay + 3) el.classList.add("medium");
+    if(cycleDay && cycleDay<=periodLength) el.classList.add("period");
+    else if(cycleDay && cycleDay>=ovulationDay-5 && cycleDay<=ovulationDay+1) el.classList.add("high");
+    else if(cycleDay && cycleDay>=ovulationDay-7 && cycleDay<=ovulationDay+3) el.classList.add("medium");
     else el.classList.add("low");
 
-    if (+cellDate === +today) el.classList.add("today");
+    if(+cellDate===+today) el.classList.add("today");
 
     cal.appendChild(el);
   }
 }
 
- // Fetch the latest blog title for the moving banner
-fetch('https://guileless-gumption-af7cfc.netlify.app/updates.json?ts=' + Date.now())
-  .then(res => res.json())
-  .then(data => {
-    if (data.items && data.items.length > 0) {
-      document.getElementById("bannerText").textContent =
-        "🔥 " + data.items[0].title;
-    } else {
-      document.getElementById("bannerText").textContent =
-        "No updates available.";
-    }
-  })
-  .catch(err => {
-    console.log("Banner load failed:", err);
-    document.getElementById("bannerText").textContent =
-      "No updates available.";
-  });
-  .catch(err => {
-    console.log("Banner load failed", err);
-    document.getElementById("bannerText").textContent = "No updates available.";
-  });
+// Moving Banner placeholder
+document.getElementById("bannerText").textContent = "No updates available yet.";
 
 function openBannerLink() {
-  const bannerURL = 'https://www.periodwise.online';  // Update with dynamic URL if needed
+  const bannerURL = 'https://www.periodwise.online'; // default, can update dynamically later
   window.open(bannerURL, '_blank');
 }
+
+// On page load: restore calendar if data exists
+document.addEventListener('DOMContentLoaded', () => {
+  if(localStorage.getItem("pw_lastPeriod") && localStorage.getItem("pw_cycles")) {
+    renderCalendar();
+  }
+});
 </script>
 
 </body>
