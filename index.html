@@ -190,10 +190,19 @@ function calculateConfidence(cycles) {
   return { confidence, label };
 }
 
-function renderCalendar() {
-  const lastPeriod = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
-  const cycles = localStorage.getItem("pw_cycles").split(",").map(n => +n);
-  const periodLength = +localStorage.getItem("pw_periodLength") || 5;
+ function renderCalendar() {
+
+  const storedLast = localStorage.getItem("pw_lastPeriod");
+  const storedCycles = localStorage.getItem("pw_cycles");
+  const storedLength = localStorage.getItem("pw_periodLength");
+
+  if (!storedLast || !storedCycles) {
+    return; // stop if no data yet
+  }
+
+  const lastPeriod = normalize(new Date(storedLast));
+  const cycles = storedCycles.split(",").map(n => +n);
+  const periodLength = +storedLength || 5;
 
   const avgCycle = Math.round(cycles.reduce((a, b) => a + b) / cycles.length);
   const ovulationDay = avgCycle - 14;
