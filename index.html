@@ -268,15 +268,6 @@ function renderCalendar() {
 
     cal.appendChild(el);
   }
-}
-
-// Moving Banner placeholder
-document.getElementById("bannerText").textContent = "No updates available yet.";
-
-function openBannerLink() {
-  const bannerURL = 'https://www.periodwise.online'; // default, can update dynamically later
-  window.open(bannerURL, '_blank');
-}
 
 // On page load: restore calendar if data exists
 document.addEventListener('DOMContentLoaded', () => {
