@@ -1,4 +1,4 @@
-cachedwise-cache-v27 CACHE_NAME = "periodwise-cache-v28";  // Update cache version number
+cachedwise-cache-v27 CACHE_NAME = "periodwise-cache-v29";  // Update cache version number
 
 // List of files to cache (including updates.json)
 const urlsToCache = [
