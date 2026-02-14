@@ -117,8 +117,9 @@
 
 <h1>PeriodWise</h1>
 
- <div id="movingBanner" onclick="window.open('https://www.periodwise.online/2026/01/can-period-tracking-apps-be-trusted.html','_blank')">
-  <span id="bannerText">⚠️ Are Period Tracking Apps Lying to You? Tap to Discover the Truth →</span>
+<!-- Moving Banner -->
+<div id="movingBanner" onclick="window.open('https://www.periodwise.online/2026/01/can-period-tracking-apps-be-trusted.html','_blank')">
+  <span>⚠️ Are Period Tracking Apps Lying to You? Tap to Discover the Truth →</span>
 </div>
 
 <p>Private • Offline • No tracking</p>
@@ -192,7 +193,7 @@ function changeMonth(step) {
   renderCalendar();
 }
 
-// Reset
+// Reset input
 function resetInput() {
   localStorage.removeItem("pw_lastPeriod");
   localStorage.removeItem("pw_cycles");
@@ -268,28 +269,22 @@ function renderCalendar() {
 
     cal.appendChild(el);
   }
+}
 
-// On page load: restore calendar if data exists
-document.addEventListener('DOMContentLoaded', () => {
+// Restore calendar on page load
+window.addEventListener("load", () => {
   if(localStorage.getItem("pw_lastPeriod") && localStorage.getItem("pw_cycles")) {
+    monthOffset = 0;
     renderCalendar();
   }
 });
-  // Register the service worker if the browser supports it
+
+// Register service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js')
-    .then(() => console.log('Service Worker registered ✅'))
-    .catch(err => console.log('Service Worker registration failed ❌', err));
+    .then(()=>console.log('Service Worker registered ✅'))
+    .catch(err=>console.log('Service Worker registration failed ❌', err));
 }
- // Restore saved data on page load
-window.addEventListener("load", function() {
-  const savedLast = localStorage.getItem("pw_lastPeriod");
-  const savedCycles = localStorage.getItem("pw_cycles");
-
-  if (savedLast && savedCycles) {
-    renderCalendar();
-  }
-});
 </script>
 
 </body>
