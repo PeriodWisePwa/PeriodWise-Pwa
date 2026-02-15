@@ -312,6 +312,22 @@ if ('serviceWorker' in navigator) {
     .catch(err=>console.log('Service Worker registration failed ❌', err));
 }
   
+  function shareApp() {
+  const shareData = {
+    title: 'PeriodWise — Private Period Tracker',
+    text: 'Track your cycle privately with PeriodWise.',
+    url: window.location.origin
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData)
+      .catch(err => console.log('Share cancelled', err));
+  } else {
+    // fallback copy link
+    navigator.clipboard.writeText(window.location.origin);
+    alert('Link copied — share it anywhere 👍');
+  }
+}
 </script>
 
 </body>
