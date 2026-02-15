@@ -110,6 +110,29 @@
     .legend-box.low { background:#c8e6c9; }
     .legend-box.today { border:2px solid black; }
 
+    /* Floating share button */
+#shareBtn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 9999;
+
+  background: #ff4d6d;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+#shareBtn:active {
+  transform: scale(0.96);
+}
+    
   </style>
 </head>
 
@@ -306,20 +329,6 @@ if ('serviceWorker' in navigator) {
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-#shareBtn:active {
-  transform: scale(0.96);
-}
-  function shareApp() {
-  if (navigator.share) {
-    navigator.share({
-      title: 'PeriodWise — Private Period Tracker',
-      text: 'Track your cycle privately with PeriodWise.',
-      url: window.location.href
-    });
-  } else {
-    alert("Sharing not supported on this device.");
-  }
-}
 </script>
 
 </body>
