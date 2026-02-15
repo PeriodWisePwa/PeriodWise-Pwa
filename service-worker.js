@@ -2,7 +2,7 @@
 // PeriodWise Service Worker
 // ==============================
 
-const CACHE_NAME = 'periodwise-v4';
+const CACHE_NAME ='periodwise-v5'
 const urlsToCache = [
   './',
   './index.html',
