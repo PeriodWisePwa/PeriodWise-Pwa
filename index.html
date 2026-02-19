@@ -208,9 +208,20 @@ button {
 <option>😠 Irritable</option>
 </select>
 
-<label><input type="checkbox" id="symptom_cramps"> Cramps</label>
-<label><input type="checkbox" id="symptom_bloating"> Bloating</label>
-<label><input type="checkbox" id="symptom_headache"> Headache</label>
+ <div class="check-row">
+  <label for="symptom_cramps">Cramps</label>
+  <input type="checkbox" id="symptom_cramps">
+</div>
+
+<div class="check-row">
+  <label for="symptom_bloating">Bloating</label>
+  <input type="checkbox" id="symptom_bloating">
+</div>
+
+<div class="check-row">
+  <label for="symptom_headache">Headache</label>
+  <input type="checkbox" id="symptom_headache">
+</div>
 
 <textarea id="note" placeholder="Notes"></textarea>
 
