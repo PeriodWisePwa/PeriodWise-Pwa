@@ -1,361 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>PeriodWise</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#e91e63">
+<meta charset="UTF-8">
+<title>PeriodWise</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e91e63">
 
-  <style>
-    body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
-    h1 { color: #e91e63; }
+<style>
+body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
+h1 { color: #e91e63; }
 
-    input, button {
-      padding: 10px;
-      margin: 6px;
-      width: 90%;
-      max-width: 320px;
-    }
+input, button, select, textarea {
+  padding: 10px;
+  margin: 6px;
+  width: 90%;
+  max-width: 320px;
+}
 
-    label {
-      display: block;
-      text-align: left;
-      max-width: 320px;
-      margin: 8px auto 2px;
-      font-size: 14px;
-    }
+button {
+  background: #e91e63;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
-    button {
-      background: #e91e63;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    /* Calendar Styles */
-    .calendar-header, .calendar {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-    }
-
-    .calendar-header { margin-top: 10px; font-weight: bold; }
-    .calendar { gap: 6px; margin-top: 6px; }
-
-    .day {
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-    }
-
-    .period { background:#f8bbd0; }
-    .high { background:#f44336; color:white; }
-    .medium { background:#ffeb3b; }
-    .low { background:#c8e6c9; }
-
-    .today { border:2px solid black; font-weight:bold; }
-
-    /* Moving Banner Styles */
-    #movingBanner {
-      width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      background: #fff3f8;
-      color: #e91e63;
-      padding: 8px 0;
-      font-weight: bold;
-      cursor: pointer;
-      margin-bottom: 16px;
-    }
-
-    #movingBanner span {
-      display: inline-block;
-      padding-left: 100%;
-      animation: scrollText 12s linear infinite;
-    }
-
-    @keyframes scrollText {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-
-    /* Legend */
-    .legend {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 12px;
-      gap: 12px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 12px;
-    }
-
-    .legend-box {
-      width: 16px;
-      height: 16px;
-      border: 1px solid #ccc;
-      display: inline-block;
-      border-radius: 3px;
-    }
-
-    .legend-box.period { background:#f8bbd0; }
-    .legend-box.high { background:#f44336; }
-    .legend-box.medium { background:#ffeb3b; }
-    .legend-box.low { background:#c8e6c9; }
-    .legend-box.today { border:2px solid black; }
-
-    /* Floating share button */
+/* Floating share */
 #shareBtn {
   position: fixed;
   top: 10px;
   right: 10px;
   z-index: 9999;
-
-  background: #ff4d6d;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 8px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  background:#ff4d6d;
+  border-radius:20px;
+  padding:8px 14px;
 }
 
-#shareBtn:active {
-  transform: scale(0.96);
+/* Calendar */
+.calendar-header, .calendar {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
 }
-    
-  </style>
+
+.day {
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+
+.period { background:#f8bbd0; }
+.high { background:#f44336;color:white;}
+.medium { background:#ffeb3b;}
+.low { background:#c8e6c9;}
+.today { border:2px solid black;font-weight:bold;}
+
+/* Banner */
+#movingBanner {
+  width:100%;
+  overflow:hidden;
+  white-space:nowrap;
+  background:#fff3f8;
+  color:#e91e63;
+  padding:8px 0;
+  font-weight:bold;
+  margin-bottom:16px;
+}
+
+#movingBanner span {
+  display:inline-block;
+  padding-left:100%;
+  animation:scrollText 12s linear infinite;
+}
+
+@keyframes scrollText {
+  0% { transform:translateX(0); }
+  100% { transform:translateX(-100%); }
+}
+
+/* Panels */
+.panel {
+  max-width:600px;
+  margin:15px auto;
+  padding:12px;
+  border-radius:10px;
+  background:#fff3f8;
+  text-align:left;
+}
+</style>
 </head>
 
 <body>
 
+<button id="shareBtn" onclick="shareApp()">📤 Share</button>
+
 <h1>PeriodWise</h1>
 
-<!-- Moving Banner -->
-<div id="movingBanner" onclick="window.open('https://www.periodwise.online/2026/01/can-period-tracking-apps-be-trusted.html','_blank')">
-  <span>⚠️ Are Period Tracking Apps Lying to You? Tap to Discover the Truth →</span>
+<div id="movingBanner">
+<span>⚠️ Learn how to understand your cycle better → periodwise.online</span>
 </div>
 
 <p>Private • Offline • No tracking</p>
-  <button id="installBtn" style="display:none; margin-top:8px;">
-⬇️ Install PeriodWise App
-</button>
-  <button onclick="shareApp()" id="shareBtn">
-📤 Share
-</button>
 
-<!-- Input Section -->
+<!-- INPUT -->
 <div id="inputSection">
-  <label>Enter the first day of your last period</label>
-  <input id="lastPeriodDate" type="date">
-  <input id="cycles" placeholder="Last 3+ cycles (e.g. 25,26,25)">
-  <input id="periodLength" type="number" placeholder="Period length (default 5)">
-  <button onclick="handleSubmit()">Save & Show Calendar</button>
+<input id="lastPeriodDate" type="date">
+<input id="cycles" placeholder="Cycles e.g 26,27,26">
+<input id="periodLength" type="number" placeholder="Period length (5)">
+<button onclick="handleSubmit()">Save & Show Calendar</button>
 </div>
 
 <p id="warning"></p>
 
-<!-- Calendar Section -->
+<!-- CALENDAR -->
 <div id="calendarSection" style="display:none;">
-  <div style="margin:10px;">
-    <button onclick="changeMonth(-1)">◀</button>
-    <strong id="monthTitle"></strong>
-    <button onclick="changeMonth(1)">▶</button>
-  </div>
+<div>
+<button onclick="changeMonth(-1)">◀</button>
+<strong id="monthTitle"></strong>
+<button onclick="changeMonth(1)">▶</button>
+</div>
 
-  <div class="calendar-header">
-    <div>Mon</div><div>Tue</div><div>Wed</div>
-    <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-  </div>
+<div class="calendar-header">
+<div>Mon</div><div>Tue</div><div>Wed</div>
+<div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+</div>
 
-  <div class="calendar" id="calendar"></div>
+<div class="calendar" id="calendar"></div>
 
-  <p id="confidenceText"></p>
-  <button onclick="resetInput()">Re-enter Cycle</button>
+<p id="confidenceText"></p>
+<button onclick="resetInput()">Re-enter Cycle</button>
+</div>
 
-  <div class="legend">
-    <span class="legend-item"><span class="legend-box period"></span>Period</span>
-    <span class="legend-item"><span class="legend-box high"></span>High</span>
-    <span class="legend-item"><span class="legend-box medium"></span>Medium</span>
-    <span class="legend-item"><span class="legend-box low"></span>Low</span>
-    <span class="legend-item"><span class="legend-box today"></span>Today</span>
-  </div>
+<!-- HABIT LOOP -->
+<div class="panel">
+<strong>🔥 Check-In Streak:</strong> <span id="streakCount">0</span> days
+<p id="habitMessage"></p>
+</div>
+
+<!-- INSIGHTS -->
+<div class="panel">
+<h4>Your Insights</h4>
+<p id="monthlyInsight"></p>
+<p id="cycleTip"></p>
+<p id="badge"></p>
+</div>
+
+<!-- DAILY CHECKIN -->
+<div class="panel" id="dailyCheckin">
+<h3>Daily Cycle Check-In</h3>
+
+<select id="mood">
+<option value="">Mood</option>
+<option>😄 Happy</option>
+<option>😴 Tired</option>
+<option>🤕 Crampy</option>
+<option>😠 Irritable</option>
+</select>
+
+<label><input type="checkbox" id="symptom_cramps"> Cramps</label>
+<label><input type="checkbox" id="symptom_bloating"> Bloating</label>
+<label><input type="checkbox" id="symptom_headache"> Headache</label>
+
+<textarea id="note" placeholder="Notes"></textarea>
+
+<button onclick="saveCheckin()">Save Check-In</button>
+<p id="checkinMsg"></p>
+</div>
+
+<!-- FOOTER -->
+<div style="margin-top:40px;font-size:12px;color:#666;">
+<a href="privacy.html">Privacy Policy</a> •
+<a href="disclaimer.html">Disclaimer</a> •
+<a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html">FAQ</a>
 </div>
 
 <script>
+
 let monthOffset = 0;
 
-// Utilities
-function normalize(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function normalize(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
 
-// Handle user input
-function handleSubmit() {
-  const last = document.getElementById("lastPeriodDate").value;
-  const cyclesInput = document.getElementById("cycles").value;
-  const periodLen = document.getElementById("periodLength").value || 5;
+function handleSubmit(){
+const last=document.getElementById("lastPeriodDate").value;
+const cycles=document.getElementById("cycles").value;
+const len=document.getElementById("periodLength").value||5;
 
-  if (!last || !cyclesInput) {
-    document.getElementById("warning").innerText = "Please enter last period and cycles.";
-    return;
-  }
+if(!last||!cycles){ warning.innerText="Enter data"; return;}
 
-  localStorage.setItem("pw_lastPeriod", last);
-  localStorage.setItem("pw_cycles", cyclesInput);
-  localStorage.setItem("pw_periodLength", periodLen);
+localStorage.setItem("pw_lastPeriod",last);
+localStorage.setItem("pw_cycles",cycles);
+localStorage.setItem("pw_periodLength",len);
 
-  monthOffset = 0;
-  renderCalendar();
+renderCalendar();
 }
 
-// Month navigation
-function changeMonth(step) {
-  monthOffset += step;
-  renderCalendar();
+function changeMonth(step){ monthOffset+=step; renderCalendar(); }
+
+function resetInput(){
+localStorage.clear();
+location.reload();
 }
 
-// Reset input
-function resetInput() {
-  localStorage.removeItem("pw_lastPeriod");
-  localStorage.removeItem("pw_cycles");
-  localStorage.removeItem("pw_periodLength");
-  document.getElementById("calendarSection").style.display = "none";
-  document.getElementById("inputSection").style.display = "block";
-  document.getElementById("warning").innerText = "";
-  document.getElementById("confidenceText").innerText = "";
+function renderCalendar(){
+const last=normalize(new Date(localStorage.getItem("pw_lastPeriod")));
+const cycles=localStorage.getItem("pw_cycles").split(",").map(Number);
+const len=+localStorage.getItem("pw_periodLength")||5;
+
+const avg=Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
+const ovDay=avg-14;
+
+const base=new Date();
+base.setDate(1);
+base.setMonth(base.getMonth()+monthOffset);
+
+monthTitle.innerText=base.toLocaleString("default",{month:"long",year:"numeric"});
+
+calendar.innerHTML="";
+calendarSection.style.display="block";
+inputSection.style.display="none";
+
+const first=new Date(base.getFullYear(),base.getMonth(),1);
+const offset=(first.getDay()+6)%7;
+const days=new Date(base.getFullYear(),base.getMonth()+1,0).getDate();
+
+for(let i=0;i<offset;i++) calendar.appendChild(document.createElement("div"));
+
+for(let d=1; d<=days; d++){
+const date=normalize(new Date(base.getFullYear(),base.getMonth(),d));
+const diff=Math.floor((date-last)/86400000);
+const cycleDay=(diff%avg)+1;
+
+const el=document.createElement("div");
+el.className="day";
+el.textContent=d;
+
+if(cycleDay<=len) el.classList.add("period");
+else if(cycleDay>=ovDay-5 && cycleDay<=ovDay+1) el.classList.add("high");
+else el.classList.add("low");
+
+calendar.appendChild(el);
 }
 
-// Confidence calculation
-function calculateConfidence(cycles) {
-  const avg = cycles.reduce((a,b)=>a+b,0)/cycles.length;
-  const variation = cycles.reduce((s,c)=>s+Math.abs(c-avg),0)/cycles.length;
-  const confidence = Math.max(40, Math.round(100 - variation * 20));
-  const label = confidence >=80 ? "High" : confidence>=60 ? "Medium":"Low";
-  return {confidence, label};
+updateInsights();
 }
 
-// Render Calendar
-function renderCalendar() {
-  const lastPeriod = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
-  const cycles = localStorage.getItem("pw_cycles").split(",").map(n=>+n);
-  const periodLength = +localStorage.getItem("pw_periodLength") || 5;
-
-  const avgCycle = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
-  const ovulationDay = avgCycle - 14;
-
-  const conf = calculateConfidence(cycles);
-  document.getElementById("confidenceText").innerText =
-    `Prediction confidence: ${conf.confidence}% (${conf.label})`;
-
-  document.getElementById("warning").innerText = conf.label === "Low" 
-    ? "⚠️ Irregular cycles detected. Predictions are estimates only." 
-    : "";
-
-  const base = new Date();
-  base.setDate(1);
-  base.setMonth(base.getMonth() + monthOffset);
-  const year = base.getFullYear();
-  const month = base.getMonth();
-  const today = normalize(new Date());
-
-  const firstDay = new Date(year, month, 1);
-  const startOffset = (firstDay.getDay()+6)%7;
-  const daysInMonth = new Date(year, month+1,0).getDate();
-
-  document.getElementById("monthTitle").innerText =
-    base.toLocaleString("default",{month:"long", year:"numeric"});
-
-  const cal = document.getElementById("calendar");
-  cal.innerHTML="";
-  document.getElementById("inputSection").style.display="none";
-  document.getElementById("calendarSection").style.display="block";
-
-  for(let i=0;i<startOffset;i++) cal.appendChild(document.createElement("div"));
-
-  for(let d=1; d<=daysInMonth; d++){
-    const cellDate = normalize(new Date(year, month, d));
-    const diffDays = Math.floor((cellDate-lastPeriod)/86400000);
-    const cycleDay = diffDays>=0 ? (diffDays%avgCycle)+1 : null;
-
-    const el = document.createElement("div");
-    el.className="day";
-    el.textContent=d;
-
-    if(cycleDay && cycleDay<=periodLength) el.classList.add("period");
-    else if(cycleDay && cycleDay>=ovulationDay-5 && cycleDay<=ovulationDay+1) el.classList.add("high");
-    else if(cycleDay && cycleDay>=ovulationDay-7 && cycleDay<=ovulationDay+3) el.classList.add("medium");
-    else el.classList.add("low");
-
-    if(+cellDate===+today) el.classList.add("today");
-
-    cal.appendChild(el);
-  }
+function shareApp(){
+if(navigator.share){
+navigator.share({title:"PeriodWise",url:location.href});
+}else alert("Copy link to share");
 }
 
-// Restore calendar on page load
-window.addEventListener("load", () => {
-  if(localStorage.getItem("pw_lastPeriod") && localStorage.getItem("pw_cycles")) {
-    monthOffset = 0;
-    renderCalendar();
-  }
+function saveCheckin(){
+const key=new Date().toISOString().slice(0,10);
+const data={
+mood:mood.value,
+cramps:symptom_cramps.checked,
+bloating:symptom_bloating.checked,
+headache:symptom_headache.checked,
+note:note.value
+};
+localStorage.setItem("pw_checkin_"+key,JSON.stringify(data));
+
+updateStreak();
+updateInsights();
+
+checkinMsg.innerText="Saved!";
+}
+
+function updateStreak(){
+const today=new Date().toISOString().slice(0,10);
+const last=localStorage.getItem("pw_last_checkin");
+let streak=parseInt(localStorage.getItem("pw_streak")||"0");
+
+const yesterday=new Date();
+yesterday.setDate(yesterday.getDate()-1);
+const yKey=yesterday.toISOString().slice(0,10);
+
+if(last===yKey) streak++;
+else if(last!==today) streak=1;
+
+localStorage.setItem("pw_last_checkin",today);
+localStorage.setItem("pw_streak",streak);
+
+streakCount.innerText=streak;
+
+const msgs=["Consistency builds insight 💛","You're doing great 🌿","Keep tracking 🙌"];
+habitMessage.innerText=msgs[Math.floor(Math.random()*msgs.length)];
+}
+
+function updateInsights(){
+const month=new Date().toISOString().slice(0,7);
+let count=0;
+
+for(let i=0;i<localStorage.length;i++){
+const k=localStorage.key(i);
+if(k.startsWith("pw_checkin_") && k.includes(month)) count++;
+}
+
+monthlyInsight.innerText=`You logged ${count} days this month`;
+
+const streak=parseInt(localStorage.getItem("pw_streak")||"0");
+
+if(streak>=30) badge.innerText="🏆 30-Day Champion";
+else if(streak>=7) badge.innerText="🌟 7-Day Streak";
+else badge.innerText="";
+}
+
+window.addEventListener("load",()=>{
+if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
+updateStreak();
+updateInsights();
 });
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js')
-    .then(()=>console.log('Service Worker registered ✅'))
-    .catch(err=>console.log('Service Worker registration failed ❌', err));
+if('serviceWorker' in navigator){
+navigator.serviceWorker.register('./service-worker.js');
 }
-  
-  function shareApp() {
-  const shareData = {
-    title: 'PeriodWise — Private Period Tracker',
-    text: 'Track your cycle privately with PeriodWise.',
-    url: window.location.origin
-  };
 
-  if (navigator.share) {
-    navigator.share(shareData)
-      .catch(err => console.log('Share cancelled', err));
-  } else {
-    // fallback copy link
-    navigator.clipboard.writeText(window.location.origin);
-    alert('Link copied — share it anywhere 👍');
-  }
-}
-  let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-
-  const btn = document.getElementById('installBtn');
-  btn.style.display = 'inline-block';
-
-  btn.addEventListener('click', async () => {
-    btn.style.display = 'none';
-    deferredPrompt.prompt();
-
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log('Install outcome:', outcome);
-
-    deferredPrompt = null;
-  });
-});
 </script>
-  <div style="margin-top:40px;font-size:12px;color:#666;">
-  <a href="/privacy.html">Privacy Policy</a> •
-  <a href="/disclaimer.html">Disclaimer</a> •
-  <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html">FAQ</a>
-</div>
 
 </body>
 </html>
