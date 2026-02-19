@@ -331,7 +331,47 @@ confidenceText.innerText = "Prediction confidence: High";
 
 updateInsights();
 }
+  
+ function updateDailyInsight(){
 
+const last = localStorage.getItem("pw_lastPeriod");
+const cyclesStr = localStorage.getItem("pw_cycles");
+
+if(!last || !cyclesStr) return;
+
+const cycles = cyclesStr.split(",").map(Number);
+const avg = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
+
+const ovulationDay = avg - 14;
+const today = new Date();
+const lastDate = new Date(last);
+
+const diff = Math.floor((today - lastDate)/86400000);
+const cycleDay = ((diff % avg) + avg) % avg + 1;
+
+let msg = "";
+
+if(cycleDay <= 5){
+msg = "🩸 On your period — rest, hydrate, and go gently.";
+}
+else if(cycleDay < ovulationDay - 3){
+msg = "🌿 Low fertility phase — steady energy, great time for planning.";
+}
+else if(cycleDay >= ovulationDay - 2 && cycleDay <= ovulationDay + 1){
+msg = "🔥 High fertility — pregnancy chance higher.";
+}
+else if(cycleDay <= ovulationDay + 5){
+msg = "⚡ Ovulation window — energy and confidence may rise.";
+}
+else if(cycleDay > avg - 5){
+msg = "💛 Period approaching — prioritize sleep and reduce stress.";
+}
+else{
+msg = "🌼 Balanced phase — keep listening to your body.";
+}
+
+document.getElementById("dailyInsightText").innerText = msg;
+}
 function shareApp(){
 if(navigator.share){
 navigator.share({title:"PeriodWise",url:location.href});
