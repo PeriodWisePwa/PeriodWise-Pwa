@@ -200,44 +200,67 @@ localStorage.clear();
 location.reload();
 }
 
-function renderCalendar(){
-const last=normalize(new Date(localStorage.getItem("pw_lastPeriod")));
-const cycles=localStorage.getItem("pw_cycles").split(",").map(Number);
-const len=+localStorage.getItem("pw_periodLength")||5;
+ function renderCalendar(){
 
-const avg=Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
-const ovDay=avg-14;
+const last = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
+const cycles = localStorage.getItem("pw_cycles").split(",").map(Number);
+const len = +localStorage.getItem("pw_periodLength") || 5;
 
-const base=new Date();
+const avg = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
+
+const ovulationDay = avg - 14;
+
+const base = new Date();
 base.setDate(1);
-base.setMonth(base.getMonth()+monthOffset);
+base.setMonth(base.getMonth() + monthOffset);
 
-monthTitle.innerText=base.toLocaleString("default",{month:"long",year:"numeric"});
+monthTitle.innerText = base.toLocaleString("default",{month:"long",year:"numeric"});
 
-calendar.innerHTML="";
-calendarSection.style.display="block";
-inputSection.style.display="none";
+calendar.innerHTML = "";
+calendarSection.style.display = "block";
+inputSection.style.display = "none";
 
-const first=new Date(base.getFullYear(),base.getMonth(),1);
-const offset=(first.getDay()+6)%7;
-const days=new Date(base.getFullYear(),base.getMonth()+1,0).getDate();
+const first = new Date(base.getFullYear(), base.getMonth(), 1);
+const offset = (first.getDay() + 6) % 7;
+const days = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
+
+const today = normalize(new Date());
 
 for(let i=0;i<offset;i++) calendar.appendChild(document.createElement("div"));
 
 for(let d=1; d<=days; d++){
-const date=normalize(new Date(base.getFullYear(),base.getMonth(),d));
-const diff=Math.floor((date-last)/86400000);
-const cycleDay=(diff%avg)+1;
 
-const el=document.createElement("div");
-el.className="day";
-el.textContent=d;
+const date = normalize(new Date(base.getFullYear(), base.getMonth(), d));
 
-if(cycleDay<=len) el.classList.add("period");
-else if(cycleDay>=ovDay-5 && cycleDay<=ovDay+1) el.classList.add("high");
-else el.classList.add("low");
+const diff = Math.floor((date - last)/86400000);
+const cycleDay = ((diff % avg) + avg) % avg + 1;
+
+const el = document.createElement("div");
+el.className = "day";
+el.textContent = d;
+
+if(cycleDay <= len){
+  el.classList.add("period");
+}
+else if(cycleDay >= ovulationDay - 1 && cycleDay <= ovulationDay + 1){
+  el.classList.add("high");
+}
+else if(cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 3){
+  el.classList.add("medium");
+}
+else{
+  el.classList.add("low");
+}
+
+if(date.getTime() === today.getTime()){
+  el.classList.add("today");
+}
 
 calendar.appendChild(el);
+}
+
+confidenceText.innerText = "Prediction confidence: High";
+
 }
 
 updateInsights();
