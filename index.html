@@ -25,7 +25,6 @@ button {
   cursor: pointer;
 }
 
-/* Floating share */
 #shareBtn {
   position: fixed;
   top: 10px;
@@ -36,13 +35,11 @@ button {
   padding:8px 14px;
 }
 
-/* Calendar */
 .calendar-header, .calendar {
   display:grid;
   grid-template-columns:repeat(7,1fr);
 }
-  
- /* Legend styling */
+
 .legend {
   display:flex;
   justify-content:center;
@@ -63,13 +60,13 @@ button {
   height:16px;
   border-radius:4px;
   border:1px solid #ccc;
-  display:inline-block;
 }
 
 .legend-box.period { background:#f8bbd0; }
 .legend-box.high { background:#f44336; }
 .legend-box.medium { background:#ffeb3b; }
 .legend-box.low { background:#c8e6c9; }
+
 .day {
   padding:10px;
   border:1px solid #ccc;
@@ -82,7 +79,6 @@ button {
 .low { background:#c8e6c9;}
 .today { border:2px solid black;font-weight:bold;}
 
-/* Banner */
 #movingBanner {
   width:100%;
   overflow:hidden;
@@ -105,7 +101,6 @@ button {
   100% { transform:translateX(-100%); }
 }
 
-/* Panels */
 .panel {
   max-width:600px;
   margin:15px auto;
@@ -115,33 +110,16 @@ button {
   text-align:left;
 }
 
-  /* Mood highlight box */
 #mood {
-  width: 100%;
-  max-width: 320px;
-  padding: 12px;
-  border-radius: 8px;
-  border: 2px solid #e91e63;
-  background: white;
-  font-size: 16px;
-  margin-bottom: 10px;
-  display: block;
-}
-
-.check-row label {
-  font-weight:500;
-}
-
-#mood {
-  width:100%;
-  margin-bottom:12px;
+  border:2px solid #e91e63;
+  border-radius:8px;
+  background:white;
 }
 
 textarea {
   width:100%;
   box-sizing:border-box;
 }
-  
 </style>
 </head>
 
@@ -157,7 +135,6 @@ textarea {
 
 <p>Private • Offline • No tracking</p>
 
-<!-- INPUT -->
 <div id="inputSection">
 <input id="lastPeriodDate" type="date">
 <input id="cycles" placeholder="Cycles e.g 26,27,26">
@@ -167,7 +144,6 @@ textarea {
 
 <p id="warning"></p>
 
-<!-- CALENDAR -->
 <div id="calendarSection" style="display:none;">
 <div>
 <button onclick="changeMonth(-1)">◀</button>
@@ -180,46 +156,42 @@ textarea {
 <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
 </div>
 
- <div class="calendar" id="calendar"></div>
-<!-- Legend goes here -->
+<div class="calendar" id="calendar"></div>
+
 <div class="legend">
-  <div class="legend-item"><span class="legend-box period"></span> Period</div>
-  <div class="legend-item"><span class="legend-box high"></span> High</div>
-  <div class="legend-item"><span class="legend-box medium"></span> Medium</div>
-  <div class="legend-item"><span class="legend-box low"></span> Low</div>
+<div class="legend-item"><span class="legend-box period"></span> Period</div>
+<div class="legend-item"><span class="legend-box high"></span> High</div>
+<div class="legend-item"><span class="legend-box medium"></span> Medium</div>
+<div class="legend-item"><span class="legend-box low"></span> Low</div>
 </div>
 
 <p id="confidenceText"></p>
 <button onclick="resetInput()">Re-enter Cycle</button>
 </div>
 
-<!-- HABIT LOOP -->
 <div class="panel">
 <strong>🔥 Check-In Streak:</strong> <span id="streakCount">0</span> days
 <p id="habitMessage"></p>
 </div>
 
-<!-- INSIGHTS -->
 <div class="panel">
 <h4>Your Insights</h4>
 <p id="monthlyInsight"></p>
-<p id="cycleTip"></p>
 <p id="badge"></p>
 </div>
 
-<!-- DAILY CHECKIN -->
 <div class="panel" id="dailyCheckin">
 <h3>Daily Cycle Check-In</h3>
-  
- <div class="panel">
+
+<div class="panel">
 <h4>🌸 Today’s Insight</h4>
 <p id="dailyInsightText"></p>
 </div>
-  
- <div class="panel">
+
+<div class="panel">
 <h4>🧠 Cycle Coach</h4>
 <p id="coachMessage"></p>
-<Cycle
+
 <select id="mood">
 <option value="">Mood</option>
 <option>😄 Happy</option>
@@ -228,28 +200,17 @@ textarea {
 <option>😠 Irritable</option>
 </select>
 
- <div class="check-row">
-  <label for="symptom_cramps">Cramps</label>
-  <input type="checkbox" id="symptom_cramps">
-</div>
-
-<div class="check-row">
-  <label for="symptom_bloating">Bloating</label>
-  <input type="checkbox" id="symptom_bloating">
-</div>
-
-<div class="check-row">
-  <label for="symptom_headache">Headache</label>
-  <input type="checkbox" id="symptom_headache">
-</div>
+<label><input type="checkbox" id="symptom_cramps"> Cramps</label><br>
+<label><input type="checkbox" id="symptom_bloating"> Bloating</label><br>
+<label><input type="checkbox" id="symptom_headache"> Headache</label>
 
 <textarea id="note" placeholder="Notes"></textarea>
 
 <button onclick="saveCheckin()">Save Check-In</button>
 <p id="checkinMsg"></p>
 </div>
+</div>
 
-<!-- FOOTER -->
 <div style="margin-top:40px;font-size:12px;color:#666;">
 <a href="privacy.html">Privacy Policy</a> •
 <a href="disclaimer.html">Disclaimer</a> •
@@ -257,7 +218,6 @@ textarea {
 </div>
 
 <script>
-
 let monthOffset = 0;
 
 function normalize(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
@@ -283,14 +243,11 @@ localStorage.clear();
 location.reload();
 }
 
- function renderCalendar(){
-
+function renderCalendar(){
 const last = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
 const cycles = localStorage.getItem("pw_cycles").split(",").map(Number);
 const len = +localStorage.getItem("pw_periodLength") || 5;
-
 const avg = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
-
 const ovulationDay = avg - 14;
 
 const base = new Date();
@@ -298,7 +255,6 @@ base.setDate(1);
 base.setMonth(base.getMonth() + monthOffset);
 
 monthTitle.innerText = base.toLocaleString("default",{month:"long",year:"numeric"});
-
 calendar.innerHTML = "";
 calendarSection.style.display = "block";
 inputSection.style.display = "none";
@@ -306,15 +262,12 @@ inputSection.style.display = "none";
 const first = new Date(base.getFullYear(), base.getMonth(), 1);
 const offset = (first.getDay() + 6) % 7;
 const days = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
-
 const today = normalize(new Date());
 
 for(let i=0;i<offset;i++) calendar.appendChild(document.createElement("div"));
 
 for(let d=1; d<=days; d++){
-
 const date = normalize(new Date(base.getFullYear(), base.getMonth(), d));
-
 const diff = Math.floor((date - last)/86400000);
 const cycleDay = ((diff % avg) + avg) % avg + 1;
 
@@ -322,130 +275,20 @@ const el = document.createElement("div");
 el.className = "day";
 el.textContent = d;
 
-if(cycleDay <= len){
-  el.classList.add("period");
-}
-else if(cycleDay >= ovulationDay - 1 && cycleDay <= ovulationDay + 1){
-  el.classList.add("high");
-}
-else if(cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 3){
-  el.classList.add("medium");
-}
-else{
-  el.classList.add("low");
-}
+if(cycleDay <= len) el.classList.add("period");
+else if(cycleDay >= ovulationDay - 1 && cycleDay <= ovulationDay + 1) el.classList.add("high");
+else if(cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 3) el.classList.add("medium");
+else el.classList.add("low");
 
-if(date.getTime() === today.getTime()){
-  el.classList.add("today");
-}
+if(date.getTime() === today.getTime()) el.classList.add("today");
 
 calendar.appendChild(el);
 }
 
 confidenceText.innerText = "Prediction confidence: High";
-
 updateInsights();
 }
-  
- function updateDailyInsight(){
 
-const last = localStorage.getItem("pw_lastPeriod");
-const cyclesStr = localStorage.getItem("pw_cycles");
-
-if(!last || !cyclesStr) return;
-
-const cycles = cyclesStr.split(",").map(Number);
-const avg = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
-
-const ovulationDay = avg - 14;
-const today = new Date();
-const lastDate = new Date(last);
-
-const diff = Math.floor((today - lastDate)/86400000);
-const cycleDay = ((diff % avg) + avg) % avg + 1;
-
-let msg = "";
-
-if(cycleDay <= 5){
-msg = "🩸 On your period — rest, hydrate, and go gently.";
-}
-else if(cycleDay < ovulationDay - 3){
-msg = "🌿 Low fertility phase — steady energy, great time for planning.";
-}
-else if(cycleDay >= ovulationDay - 2 && cycleDay <= ovulationDay + 1){
-msg = "🔥 High fertility — pregnancy chance higher.";
-}
-else if(cycleDay <= ovulationDay + 5){
-msg = "⚡ Ovulation window — energy and confidence may rise.";
-}
-else if(cycleDay > avg - 5){
-msg = "💛 Period approaching — prioritize sleep and reduce stress.";
-}
-else{
-msg = "🌼 Balanced phase — keep listening to your body.";
-}
-
-document.getElementById("dailyInsightText").innerText = msg;
-}
-
- function updateCoach(){
-
-const last = localStorage.getItem("pw_lastPeriod");
-const cyclesStr = localStorage.getItem("pw_cycles");
-
-if(!last || !cyclesStr) return;
-
-const cycles = cyclesStr.split(",").map(Number);
-const avg = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
-
-const ovulationDay = avg - 14;
-const today = new Date();
-const lastDate = new Date(last);
-
-const diff = Math.floor((today - lastDate)/86400000);
-const cycleDay = ((diff % avg) + avg) % avg + 1;
-
-const key = today.toISOString().slice(0,10);
-const checkin = JSON.parse(localStorage.getItem("pw_checkin_"+key) || "{}");
-
-let msg = "";
-
-if(checkin.cramps){
-msg += "💛 You logged cramps — warmth and gentle stretching may help. ";
-}
-
-if(checkin.bloating){
-msg += "🌿 Bloating noted — hydration and light movement can ease discomfort. ";
-}
-
-if(checkin.headache){
-msg += "🧘 Headache — consider rest and reducing screen time. ";
-}
-
-if(checkin.mood){
-msg += "🌸 Mood check — take a moment to breathe and reset. ";
-}
-
-if(!msg){
-
-if(cycleDay <= 5){
-msg = "🩸 On your period — prioritize rest and nourishment.";
-}
-else if(cycleDay >= ovulationDay - 2 && cycleDay <= ovulationDay + 1){
-msg = "🔥 Fertility window — energy and confidence may feel higher.";
-}
-else if(cycleDay > avg - 5){
-msg = "🌙 Period approaching — slow down and care for yourself.";
-}
-else{
-msg = "🌼 Balanced phase — maintain healthy routines.";
-}
-
-}
-
-document.getElementById("coachMessage").innerText = msg;
-}
-  
 function shareApp(){
 if(navigator.share){
 navigator.share({title:"PeriodWise",url:location.href});
@@ -462,10 +305,8 @@ headache:symptom_headache.checked,
 note:note.value
 };
 localStorage.setItem("pw_checkin_"+key,JSON.stringify(data));
-
 updateStreak();
 updateInsights();
-
 checkinMsg.innerText="Saved!";
 }
 
@@ -485,7 +326,6 @@ localStorage.setItem("pw_last_checkin",today);
 localStorage.setItem("pw_streak",streak);
 
 streakCount.innerText=streak;
-
 const msgs=["Consistency builds insight 💛","You're doing great 🌿","Keep tracking 🙌"];
 habitMessage.innerText=msgs[Math.floor(Math.random()*msgs.length)];
 }
@@ -502,7 +342,6 @@ if(k.startsWith("pw_checkin_") && k.includes(month)) count++;
 monthlyInsight.innerText=`You logged ${count} days this month`;
 
 const streak=parseInt(localStorage.getItem("pw_streak")||"0");
-
 if(streak>=30) badge.innerText="🏆 30-Day Champion";
 else if(streak>=7) badge.innerText="🌟 7-Day Streak";
 else badge.innerText="";
@@ -512,14 +351,11 @@ window.addEventListener("load",()=>{
 if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
 updateStreak();
 updateInsights();
-updateDailyInsight();
-updateCoach();
 });
 
 if('serviceWorker' in navigator){
 navigator.serviceWorker.register('./service-worker.js');
 }
-
 </script>
 
 </body>
