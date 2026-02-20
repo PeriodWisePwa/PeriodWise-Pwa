@@ -205,6 +205,10 @@ button {
 <p id="dailyInsightText"></p>
 </div>
   
+ <div class="panel">
+<h4>🧠 Cycle Coach</h4>
+<p id="coachMessage"></p>
+<Cycle
 <select id="mood">
 <option value="">Mood</option>
 <option>😄 Happy</option>
@@ -372,6 +376,65 @@ msg = "🌼 Balanced phase — keep listening to your body.";
 
 document.getElementById("dailyInsightText").innerText = msg;
 }
+
+ function updateCoach(){
+
+const last = localStorage.getItem("pw_lastPeriod");
+const cyclesStr = localStorage.getItem("pw_cycles");
+
+if(!last || !cyclesStr) return;
+
+const cycles = cyclesStr.split(",").map(Number);
+const avg = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
+
+const ovulationDay = avg - 14;
+const today = new Date();
+const lastDate = new Date(last);
+
+const diff = Math.floor((today - lastDate)/86400000);
+const cycleDay = ((diff % avg) + avg) % avg + 1;
+
+const key = today.toISOString().slice(0,10);
+const checkin = JSON.parse(localStorage.getItem("pw_checkin_"+key) || "{}");
+
+let msg = "";
+
+if(checkin.cramps){
+msg += "💛 You logged cramps — warmth and gentle stretching may help. ";
+}
+
+if(checkin.bloating){
+msg += "🌿 Bloating noted — hydration and light movement can ease discomfort. ";
+}
+
+if(checkin.headache){
+msg += "🧘 Headache — consider rest and reducing screen time. ";
+}
+
+if(checkin.mood){
+msg += "🌸 Mood check — take a moment to breathe and reset. ";
+}
+
+if(!msg){
+
+if(cycleDay <= 5){
+msg = "🩸 On your period — prioritize rest and nourishment.";
+}
+else if(cycleDay >= ovulationDay - 2 && cycleDay <= ovulationDay + 1){
+msg = "🔥 Fertility window — energy and confidence may feel higher.";
+}
+else if(cycleDay > avg - 5){
+msg = "🌙 Period approaching — slow down and care for yourself.";
+}
+else{
+msg = "🌼 Balanced phase — maintain healthy routines.";
+}
+
+}
+
+document.getElementById("coachMessage").innerText = msg;
+}
+  
 function shareApp(){
 if(navigator.share){
 navigator.share({title:"PeriodWise",url:location.href});
