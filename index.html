@@ -1,361 +1,195 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>PeriodWise</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#e91e63">
+<title>Cycle Tracker</title>
 
 <style>
-body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
-h1 { color: #e91e63; }
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background: #fafafa;
+}
 
-input, button, select, textarea {
-  padding: 10px;
-  margin: 6px;
-  width: 90%;
-  max-width: 320px;
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+h2 {
+  margin-top: 0;
 }
 
 button {
-  background: #e91e63;
-  color: white;
+  padding: 10px 15px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  background: #ff4d6d;
+  color: white;
   cursor: pointer;
 }
 
-#shareBtn {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 9999;
-  background:#ff4d6d;
-  border-radius:20px;
-  padding:8px 14px;
+label {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
 }
 
-.calendar-header, .calendar {
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-}
-
-.legend {
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-top:12px;
-}
-
-.legend-item {
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:13px;
-}
-
-.legend-box {
-  width:16px;
-  height:16px;
-  border-radius:4px;
-  border:1px solid #ccc;
-}
-
-.legend-box.period { background:#f8bbd0; }
-.legend-box.high { background:#f44336; }
-.legend-box.medium { background:#ffeb3b; }
-.legend-box.low { background:#c8e6c9; }
-
-.day {
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:6px;
-}
-
-.period { background:#f8bbd0; }
-.high { background:#f44336;color:white;}
-.medium { background:#ffeb3b;}
-.low { background:#c8e6c9;}
-.today { border:2px solid black;font-weight:bold;}
-
-#movingBanner {
-  width:100%;
-  overflow:hidden;
-  white-space:nowrap;
-  background:#fff3f8;
-  color:#e91e63;
-  padding:8px 0;
-  font-weight:bold;
-  margin-bottom:16px;
-}
-
-#movingBanner span {
-  display:inline-block;
-  padding-left:100%;
-  animation:scrollText 12s linear infinite;
-}
-
-@keyframes scrollText {
-  0% { transform:translateX(0); }
-  100% { transform:translateX(-100%); }
-}
-
-.panel {
-  max-width:600px;
-  margin:15px auto;
-  padding:12px;
-  border-radius:10px;
-  background:#fff3f8;
-  text-align:left;
-}
-
-#mood {
-  border:2px solid #e91e63;
-  border-radius:8px;
-  background:white;
-}
-
-textarea {
-  width:100%;
-  box-sizing:border-box;
+.score {
+  font-size: 28px;
+  font-weight: bold;
+  color: #ff4d6d;
 }
 </style>
 </head>
 
 <body>
 
-<button id="shareBtn" onclick="shareApp()">📤 Share</button>
-
-<h1>PeriodWise</h1>
-
-<div id="movingBanner">
-<span>⚠️ Learn how to understand your cycle better → periodwise.online</span>
+<div class="card">
+<h2>Today’s Insight</h2>
+<p id="dailyInsightText">Loading insight…</p>
 </div>
 
-<p>Private • Offline • No tracking</p>
-
-<div id="inputSection">
-<input id="lastPeriodDate" type="date">
-<input id="cycles" placeholder="Cycles e.g 26,27,26">
-<input id="periodLength" type="number" placeholder="Period length (5)">
-<button onclick="handleSubmit()">Save & Show Calendar</button>
+<div class="card">
+<h2>Cycle Coach</h2>
+<p id="coachText">Loading guidance…</p>
 </div>
 
-<p id="warning"></p>
-
-<div id="calendarSection" style="display:none;">
-<div>
-<button onclick="changeMonth(-1)">◀</button>
-<strong id="monthTitle"></strong>
-<button onclick="changeMonth(1)">▶</button>
+<div class="card">
+<h2>Cycle Health Score</h2>
+<div class="score" id="healthScore">--</div>
 </div>
 
-<div class="calendar-header">
-<div>Mon</div><div>Tue</div><div>Wed</div>
-<div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-</div>
+<div class="card">
+<h2>Daily Check-In</h2>
 
-<div class="calendar" id="calendar"></div>
-
-<div class="legend">
-<div class="legend-item"><span class="legend-box period"></span> Period</div>
-<div class="legend-item"><span class="legend-box high"></span> High</div>
-<div class="legend-item"><span class="legend-box medium"></span> Medium</div>
-<div class="legend-item"><span class="legend-box low"></span> Low</div>
-</div>
-
-<p id="confidenceText"></p>
-<button onclick="resetInput()">Re-enter Cycle</button>
-</div>
-
-<div class="panel">
-<strong>🔥 Check-In Streak:</strong> <span id="streakCount">0</span> days
-<p id="habitMessage"></p>
-</div>
-
-<div class="panel">
-<h4>Your Insights</h4>
-<p id="monthlyInsight"></p>
-<p id="badge"></p>
-</div>
-
-<div class="panel" id="dailyCheckin">
-<h3>Daily Cycle Check-In</h3>
-
-<div class="panel">
-<h4>🌸 Today’s Insight</h4>
-<p id="dailyInsightText"></p>
-</div>
-
-<div class="panel">
-<h4>🧠 Cycle Coach</h4>
-<p id="coachMessage"></p>
-
-<select id="mood">
-<option value="">Mood</option>
-<option>😄 Happy</option>
-<option>😴 Tired</option>
-<option>🤕 Crampy</option>
-<option>😠 Irritable</option>
-</select>
-
-<label><input type="checkbox" id="symptom_cramps"> Cramps</label><br>
-<label><input type="checkbox" id="symptom_bloating"> Bloating</label><br>
-<label><input type="checkbox" id="symptom_headache"> Headache</label>
-
-<textarea id="note" placeholder="Notes"></textarea>
+<label>Cramps <input type="checkbox" id="symptom_cramps"></label>
+<label>Bloating <input type="checkbox" id="symptom_bloating"></label>
+<label>Headache <input type="checkbox" id="symptom_headache"></label>
 
 <button onclick="saveCheckin()">Save Check-In</button>
-<p id="checkinMsg"></p>
-</div>
 </div>
 
-<div style="margin-top:40px;font-size:12px;color:#666;">
-<a href="privacy.html">Privacy Policy</a> •
-<a href="disclaimer.html">Disclaimer</a> •
-<a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html">FAQ</a>
+<div class="card">
+<h2>Mood</h2>
+<select id="moodSelect">
+<option value="">Select mood</option>
+<option>Happy</option>
+<option>Calm</option>
+<option>Low</option>
+<option>Irritable</option>
+<option>Emotional</option>
+</select>
 </div>
 
 <script>
-let monthOffset = 0;
 
-function normalize(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+// ---------- SETTINGS ----------
+const avgCycle = parseInt(localStorage.getItem("pw_avgCycle") || 28);
+const periodLength = parseInt(localStorage.getItem("pw_periodLength") || 5);
+const lastPeriod = new Date(localStorage.getItem("pw_lastPeriod") || new Date());
 
-function handleSubmit(){
-const last=document.getElementById("lastPeriodDate").value;
-const cycles=document.getElementById("cycles").value;
-const len=document.getElementById("periodLength").value||5;
+// ---------- CALCULATE DAY ----------
+const today = new Date();
+const diff = Math.floor((today - lastPeriod) / 86400000);
+const cycleDay = ((diff % avgCycle) + avgCycle) % avgCycle + 1;
+const ovulationDay = avgCycle - 14;
 
-if(!last||!cycles){ warning.innerText="Enter data"; return;}
+// ---------- LOAD CHECKIN ----------
+const key = today.toISOString().slice(0,10);
+const checkin = JSON.parse(localStorage.getItem("pw_checkin_"+key) || "{}");
 
-localStorage.setItem("pw_lastPeriod",last);
-localStorage.setItem("pw_cycles",cycles);
-localStorage.setItem("pw_periodLength",len);
+// ---------- SMART INSIGHT ----------
+function getInsight() {
 
-renderCalendar();
+ let msg = "";
+
+ if(cycleDay <= periodLength) {
+   msg = "🩸 You're on your period. Prioritize rest and hydration.";
+ }
+ else if(cycleDay <= ovulationDay - 5) {
+   msg = "🌿 Energy rising — great time for focus and planning.";
+ }
+ else if(cycleDay >= ovulationDay - 2 && cycleDay <= ovulationDay + 1) {
+   msg = "🔥 Ovulation window — confidence and energy may peak.";
+ }
+ else if(cycleDay <= avgCycle - 5) {
+   msg = "⚡ Luteal phase — take things gently and listen to your body.";
+ }
+ else {
+   msg = "💛 Period approaching — prepare and track PMS symptoms.";
+ }
+
+ const daysToPeriod = avgCycle - cycleDay;
+ if(daysToPeriod <= 5 && cycleDay > periodLength) {
+   msg += ` Your period expected in ${daysToPeriod} day(s).`;
+ }
+
+ if(checkin.cramps) msg += " Cramps logged — consider warmth.";
+ if(checkin.bloating) msg += " Bloating noted — hydrate.";
+ if(checkin.headache) msg += " Headache — rest recommended.";
+
+ return msg;
 }
 
-function changeMonth(step){ monthOffset+=step; renderCalendar(); }
+// ---------- COACH ----------
+function getCoach() {
 
-function resetInput(){
-localStorage.clear();
-location.reload();
+ if(cycleDay <= periodLength) {
+   return "Coach: Slow down, nourish your body, reduce stress.";
+ }
+
+ if(cycleDay <= ovulationDay) {
+   return "Coach: Use your rising energy — tackle important tasks.";
+ }
+
+ if(cycleDay > ovulationDay) {
+   return "Coach: Be gentle, prioritize sleep and emotional care.";
+ }
+
 }
 
-function renderCalendar(){
-const last = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
-const cycles = localStorage.getItem("pw_cycles").split(",").map(Number);
-const len = +localStorage.getItem("pw_periodLength") || 5;
-const avg = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
-const ovulationDay = avg - 14;
+// ---------- HEALTH SCORE ----------
+function calculateScore() {
 
-const base = new Date();
-base.setDate(1);
-base.setMonth(base.getMonth() + monthOffset);
+ let score = 100;
 
-monthTitle.innerText = base.toLocaleString("default",{month:"long",year:"numeric"});
-calendar.innerHTML = "";
-calendarSection.style.display = "block";
-inputSection.style.display = "none";
+ if(checkin.cramps) score -= 10;
+ if(checkin.bloating) score -= 5;
+ if(checkin.headache) score -= 5;
 
-const first = new Date(base.getFullYear(), base.getMonth(), 1);
-const offset = (first.getDay() + 6) % 7;
-const days = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
-const today = normalize(new Date());
-
-for(let i=0;i<offset;i++) calendar.appendChild(document.createElement("div"));
-
-for(let d=1; d<=days; d++){
-const date = normalize(new Date(base.getFullYear(), base.getMonth(), d));
-const diff = Math.floor((date - last)/86400000);
-const cycleDay = ((diff % avg) + avg) % avg + 1;
-
-const el = document.createElement("div");
-el.className = "day";
-el.textContent = d;
-
-if(cycleDay <= len) el.classList.add("period");
-else if(cycleDay >= ovulationDay - 1 && cycleDay <= ovulationDay + 1) el.classList.add("high");
-else if(cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 3) el.classList.add("medium");
-else el.classList.add("low");
-
-if(date.getTime() === today.getTime()) el.classList.add("today");
-
-calendar.appendChild(el);
+ return score;
 }
 
-confidenceText.innerText = "Prediction confidence: High";
-updateInsights();
+// ---------- SAVE CHECKIN ----------
+function saveCheckin() {
+
+ const data = {
+   cramps: document.getElementById("symptom_cramps").checked,
+   bloating: document.getElementById("symptom_bloating").checked,
+   headache: document.getElementById("symptom_headache").checked,
+   mood: document.getElementById("moodSelect").value
+ };
+
+ localStorage.setItem("pw_checkin_"+key, JSON.stringify(data));
+
+ // update streak
+ let streak = parseInt(localStorage.getItem("pw_streak") || 0);
+ streak++;
+ localStorage.setItem("pw_streak", streak);
+
+ alert("Saved!");
+ location.reload();
 }
 
-function shareApp(){
-if(navigator.share){
-navigator.share({title:"PeriodWise",url:location.href});
-}else alert("Copy link to share");
-}
+// ---------- RENDER ----------
+document.getElementById("dailyInsightText").innerText = getInsight();
+document.getElementById("coachText").innerText = getCoach();
+document.getElementById("healthScore").innerText = calculateScore();
 
-function saveCheckin(){
-const key=new Date().toISOString().slice(0,10);
-const data={
-mood:mood.value,
-cramps:symptom_cramps.checked,
-bloating:symptom_bloating.checked,
-headache:symptom_headache.checked,
-note:note.value
-};
-localStorage.setItem("pw_checkin_"+key,JSON.stringify(data));
-updateStreak();
-updateInsights();
-checkinMsg.innerText="Saved!";
-}
-
-function updateStreak(){
-const today=new Date().toISOString().slice(0,10);
-const last=localStorage.getItem("pw_last_checkin");
-let streak=parseInt(localStorage.getItem("pw_streak")||"0");
-
-const yesterday=new Date();
-yesterday.setDate(yesterday.getDate()-1);
-const yKey=yesterday.toISOString().slice(0,10);
-
-if(last===yKey) streak++;
-else if(last!==today) streak=1;
-
-localStorage.setItem("pw_last_checkin",today);
-localStorage.setItem("pw_streak",streak);
-
-streakCount.innerText=streak;
-const msgs=["Consistency builds insight 💛","You're doing great 🌿","Keep tracking 🙌"];
-habitMessage.innerText=msgs[Math.floor(Math.random()*msgs.length)];
-}
-
-function updateInsights(){
-const month=new Date().toISOString().slice(0,7);
-let count=0;
-
-for(let i=0;i<localStorage.length;i++){
-const k=localStorage.key(i);
-if(k.startsWith("pw_checkin_") && k.includes(month)) count++;
-}
-
-monthlyInsight.innerText=`You logged ${count} days this month`;
-
-const streak=parseInt(localStorage.getItem("pw_streak")||"0");
-if(streak>=30) badge.innerText="🏆 30-Day Champion";
-else if(streak>=7) badge.innerText="🌟 7-Day Streak";
-else badge.innerText="";
-}
-
-window.addEventListener("load",()=>{
-if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
-updateStreak();
-updateInsights();
-});
-
-if('serviceWorker' in navigator){
-navigator.serviceWorker.register('./service-worker.js');
-}
 </script>
 
 </body>
