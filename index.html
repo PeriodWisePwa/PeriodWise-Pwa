@@ -10,7 +10,7 @@
 body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
 h1 { color: #e91e63; }
 
-input, button, select, textarea {
+input, button {
   padding: 10px;
   margin: 6px;
   width: 90%;
@@ -29,7 +29,6 @@ button {
   position: fixed;
   top: 10px;
   right: 10px;
-  z-index: 9999;
   background:#ff4d6d;
   border-radius:20px;
   padding:8px 14px;
@@ -40,19 +39,23 @@ button {
   grid-template-columns:repeat(7,1fr);
 }
 
+.day {
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+
+.period { background:#f8bbd0; }
+.high { background:#f44336;color:white;}
+.medium { background:#ffeb3b;}
+.low { background:#c8e6c9;}
+.today { border:2px solid black;font-weight:bold;}
+
 .legend {
   display:flex;
   justify-content:center;
-  flex-wrap:wrap;
   gap:12px;
   margin-top:12px;
-}
-
-.legend-item {
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:13px;
 }
 
 .legend-box {
@@ -66,18 +69,6 @@ button {
 .legend-box.high { background:#f44336; }
 .legend-box.medium { background:#ffeb3b; }
 .legend-box.low { background:#c8e6c9; }
-
-.day {
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:6px;
-}
-
-.period { background:#f8bbd0; }
-.high { background:#f44336;color:white;}
-.medium { background:#ffeb3b;}
-.low { background:#c8e6c9;}
-.today { border:2px solid black;font-weight:bold;}
 
 #movingBanner {
   width:100%;
@@ -100,26 +91,6 @@ button {
   0% { transform:translateX(0); }
   100% { transform:translateX(-100%); }
 }
-
-.panel {
-  max-width:600px;
-  margin:15px auto;
-  padding:12px;
-  border-radius:10px;
-  background:#fff3f8;
-  text-align:left;
-}
-
-#mood {
-  border:2px solid #e91e63;
-  border-radius:8px;
-  background:white;
-}
-
-textarea {
-  width:100%;
-  box-sizing:border-box;
-}
 </style>
 </head>
 
@@ -130,7 +101,7 @@ textarea {
 <h1>PeriodWise</h1>
 
 <div id="movingBanner">
-<span>⚠️ Learn how to understand your cycle better → periodwise.online</span>
+<span>Understand your cycle better → periodwise.online</span>
 </div>
 
 <p>Private • Offline • No tracking</p>
@@ -159,62 +130,19 @@ textarea {
 <div class="calendar" id="calendar"></div>
 
 <div class="legend">
-<div class="legend-item"><span class="legend-box period"></span> Period</div>
-<div class="legend-item"><span class="legend-box high"></span> High</div>
-<div class="legend-item"><span class="legend-box medium"></span> Medium</div>
-<div class="legend-item"><span class="legend-box low"></span> Low</div>
+<div><span class="legend-box period"></span> Period</div>
+<div><span class="legend-box high"></span> High</div>
+<div><span class="legend-box medium"></span> Medium</div>
+<div><span class="legend-box low"></span> Low</div>
 </div>
 
 <p id="confidenceText"></p>
 <button onclick="resetInput()">Re-enter Cycle</button>
 </div>
 
-<div class="panel">
-<strong>🔥 Check-In Streak:</strong> <span id="streakCount">0</span> days
-<p id="habitMessage"></p>
-</div>
-
-<div class="panel">
-<h4>Your Insights</h4>
-<p id="monthlyInsight"></p>
-<p id="badge"></p>
-</div>
-
-<div class="panel" id="dailyCheckin">
-<h3>Daily Cycle Check-In</h3>
-
-<div class="panel">
-<h4>🌸 Today’s Insight</h4>
-<p id="dailyInsightText"></p>
-</div>
-
-<div class="panel">
-<h4>🧠 Cycle Coach</h4>
-<p id="coachMessage"></p>
-
-<select id="mood">
-<option value="">Mood</option>
-<option>😄 Happy</option>
-<option>😴 Tired</option>
-<option>🤕 Crampy</option>
-<option>😠 Irritable</option>
-</select>
-
-<label><input type="checkbox" id="symptom_cramps"> Cramps</label><br>
-<label><input type="checkbox" id="symptom_bloating"> Bloating</label><br>
-<label><input type="checkbox" id="symptom_headache"> Headache</label>
-
-<textarea id="note" placeholder="Notes"></textarea>
-
-<button onclick="saveCheckin()">Save Check-In</button>
-<p id="checkinMsg"></p>
-</div>
-</div>
-
 <div style="margin-top:40px;font-size:12px;color:#666;">
 <a href="privacy.html">Privacy Policy</a> •
-<a href="disclaimer.html">Disclaimer</a> •
-<a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html">FAQ</a>
+<a href="disclaimer.html">Disclaimer</a>
 </div>
 
 <script>
@@ -286,7 +214,6 @@ calendar.appendChild(el);
 }
 
 confidenceText.innerText = "Prediction confidence: High";
-updateInsights();
 }
 
 function shareApp(){
@@ -295,62 +222,8 @@ navigator.share({title:"PeriodWise",url:location.href});
 }else alert("Copy link to share");
 }
 
-function saveCheckin(){
-const key=new Date().toISOString().slice(0,10);
-const data={
-mood:mood.value,
-cramps:symptom_cramps.checked,
-bloating:symptom_bloating.checked,
-headache:symptom_headache.checked,
-note:note.value
-};
-localStorage.setItem("pw_checkin_"+key,JSON.stringify(data));
-updateStreak();
-updateInsights();
-checkinMsg.innerText="Saved!";
-}
-
-function updateStreak(){
-const today=new Date().toISOString().slice(0,10);
-const last=localStorage.getItem("pw_last_checkin");
-let streak=parseInt(localStorage.getItem("pw_streak")||"0");
-
-const yesterday=new Date();
-yesterday.setDate(yesterday.getDate()-1);
-const yKey=yesterday.toISOString().slice(0,10);
-
-if(last===yKey) streak++;
-else if(last!==today) streak=1;
-
-localStorage.setItem("pw_last_checkin",today);
-localStorage.setItem("pw_streak",streak);
-
-streakCount.innerText=streak;
-const msgs=["Consistency builds insight 💛","You're doing great 🌿","Keep tracking 🙌"];
-habitMessage.innerText=msgs[Math.floor(Math.random()*msgs.length)];
-}
-
-function updateInsights(){
-const month=new Date().toISOString().slice(0,7);
-let count=0;
-
-for(let i=0;i<localStorage.length;i++){
-const k=localStorage.key(i);
-if(k.startsWith("pw_checkin_") && k.includes(month)) count++;
-}
-
-monthlyInsight.innerText=`You logged ${count} days this month`;
-
-const streak=parseInt(localStorage.getItem("pw_streak")||"0");
-if(streak>=30) badge.innerText="🏆 30-Day Champion";
-else if(streak>=7) badge.innerText="🌟 7-Day Streak";
-else badge.innerText="";
-}
-
 window.addEventListener("load",()=>{
 if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
-updateStreak();
-updateInsights();
 });
 
 if('serviceWorker' in navigator){
