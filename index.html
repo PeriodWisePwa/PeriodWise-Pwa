@@ -296,8 +296,10 @@ function updateSmartInsights() {
  document.getElementById("healthScore").innerText = score + "%";
 }
   
-window.addEventListener("load",()=>{
-if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
+ window.addEventListener("load",()=>{
+ if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
+
+ updateSmartInsights();
 });
 
 if('serviceWorker' in navigator){
