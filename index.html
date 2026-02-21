@@ -230,6 +230,72 @@ navigator.share({title:"PeriodWise",url:location.href});
 }else alert("Copy link to share");
 }
 
+ function calculateCycleDay() {
+
+ const lastStr = localStorage.getItem("pw_lastPeriod");
+ const cyclesStr = localStorage.getItem("pw_cycles");
+
+ if(!lastStr || !cyclesStr) return null;
+
+ const last = new Date(lastStr);
+
+ const cycles = cyclesStr.split(",").map(Number);
+ const avg = cycles.reduce((a,b)=>a+b) / cycles.length;
+
+ const today = new Date();
+ const diff = Math.floor((today - last)/86400000);
+
+ return ((diff % avg) + avg) % avg + 1;
+}
+
+function updateSmartInsights() {
+
+ const cycleDay = calculateCycleDay();
+ if(!cycleDay) return;
+
+ const cycles = localStorage.getItem("pw_cycles").split(",").map(Number);
+ const avg = cycles.reduce((a,b)=>a+b) / cycles.length;
+
+ const periodLength = Number(localStorage.getItem("pw_periodLength")) || 5;
+ const ovulationDay = avg - 14;
+
+ let insight = "";
+ let coach = "";
+
+ if(cycleDay <= periodLength) {
+   insight = "🩸 You're on your period — rest and hydrate.";
+   coach = "Take it slow today.";
+ }
+ else if(cycleDay >= ovulationDay - 2 && cycleDay <= ovulationDay + 1) {
+   insight = "🔥 Ovulation window — energy high.";
+   coach = "Great time for social or important tasks.";
+ }
+ else if(cycleDay >= avg - 5) {
+   insight = "💛 Period approaching — prepare and track symptoms.";
+   coach = "Focus on sleep and gentle routines.";
+ }
+ else {
+   insight = "🌿 Balanced phase — steady energy.";
+   coach = "Maintain healthy habits.";
+ }
+
+ document.getElementById("dailyInsightText").innerText = insight;
+ document.getElementById("coachMessage").innerText = coach;
+
+ // Safe health score
+ let score = 100;
+
+ const cramps = document.getElementById("symptom_cramps");
+ const bloating = document.getElementById("symptom_bloating");
+ const headache = document.getElementById("symptom_headache");
+
+ if(cramps && cramps.checked) score -= 10;
+ if(bloating && bloating.checked) score -= 5;
+ if(headache && headache.checked) score -= 5;
+
+ document.getElementById("healthScore").innerText = score + "%";
+}
+  
 window.addEventListener("load",()=>{
 if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
 });
