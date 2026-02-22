@@ -409,6 +409,31 @@ function updateSmartInsights() {
 if('serviceWorker' in navigator){
 navigator.serviceWorker.register('./service-worker.js');
 }
+
+ function scrollToBlogs() {
+  document.getElementById("blogSection").scrollIntoView({
+    behavior: "smooth"
+  });
+
+  // hide after click
+  document.getElementById("smartArrow").style.display = "none";
+}
+
+// hide on scroll down, show on scroll up
+let lastScroll = 0;
+
+window.addEventListener("scroll", () => {
+  const current = window.pageYOffset;
+  const arrow = document.getElementById("smartArrow");
+
+  if(current > lastScroll) {
+    arrow.style.opacity = "0.2";
+  } else {
+    arrow.style.opacity = "1";
+  }
+
+  lastScroll = current;
+});
 </script>
 
 </body>
