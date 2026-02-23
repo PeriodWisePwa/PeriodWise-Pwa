@@ -1,441 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PeriodWise</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#e91e63">
+  <meta charset="UTF-8">
+  <title>PeriodWise</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e91e63">
 
-<style>
-body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
-h1 { color: #e91e63; }
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
+    h1 { color: #e91e63; }
 
-input, button {
-  padding: 10px;
-  margin: 6px;
-  width: 90%;
-  max-width: 320px;
-}
+    input, button {
+      padding: 10px;
+      margin: 6px;
+      width: 90%;
+      max-width: 320px;
+    }
 
-button {
-  background: #e91e63;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+    button {
+      background: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
-#shareBtn {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background:#ff4d6d;
-  border-radius:20px;
-  padding:8px 14px;
-}
+    #shareBtn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #ff4d6d;
+      border-radius: 20px;
+      padding: 8px 14px;
+    }
 
-.calendar-header, .calendar {
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-}
+    .calendar-header, .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
 
-.day {
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:6px;
-}
+    .day {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
 
-.period { background:#f8bbd0; }
-.high { background:#f44336;color:white;}
-.medium { background:#ffeb3b;}
-.low { background:#c8e6c9;}
-.today { border:2px solid black;font-weight:bold;}
+    .period { background: #f8bbd0; }
+    .high { background: #f44336; color: white; }
+    .medium { background: #ffeb3b; }
+    .low { background: #c8e6c9; }
+    .today { border: 2px solid black; font-weight: bold; }
 
-.legend {
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:16px;
-  margin-top:16px;
-  font-weight:600;
-}
+    .legend {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+      font-weight: 600;
+    }
 
-.legend div {
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
+    .legend div {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-.legend-box {
-  width:20px;
-  height:20px;
-  border-radius:5px;
-  border:2px solid #999;
-}
+    .legend-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border: 2px solid #999;
+    }
 
-.legend-box.period { background:#f8bbd0; }
-.legend-box.high { background:#f44336; }
-.legend-box.medium { background:#ffeb3b; }
-.legend-box.low { background:#c8e6c9; }
+    .legend-box.period { background: #f8bbd0; }
+    .legend-box.high { background: #f44336; }
+    .legend-box.medium { background: #ffeb3b; }
+    .legend-box.low { background: #c8e6c9; }
 
-#movingBanner {
-  width:100%;
-  overflow:hidden;
-  white-space:nowrap;
-  background:#fff3f8;
-  color:#e91e63;
-  padding:8px 0;
-  font-weight:bold;
-  margin-bottom:16px;
-}
+    #movingBanner {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      background: #fff3f8;
+      color: #e91e63;
+      padding: 8px 0;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
 
-#movingBanner span {
-  display:inline-block;
-  padding-left:100%;
-  animation:scrollText 12s linear infinite;
-}
+    #movingBanner span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollText 12s linear infinite;
+    }
 
-@keyframes scrollText {
-  0% { transform:translateX(0); }
-  100% { transform:translateX(-100%); }
-}
+    @keyframes scrollText {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
 
-.panel {
-  margin-top: 20px;
-}
+    .panel {
+      margin-top: 20px;
+    }
 
-#healthScore {
-  font-size: 24px;
-  font-weight: bold;
-  color: #e91e63;
-}
+    #healthScore {
+      font-size: 24px;
+      font-weight: bold;
+      color: #e91e63;
+    }
 
-hr.soft {
-  border: none;
-  border-top: 1px solid #eee;
-  margin: 20px 0;
-}
+    hr.soft {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 20px 0;
+    }
 
-.article {
-  background:white;
-  padding:12px;
-  border-radius:8px;
-  margin:10px 0;
-  box-shadow:0 1px 4px rgba(0,0,0,0.08);
-}
+    .article {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
 
-.article a {
-  text-decoration:none;
-  color:#e91e63;
-}
+    .article a {
+      text-decoration: none;
+      color: #e91e63;
+    }
 
-.article:hover {
-  transform:translateY(-2px);
-  transition:0.2s;
-}
+    .article:hover {
+      transform: translateY(-2px);
+      transition: 0.2s;
+    }
 
-#smartArrow {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #e91e63;
-  color: white;
-  padding: 10px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  animation: pulse 1.5s infinite;
-  z-index: 9999;
-}
+    #smartArrow {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #e91e63;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      animation: pulse 1.5s infinite;
+      z-index: 9999;
+    }
 
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.08); opacity: 1; }
-  100% { transform: scale(1); opacity: 0.9; }
-}
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.9; }
+    }
 
-html {
-  scroll-behavior: smooth;
-}
-</style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 </head>
 
 <body>
 
-<button id="shareBtn" onclick="shareApp()">📤 Share</button>
+  <button id="shareBtn" onclick="shareApp()">📤 Share</button>
 
-<h1>PeriodWise</h1>
+  <h1>PeriodWise</h1>
 
-<div id="movingBanner">
-  <span>Understand your cycle better → periodwise.online</span>
-</div>
-
-<p>Private • Offline • No tracking</p>
-
-<p style="font-weight:bold; color:#e91e63;">
-  Enter the first day of your last period
-</p>
-
-<input id="lastPeriodDate" type="date">
-<input id="cycles" placeholder="Cycles e.g 26,27,26">
-<input id="periodLength" type="number" placeholder="Period length (5)">
-<button onclick="handleSubmit()">Save & Show Calendar</button>
-<p id="warning"></p>
-
-<div id="calendarSection" style="display:none;">
-  <div>
-    <button onclick="changeMonth(-1)">◀</button>
-    <strong id="monthTitle"></strong>
-    <button onclick="changeMonth(1)">▶</button>
+  <div id="movingBanner">
+    <span>Understand your cycle better → periodwise.online</span>
   </div>
 
-  <div class="calendar-header">
-    <div>Mon</div><div>Tue</div><div>Wed</div>
-    <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+  <p>Private • Offline • No tracking</p>
+
+  <p style="font-weight: bold; color: #e91e63;">
+    Enter the first day of your last period
+  </p>
+
+  <input id="lastPeriodDate" type="date">
+  <input id="cycles" placeholder="Cycles e.g 26,27,26">
+  <input id="periodLength" type="number" placeholder="Period length (5)">
+  <button onclick="handleSubmit()">Save & Show Calendar</button>
+  <p id="warning"></p>
+
+  <div id="calendarSection" style="display: none;">
+    <div>
+      <button onclick="changeMonth(-1)">◀</button>
+      <strong id="monthTitle"></strong>
+      <button onclick="changeMonth(1)">▶</button>
+    </div>
+
+    <div class="calendar-header">
+      <div>Mon</div><div>Tue</div><div>Wed</div>
+      <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+    </div>
+
+    <div class="calendar" id="calendar"></div>
+
+    <div class="legend">
+      <div><span class="legend-box period"></span> Period</div>
+      <div><span class="legend-box high"></span> High</div>
+      <div><span class="legend-box medium"></span> Medium</div>
+      <div><span class="legend-box low"></span> Low</div>
+    </div>
+
+    <p id="confidenceText"></p>
+    <button onclick="resetInput()">Re-enter Cycle</button>
   </div>
 
-  <div class="calendar" id="calendar"></div>
+  <hr class="soft">
 
-  <div class="legend">
-    <div><span class="legend-box period"></span> Period</div>
-    <div><span class="legend-box high"></span> High</div>
-    <div><span class="legend-box medium"></span> Medium</div>
-    <div><span class="legend-box low"></span> Low</div>
-  </div>
-
-  <p id="confidenceText"></p>
-  <button onclick="resetInput()">Re-enter Cycle</button>
-</div>
-
-<hr class="soft">
-
-<div class="panel">
-  <h3>🌸 Today’s Insight</h3>
-  <p id="dailyInsightText"></p>
-</div>
-
-<div class="panel">
-  <h3>🧠 Cycle Coach</h3>
-  <p id="coachMessage"></p>
-</div>
-
-<div class="panel">
-  <h3>💯 Cycle Health Score</h3>
-  <p id="healthScore"></p>
-</div>
-
-<div style="margin-top:40px;text-align:left;max-width:600px;margin-left:auto;margin-right:auto;">
-
-💡 Tip: Learning your cycle improves prediction accuracy
-
-<h3>📚 Learn About Your Cycle</h3>
-<p style="font-size:13px;color:#777;">Helpful reads to understand your body better</p>
-
-<div class="article">
-  <a href="https://www.periodwise.online/2026/02/why-is-my-period-late-common-causes.html" target="_blank">
-    <strong>Why Is My Period Late? Common Causes Explained</strong>
-  </a>
-  <p>Understand delays beyond pregnancy — stress, hormones, travel, lifestyle.</p>
-</div>
-
-<div class="article">
-  <a href="https://www.periodwise.online/2026/02/understanding-your-flow.html" target="_blank">
-    <strong>Understanding Your Flow</strong>
-  </a>
-  <p>What different flow patterns mean for your cycle health.</p>
-</div>
-
-<div class="article">
-  <a href="https://www.periodwise.online/2026/02/why-you-may-feel-different-before-your.html" target="_blank">
-    <strong>Why You May Feel Different Before Your Period</strong>
-  </a>
-  <p>Learn why mood and body changes happen before bleeding starts.</p>
-</div>
-
-</div>
-
-<!-- Scroll Arrow Button -->
-<div id="smartArrow" onclick="scrollToTips()">
-  ↓ Explore Tips
-</div>
-
-<!-- Explore Tips Section -->
-<div id="tipsSection" style="margin-top:40px;">
   <div class="panel">
-    <h3>💡 Explore Tips</h3>
-    <p>Check out these tips to understand your cycle better and optimize your health!</p>
-    <ul>
-      <li>Track your period daily to understand patterns.</li>
-      <li>Note mood and symptoms for better predictions.</li>
-      <li>Stay hydrated and maintain healthy routines.</li>
-      <li>Check insights regularly to spot cycle trends.</li>
-    </ul>
+    <h3>🌸 Today’s Insight</h3>
+    <p id="dailyInsightText"></p>
   </div>
-</div>
 
-<!-- Footer -->
-<div id="footer" style="margin-top:40px;font-size:12px;color:#666;">
-  <a href="privacy.html">Privacy Policy</a> •
-  <a href="disclaimer.html">Disclaimer</a> •
-  <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html">FAQ</a>
-</div>
+  <div class="panel">
+    <h3>🧠 Cycle Coach</h3>
+    <p id="coachMessage"></p>
+  </div>
 
-<script>
-let monthOffset = 0;
+  <div class="panel">
+    <h3>💯 Cycle Health Score</h3>
+    <p id="healthScore"></p>
+  </div>
 
-function normalize(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  <div style="margin-top:40px;text-align:left;max-width:600px;margin-left:auto;margin-right:auto;">
+    💡 Tip: Learning your cycle improves prediction accuracy
 
-function handleSubmit(){
-  const last=document.getElementById("lastPeriodDate").value;
-  const cycles=document.getElementById("cycles").value;
-  const len=document.getElementById("periodLength").value||5;
+    <h3>📚 Learn About Your Cycle</h3>
+    <p style="font-size:13px;color:#777;">Helpful reads to understand your body better</p>
 
-  if(!last||!cycles){ warning.innerText="Enter data"; return;}
+    <div class="article">
+      <a href="https://www.periodwise.online/2026/02/why-is-my-period-late-common-causes.html" target="_blank">
+        <strong>Why Is My Period Late? Common Causes Explained</strong>
+      </a>
+      <p>Understand delays beyond pregnancy — stress, hormones, travel, lifestyle.</p>
+    </div>
 
-  localStorage.setItem("pw_lastPeriod",last);
-  localStorage.setItem("pw_cycles",cycles);
-  localStorage.setItem("pw_periodLength",len);
+    <div class="article">
+      <a href="https://www.periodwise.online/2026/02/understanding-your-flow.html" target="_blank">
+        <strong>Understanding Your Flow</strong>
+      </a>
+      <p>What different flow patterns mean for your cycle health.</p>
+    </div>
 
-  renderCalendar();
-}
+    <div class="article">
+      <a href="https://www.periodwise.online/2026/02/why-you-may-feel-different-before-your.html" target="_blank">
+        <strong>Why You May Feel Different Before Your Period</strong>
+      </a>
+      <p>Learn why mood and body changes happen before bleeding starts.</p>
+    </div>
+  </div>
 
-function changeMonth(step){ monthOffset+=step; renderCalendar(); }
+  <!-- Scroll Arrow Button -->
+  <div id="smartArrow" onclick="scrollToTips()">
+    ↓ Explore Tips
+  </div>
 
-function resetInput(){
-  localStorage.clear();
-  location.reload();
-}
+  <!-- Explore Tips Section -->
+  <div id="tipsSection" style="margin-top:40px;">
+    <div class="panel">
+      <h3>💡 Explore Tips</h3>
+      <p>Check out these tips to understand your cycle better and optimize your health!</p>
+      <ul>
+        <li>Track your period daily to understand patterns.</li>
+        <li>Note mood and symptoms for better predictions.</li>
+        <li>Stay hydrated and maintain healthy routines.</li>
+        <li>Check insights regularly to spot cycle trends.</li>
+      </ul>
+    </div>
+  </div>
 
-function renderCalendar(){
-  const last = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
-  const cycles = localStorage.getItem("pw_cycles").split(",").map(Number);
-  const len = +localStorage.getItem("pw_periodLength") || 5;
-  const avg = Math.round(cycles.reduce((a,b)=>a+b)/cycles.length);
-  const ovulationDay = avg - 14;
+  <!-- Footer -->
+  <div id="footer" style="margin-top:40px;font-size:12px;color:#666;">
+    <a href="privacy.html">Privacy Policy</a> •
+    <a href="disclaimer.html">Disclaimer</a> •
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html">FAQ</a>
+  </div>
 
-  const base = new Date();
-  base.setDate(1);
-  base.setMonth(base.getMonth() + monthOffset);
+  <script>
+    let monthOffset = 0;
 
-  monthTitle.innerText = base.toLocaleString("default",{month:"long",year:"numeric"});
-  calendar.innerHTML = "";
-  calendarSection.style.display = "block";
-  inputSection.style.display = "none";
+    function normalize(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
 
-  const first = new Date(base.getFullYear(), base.getMonth(), 1);
-  const offset = (first.getDay() + 6) % 7;
-  const days = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
-  const today = normalize(new Date());
+    function handleSubmit(){
+      const last = document.getElementById("lastPeriodDate").value;
+      const cycles = document.getElementById("cycles").value;
+      const len = document.getElementById("periodLength").value || 5;
 
-  for(let i=0;i<offset;i++) calendar.appendChild(document.createElement("div"));
+      if (!last || !cycles) { warning.innerText = "Enter data"; return; }
 
-  for(let d=1; d<=days; d++){
-    const date = normalize(new Date(base.getFullYear(), base.getMonth(), d));
-    const diff = Math.floor((date - last)/86400000);
-    const cycleDay = ((diff % avg) + avg) % avg + 1;
+      localStorage.setItem("pw_lastPeriod", last);
+      localStorage.setItem("pw_cycles", cycles);
+      localStorage.setItem("pw_periodLength", len);
 
-    const el = document.createElement("div");
-    el.className = "day";
-    el.textContent = d;
+      renderCalendar();
+    }
 
-    if(cycleDay <= len) el.classList.add("period");
-    else if(cycleDay >= ovulationDay - 1 && cycleDay <= ovulationDay + 1) el.classList.add("high");
-    else if(cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 3) el.classList.add("medium");
-    else el.classList.add("low");
+    function changeMonth(step){ monthOffset += step; renderCalendar(); }
 
-    if(date.getTime() === today.getTime()) el.classList.add("today");
+    function resetInput(){
+      localStorage.clear();
+      location.reload();
+    }
 
-    calendar.appendChild(el);
-  }
+    function renderCalendar(){
+      const last = normalize(new Date(localStorage.getItem("pw_lastPeriod")));
+      const cycles = localStorage.getItem("pw_cycles").split(",").map(Number);
+      const len = +localStorage.getItem("pw_periodLength") || 5;
+      const avg = Math.round(cycles.reduce((a,b) => a + b) / cycles.length);
+      const ovulationDay = avg - 14;
 
-  confidenceText.innerText = "Prediction confidence: High";
-  updateSmartInsights();
-}
+      const base = new Date();
+      base.setDate(1);
+      base.setMonth(base.getMonth() + monthOffset);
 
-function shareApp(){
-  if(navigator.share){
-    navigator.share({title:"PeriodWise",url:location.href});
-  }else alert("Copy link to share");
-}
+      monthTitle.innerText = base.toLocaleString("default", { month: "long", year: "numeric" });
+      calendar.innerHTML = "";
+      calendarSection.style.display = "block";
+      inputSection.style.display = "none";
 
-function scrollToTips() {
-  document.getElementById("tipsSection").scrollIntoView({
-    behavior: "smooth"
-  });
+      const first = new Date(base.getFullYear(), base.getMonth(), 1);
+      const offset = (first.getDay() + 6) % 7;
+      const days = new Date(base.getFullYear(), base.getMonth() + 1, 0).getDate();
+      const today = normalize(new Date());
 
-  // hide after click
-  document.getElementById("smartArrow").style.display = "none";
-}
+      for (let i = 0; i < offset; i++) calendar.appendChild(document.createElement("div"));
 
-function calculateCycleDay() {
-  const lastStr = localStorage.getItem("pw_lastPeriod");
-  const cyclesStr = localStorage.getItem("pw_cycles");
+      for (let d = 1; d <= days; d++) {
+        const date = normalize(new Date(base.getFullYear(), base.getMonth(), d));
+        const diff = Math.floor((date - last) / 86400000);
+        const cycleDay = ((diff % avg) + avg) % avg + 1;
 
-  if(!lastStr || !cyclesStr) return null;
+        const el = document.createElement("div");
+        el.className = "day";
+        el.textContent = d;
 
-  const last = new Date(lastStr);
-  const cycles = cyclesStr.split(",").map(Number);
-  const avg = cycles.reduce((a,b)=>a+b) / cycles.length;
+        if (cycleDay <= len) el.classList.add("period");
+        else if (cycleDay >= ovulationDay - 1 && cycleDay <= ovulationDay + 1) el.classList.add("high");
+        else if (cycleDay >= ovulationDay - 5 && cycleDay <= ovulationDay + 3) el.classList.add("medium");
+        else el.classList.add("low");
 
-  const today = new Date();
-  const diff = Math.floor((today - last)/86400000);
+        if (date.getTime() === today.getTime()) el.classList.add("today");
 
-  return ((diff % avg) + avg) % avg + 1;
-}
+        calendar.appendChild(el);
+      }
 
-function updateSmartInsights() {
-  const cycleDay = calculateCycleDay();
-  if(!cycleDay) return;
+      confidenceText.innerText = "Prediction confidence: High";
+      updateSmartInsights();
+    }
 
-  const cycles = localStorage.getItem("pw_cycles").split(",").map(Number);
-  const avg = cycles.reduce((a,b)=>a+b) / cycles.length;
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({ title: "PeriodWise", url: location.href });
+      } else alert("Copy link to share");
+    }
 
-  const periodLength = Number(localStorage.getItem("pw_periodLength")) || 5;
-  const ovulationDay = avg - 14;
+    function scrollToTips() {
+      document.getElementById("tipsSection").scrollIntoView({
+        behavior: "smooth"
+      });
 
-  let insight = "";
-  let coach = "";
+      document.getElementById("smartArrow").style.display = "none";
+    }
 
-  if(cycleDay <= periodLength) {
-    insight = "🩸 You're on your period — rest and hydrate.";
-    coach = "Take it slow today.";
-  }
-  else if(cycleDay >= ovulationDay - 2 && cycleDay <= ovulationDay + 1) {
-    insight = "🔥 Ovulation window — energy high.";
-    coach = "Great time for social or important tasks.";
-  }
-  else if(cycleDay >= avg - 5) {
-    insight = "💛 Period approaching — prepare and track symptoms.";
-    coach = "Focus on sleep and gentle routines.";
-  }
-  else {
-    insight = "🌿 Balanced phase — steady energy.";
-    coach = "Maintain healthy habits.";
-  }
+    function calculateCycleDay() {
+      const lastStr = localStorage.getItem("pw_lastPeriod");
+      const cyclesStr = localStorage.getItem("pw_cycles");
 
-  document.getElementById("dailyInsightText").innerText = insight;
-  document.getElementById("coachMessage").innerText = coach;
+      if (!lastStr || !cyclesStr) return null;
 
-  let score = 100;
+      const last = new Date(lastStr);
+      const cycles = cyclesStr.split(",").map(Number);
+      const avg = cycles.reduce((a, b) => a + b) / cycles.length;
 
-  const cramps = document.getElementById("symptom_cramps");
-  const bloating = document.getElementById("symptom_bloating");
-  const headache = document.getElementById("symptom_headache");
+      const today = new Date();
+      const diff = Math.floor((today - last) / 86400000);
 
-  if(cramps && cramps.checked) score -= 10;
-  if(bloating && bloating.checked) score -= 5;
-  if(headache && headache.checked) score -= 5;
+      return ((diff % avg) + avg) % avg + 1;
+    }
 
-  document.getElementById("healthScore").innerText = score + "%";
-}
+    function updateSmartInsights() {
+      const cycleDay = calculateCycleDay();
+      if (!cycleDay) return;
 
-window.addEventListener("load",()=>{
-  if(localStorage.getItem("pw_lastPeriod")) renderCalendar();
-  updateSmartInsights();
-});
+      const cycles = localStorage.getItem("pw_cycles").split(",").map(Number);
+      const avg = cycles.reduce((a, b) => a + b) / cycles.length;
 
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./service-worker.js');
-}
-</script>
+      const periodLength = Number(localStorage.getItem("pw_periodLength")) || 5;
+      const ovulationDay = avg - 14;
+
+      let insight = "";
+      let coach = "";
+
+      if (cycleDay <= periodLength) {
+        insight = "🩸 You're on your period — rest and hydrate.";
+        coach = "Take it slow today.";
+      } else if (cycleDay >= ovulationDay - 2 && cycleDay <= ovulationDay + 1) {
+        insight = "🔥 Ovulation window — energy high.";
+        coach = "Great time for social or important tasks.";
+      } else if (cycleDay >= avg - 5) {
+        insight = "💛 Period approaching — prepare and track symptoms.";
+        coach = "Focus on sleep and gentle routines.";
+      } else {
+        insight = "🌿 Balanced phase — steady energy.";
+        coach = "Maintain healthy habits.";
+      }
+
+      document.getElementById("dailyInsightText").innerText = insight;
+      document.getElementById("coachMessage").innerText = coach;
+
+      let score = 100;
+
+      const cramps = document.getElementById("symptom_cramps");
+      const bloating = document.getElementById("symptom_bloating");
+      const headache = document.getElementById("symptom_headache");
+
+      if (cramps && cramps.checked) score -= 10;
+      if (bloating && bloating.checked) score -= 5;
+      if (headache && headache.checked) score -= 5;
+
+      document.getElementById("healthScore").innerText = score + "%";
+    }
+
+    window.addEventListener("load", () => {
+      if (localStorage.getItem("pw_lastPeriod")) renderCalendar();
+      updateSmartInsights();
+    });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js');
+    }
+  </script>
+
 </body>
 </html>
