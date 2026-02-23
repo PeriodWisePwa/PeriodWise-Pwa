@@ -156,6 +156,10 @@
     html {
       scroll-behavior: smooth;
     }
+
+    #calendarSection {
+      display: none; /* Ensure that the calendar is hidden initially */
+    }
   </style>
 </head>
 
@@ -181,7 +185,7 @@
   <button onclick="handleSubmit()">Save & Show Calendar</button>
   <p id="warning"></p>
 
-  <div id="calendarSection" style="display: none;">
+  <div id="calendarSection">
     <div>
       <button onclick="changeMonth(-1)">◀</button>
       <strong id="monthTitle"></strong>
