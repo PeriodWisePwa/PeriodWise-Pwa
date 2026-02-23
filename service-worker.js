@@ -2,14 +2,14 @@
 // PeriodWise Service Worker
 // ==============================
 
-const CACHE_NAME ='periodwise-v25'
+const CACHE_NAME ='periodwise-v26'
 const urlsToCache = [
   './',
   './index.html',
   './notifications.html',
   './updates.json',
   './manifest.json'
-];
+];6
 
 // Install - cache essential files
 self.addEventListener('install', event => {
