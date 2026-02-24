@@ -81,6 +81,34 @@ body {
 #mainContent {
   flex: 1;
 }
+
+ .legend {
+  margin-top: 20px;
+  text-align: left;
+  padding: 10px;
+}
+
+.legend h3 {
+  margin-bottom: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.box {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.period { background: pink; }
+.high { background: red; }
+.medium { background: yellow; }
+.low { background: green; }
 </style>
 </head>
 
@@ -118,7 +146,25 @@ Enter the first day of your last period
 
 <div class="calendar" id="calendar"></div>
 
-<p id="confidenceText"></p>
+<p id="confidenceText"></pspandiv class="legend">
+  <h3>Cycle Legend</h3>
+
+  <div class="legend-item">
+    <span class="box period"></span> Period
+  </div>
+
+  <div class="legend-item">
+    <span class="box high"></span> High
+  </div>
+
+  <div class="legend-item">
+    <span class="box medium"></span> Medium
+  </div>
+
+  <div class="legend-item">
+    <span class="box low"></span> Low
+  </div>
+</div>
 <button onclick="resetInput()">Re-enter Cycle</button>
 
 </div>
