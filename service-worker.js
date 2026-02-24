@@ -1,60 +1,49 @@
-// ==============================
-// PeriodWise Service Worker
-// ==============================
-
-const CACHE_NAME ='periodwise-v27'
+const CACHE_NAME = 'periodwise-cache-v1';
 const urlsToCache = [
-  './',
-  './index.html',
-  './notifications.html',
-  './updates.json',
-  './manifest.json'
-];6
+  '/',
+  '/index.html',
+  '/styles.css',
+  '/script.js',
+  '/images/logo.png', // Add all static assets like images, icons here
+];
 
-// Install - cache essential files
-self.addEventListener('install', event => {
-  self.skipWaiting(); // activate new SW immediately
+// Install the service worker and cache assets
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Service Worker: Caching assets');
+      return cache.addAll(urlsToCache);
+    })
   );
 });
 
-// Activate - clean up old caches
-self.addEventListener('activate', event => {
+// Activate the service worker and remove old caches
+self.addEventListener('activate', (event) => {
+  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => key !== CACHE_NAME && caches.delete(key))
-      )
-    )
-  );
-  self.clients.claim();
-});
-
-// Fetch - network first for updates.json, network fallback for others
-self.addEventListener('fetch', event => {
-  // Always fetch updates.json fresh
-  if (event.request.url.includes('updates.json')) {
-    event.respondWith(
-      fetch(event.request, { cache: 'no-store' })
-        .then(response => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          return response;
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
         })
-        .catch(() => caches.match(event.request))
-    );
-    return;
-  }
+      );
+    })
+  );
+  console.log('Service Worker: Activated');
+});
 
-  // For all other requests
+// Intercept fetch requests and serve cached assets
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
-      })
-      .catch(() => caches.match(event.request))
+    caches.match(event.request).then((cachedResponse) => {
+      // If a match is found in the cache, return it
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      // Otherwise, fetch from the network
+      return fetch(event.request);
+    })
   );
 });
