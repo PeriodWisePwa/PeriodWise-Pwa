@@ -51,18 +51,26 @@ button {
 .low { background:#c8e6c9;}
 .today { border:2px solid black;font-weight:bold;}
 
-.legend {
+  .legend {
   display:flex;
   justify-content:center;
-  gap:12px;
-  margin-top:12px;
+  flex-wrap:wrap;
+  gap:16px;
+  margin-top:16px;
+  font-weight:600;
+}
+
+.legend div {
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
 
 .legend-box {
-  width:16px;
-  height:16px;
-  border-radius:4px;
-  border:1px solid #ccc;
+  width:20px;
+  height:20px;
+  border-radius:5px;
+  border:2px solid #999;
 }
 
 .legend-box.period { background:#f8bbd0; }
@@ -129,32 +137,12 @@ button {
 
 <div class="calendar" id="calendar"></div>
 
-  .legend {
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:16px;
-  margin-top:16px;
-  font-weight:600;
-}
-
-.legend div {
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.legend-box {
-  width:20px;
-  height:20px;
-  border-radius:5px;
-  border:2px solid #999;
-}
-
-.legend-box.period { background:#f8bbd0; }
-.legend-box.high { background:#f44336; }
-.legend-box.medium { background:#ffeb3b; }
-.legend-box.low { background:#c8e6c9; }
+<div class="legend">
+<div><span class="legend-box period"></span> Period</div>
+<div><span class="legend-box high"></span> High</div>
+<div><span class="legend-box medium"></span> Medium</div>
+<div><span class="legend-box low"></span> Low</div>
+</div>
 
 <p id="confidenceText"></p>
 <button onclick="resetInput()">Re-enter Cycle</button>
