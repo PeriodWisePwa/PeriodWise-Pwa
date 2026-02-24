@@ -109,6 +109,39 @@ body {
 .high { background: red; }
 .medium { background: yellow; }
 .low { background: green; }
+
+ .faq-section {
+  margin-top: 24px;
+  text-align: left;
+  padding: 0 12px;
+}
+
+.faq-section h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #e91e63;
+}
+
+.faq-section details {
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.faq-section summary {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.faq-section a {
+  font-size: 12px;
+  color: #e91e63;
+  text-decoration: underline;
+  margin-top: 4px;
+  display: inline-block;
+}
 </style>
 </head>
 
@@ -169,9 +202,68 @@ Enter the first day of your last period
 
 </div>
 
-<hr>
+ <!-- FAQ Section -->
+<div class="faq-section">
+  <h3>📖 Frequently Asked Questions</h3>
 
-<div class="panel">
+  <details>
+    <summary>How does PeriodWise predict my cycle?</summary>
+    <p>PeriodWise estimates your cycle based on your last period date and previous cycle lengths using basic biological patterns. Predictions improve with more consistent data.</p>
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html#how-does-periodwise-predict-my-cycle" target="_blank">Read more on blog</a>
+  </details>
+
+  <details>
+    <summary>What do the calendar colors mean?</summary>
+    <p>🩷 Period days – Menstrual bleeding days<br>
+       🔴 High fertility – Higher chance of pregnancy<br>
+       🟡 Medium fertility – Transitional fertility days<br>
+       🟢 Low fertility – Lower chance of pregnancy</p>
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html#what-do-the-calendar-colors-mean" target="_blank">Read more on blog</a>
+  </details>
+
+  <details>
+    <summary>Is PeriodWise accurate?</summary>
+    <p>Accuracy depends on cycle regularity and consistent data entry. Irregular cycles may reduce prediction reliability.</p>
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html#is-periodwise-accurate" target="_blank">Read more on blog</a>
+  </details>
+
+  <details>
+    <summary>Can I use PeriodWise for birth control?</summary>
+    <p>No. PeriodWise is for educational tracking only and should not be used as the sole method of contraception.</p>
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html#can-i-use-periodwise-for-birth-control" target="_blank">Read more on blog</a>
+  </details>
+
+  <details>
+    <summary>Does PeriodWise track or store my data?</summary>
+    <p>No. The app does not collect or transmit data — everything is stored only on your device.</p>
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html#does-periodwise-track-or-store-my-data" target="_blank">Read more on blog</a>
+  </details>
+
+  <details>
+    <summary>Does the app work offline?</summary>
+    <p>Yes — once loaded, PeriodWise functions offline. Internet is only required to open external links.</p>
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html#does-the-app-work-offline" target="_blank">Read more on blog</a>
+  </details>
+
+  <details>
+    <summary>Why did my predicted dates change?</summary>
+    <p>Predictions may shift when new data is entered or cycle averages change. This reflects natural variations.</p>
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html#why-did-my-predicted-dates-change" target="_blank">Read more on blog</a>
+  </details>
+
+  <details>
+    <summary>Who should not rely on cycle predictions?</summary>
+    <p>People with highly irregular cycles, recent birth control changes, or conditions such as PCOS should use predictions as general guidance only.</p>
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html#who-should-not-rely-on-cycle-predictions" target="_blank">Read more on blog</a>
+  </details>
+
+  <details>
+    <summary>Is PeriodWise a medical app?</summary>
+    <p>No — PeriodWise is an educational tool and not a substitute for professional medical advice.</p>
+    <a href="https://www.periodwise.online/p/periodwise-app-frequently-asked.html#is-periodwise-a-medical-app" target="_blank">Read more on blog</a>
+  </details>
+
+</divscroll-behaviorclass="panel">
 <h3>🌸 Today’s Insight</h3>
 <p id="dailyInsightText"></p>
 </div>
