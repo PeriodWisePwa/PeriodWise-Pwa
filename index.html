@@ -5,6 +5,7 @@
   <title>PeriodWise</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#e91e63">
+
   <style>
     body { font-family: Arial, sans-serif; padding: 16px; text-align: center; }
     h1 { color: #e91e63; }
@@ -159,7 +160,6 @@
     #calendarSection {
       display: none;
     }
-
   </style>
 </head>
 
@@ -280,6 +280,14 @@
   </div>
 
   <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
+        console.log('Service Worker registration successful with scope: ', registration.scope);
+      }).catch(function(error) {
+        console.log('Service Worker registration failed: ', error);
+      });
+    }
+
     let monthOffset = 0;
 
     function normalize(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
