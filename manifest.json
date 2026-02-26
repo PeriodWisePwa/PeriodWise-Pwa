@@ -1,8 +1,10 @@
 {
   "name": "PeriodWise",
   "short_name": "PeriodWise",
+  "id": "periodwise.app",
   "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#e91e63",
   "description": "PeriodWise is a private menstrual cycle tracker that works offline and helps users understand their cycle with simple insights.",
@@ -15,6 +17,13 @@
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1080x2400",
       "type": "image/png"
     }
   ]
