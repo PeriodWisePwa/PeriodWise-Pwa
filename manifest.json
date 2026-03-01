@@ -2,7 +2,7 @@
   "name": "PeriodWise",
   "short_name": "PeriodWise",
   "id": "periodwise.app",
-  "start_url": "/",
+  "start_url": "lock.html"
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
