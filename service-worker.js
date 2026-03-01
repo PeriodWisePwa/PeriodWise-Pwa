@@ -2,6 +2,7 @@ const CACHE_NAME = 'periodwise-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/lock.html
   '/styles.css',
   '/script.js',
   '/images/logo.png', // Add all static assets like images, icons here
