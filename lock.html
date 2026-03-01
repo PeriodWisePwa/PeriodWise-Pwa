@@ -91,7 +91,7 @@
 </div>
 
 <script>
-(function() {
+ (function() {
   const PIN_KEY = "userPIN";
   const title = document.getElementById("pw-title");
   const input = document.getElementById("pw-input");
@@ -113,9 +113,28 @@
         return;
       }
       localStorage.setItem(PIN_KEY, val);
-      alert("PIN set! Reopen app to enter PIN");
+
+      // Automatically switch to Unlock mode
       input.value = "";
       error.textContent = "";
+      title.textContent = "Enter your PIN";
+      btn.textContent = "Unlock";
+
+      // Replace old click handler with unlock handler
+      btn.replaceWith(btn.cloneNode(true)); // remove old listener
+      const newBtn = document.getElementById("pw-btn");
+
+      newBtn.addEventListener("click", () => {
+        const entered = input.value;
+        const stored = localStorage.getItem(PIN_KEY);
+        if (entered === stored) {
+          sessionStorage.setItem("unlocked", "true");
+          window.location.href = "index.html";
+        } else {
+          error.textContent = "Incorrect PIN";
+          input.value = "";
+        }
+      });
     });
 
     forgot.style.display = "none";
