@@ -84,14 +84,14 @@
 
 <div class="lock-card">
   <h2 id="pw-title"></h2>
-  <input type="password" id="pw-input" maxlength="4" placeholder="●●●●">
+  <input type="password" id="pw-input" maxlength="4" placeholder="●●●●" />
   <button id="pw-btn"></button>
   <button class="secondary-btn" id="pw-forgot">Forgot PIN?</button>
   <p id="pw-error" class="error"></p>
 </div>
 
 <script>
- (function() {
+(function() {
   const PIN_KEY = "userPIN";
   const title = document.getElementById("pw-title");
   const input = document.getElementById("pw-input");
@@ -99,12 +99,36 @@
   const error = document.getElementById("pw-error");
   const forgot = document.getElementById("pw-forgot");
 
-  const storedPIN = localStorage.getItem(PIN_KEY);
+  let storedPIN = localStorage.getItem(PIN_KEY);
+
+  function switchToUnlock() {
+    title.textContent = "Enter your PIN";
+    btn.textContent = "Unlock";
+    input.value = "";
+    error.textContent = "";
+
+    btn.replaceWith(btn.cloneNode(true));
+    const newBtn = document.getElementById("pw-btn");
+    newBtn.addEventListener("click", () => {
+      const val = input.value;
+      const currentPIN = localStorage.getItem(PIN_KEY);
+      if (val === currentPIN) {
+        sessionStorage.setItem("unlocked", "true");
+        window.location.href = "index.html"; // redirect to main app
+      } else {
+        error.textContent = "Incorrect PIN";
+        input.value = "";
+      }
+    });
+
+    forgot.style.display = "inline-block";
+  }
 
   if (!storedPIN) {
-    // First-time: create PIN
+    // First-time PIN creation
     title.textContent = "Create a 4-digit PIN";
     btn.textContent = "Set PIN";
+    forgot.style.display = "none";
 
     btn.addEventListener("click", () => {
       const val = input.value;
@@ -113,52 +137,22 @@
         return;
       }
       localStorage.setItem(PIN_KEY, val);
-
-      // Automatically switch to Unlock mode
-      input.value = "";
-      error.textContent = "";
-      title.textContent = "Enter your PIN";
-      btn.textContent = "Unlock";
-
-      // Replace old click handler with unlock handler
-      btn.replaceWith(btn.cloneNode(true)); // remove old listener
-      const newBtn = document.getElementById("pw-btn");
-
-      newBtn.addEventListener("click", () => {
-        const entered = input.value;
-        const stored = localStorage.getItem(PIN_KEY);
-        if (entered === stored) {
-          sessionStorage.setItem("unlocked", "true");
-          window.location.href = "index.html";
-        } else {
-          error.textContent = "Incorrect PIN";
-          input.value = "";
-        }
-      });
+      // Immediately switch to unlock screen
+      switchToUnlock();
     });
-
-    forgot.style.display = "none";
-
   } else {
-    // PIN exists: prompt entry
-    title.textContent = "Enter your PIN";
-    btn.textContent = "Unlock";
-
-    btn.addEventListener("click", () => {
-      const val = input.value;
-      if (val === storedPIN) {
-        sessionStorage.setItem("unlocked", "true");
-        window.location.href = "index.html";
-      } else {
-        error.textContent = "Incorrect PIN";
-        input.value = "";
-      }
-    });
-
-    forgot.addEventListener("click", () => {
-      alert("Forgot PIN feature coming soon.");
-    });
+    // PIN exists: enter PIN
+    switchToUnlock();
   }
+
+  // Forgot PIN resets stored PIN
+  forgot.addEventListener("click", () => {
+    if(confirm("Are you sure you want to reset your PIN?")) {
+      localStorage.removeItem(PIN_KEY);
+      alert("PIN cleared. Please create a new PIN.");
+      location.reload();
+    }
+  });
 })();
 </script>
 
