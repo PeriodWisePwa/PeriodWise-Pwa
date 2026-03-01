@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Unlock App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+    }
+
+    .container {
+      text-align: center;
+      width: 280px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 20px;
+      text-align: center;
+      letter-spacing: 8px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Enter PIN</h2>
+  <input type="password" maxlength="4" id="pin">
+  <button onclick="unlock()">Unlock</button>
+  <p id="error" style="color:red;"></p>
+</div>
+
+<script>
+const CORRECT_PIN = "1234";
+
+function unlock() {
+  const value = document.getElementById("pin").value;
+
+  if (value === CORRECT_PIN) {
+    sessionStorage.setItem("unlocked", "true");
+    window.location.href = "index.html";
+  } else {
+    document.getElementById("error").textContent = "Incorrect PIN";
+  }
+}
+</script>
+
+</body>
+</html>
