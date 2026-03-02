@@ -91,69 +91,74 @@
 </div>
 
 <script>
-(function() {
-  const PIN_KEY = "userPIN";
-  const title = document.getElementById("pw-title");
-  const input = document.getElementById("pw-input");
-  const btn = document.getElementById("pw-btn");
-  const error = document.getElementById("pw-error");
-  const forgot = document.getElementById("pw-forgot");
+ if (isPWA()) {
+  (function() {
+    const PIN_KEY = "userPIN";
+    const title = document.getElementById("pw-title");
+    const input = document.getElementById("pw-input");
+    const btn = document.getElementById("pw-btn");
+    const error = document.getElementById("pw-error");
+    const forgot = document.getElementById("pw-forgot");
 
-  let storedPIN = localStorage.getItem(PIN_KEY);
+    let storedPIN = localStorage.getItem(PIN_KEY);
 
-  function switchToUnlock() {
-    title.textContent = "Enter your PIN";
-    btn.textContent = "Unlock";
-    input.value = "";
-    error.textContent = "";
+    function switchToUnlock() {
+      title.textContent = "Enter your PIN";
+      btn.textContent = "Unlock";
+      input.value = "";
+      error.textContent = "";
 
-    btn.replaceWith(btn.cloneNode(true));
-    const newBtn = document.getElementById("pw-btn");
-    newBtn.addEventListener("click", () => {
-      const val = input.value;
-      const currentPIN = localStorage.getItem(PIN_KEY);
-      if (val === currentPIN) {
-        sessionStorage.setItem("unlocked", "true");
-        window.location.href = "index.html"; // redirect to main app
-      } else {
-        error.textContent = "Incorrect PIN";
-        input.value = "";
-      }
-    });
+      btn.replaceWith(btn.cloneNode(true));
+      const newBtn = document.getElementById("pw-btn");
+      newBtn.addEventListener("click", () => {
+        const val = input.value;
+        const currentPIN = localStorage.getItem(PIN_KEY);
+        if (val === currentPIN) {
+          sessionStorage.setItem("unlocked", "true");
+          window.location.href = "index.html"; // main app
+        } else {
+          error.textContent = "Incorrect PIN";
+          input.value = "";
+        }
+      });
 
-    forgot.style.display = "inline-block";
-  }
-
-  if (!storedPIN) {
-    // First-time PIN creation
-    title.textContent = "Create a 4-digit PIN";
-    btn.textContent = "Set PIN";
-    forgot.style.display = "none";
-
-    btn.addEventListener("click", () => {
-      const val = input.value;
-      if (val.length !== 4 || isNaN(val)) {
-        error.textContent = "PIN must be 4 digits";
-        return;
-      }
-      localStorage.setItem(PIN_KEY, val);
-      // Immediately switch to unlock screen
-      switchToUnlock();
-    });
-  } else {
-    // PIN exists: enter PIN
-    switchToUnlock();
-  }
-
-  // Forgot PIN resets stored PIN
-  forgot.addEventListener("click", () => {
-    if(confirm("Are you sure you want to reset your PIN?")) {
-      localStorage.removeItem(PIN_KEY);
-      alert("PIN cleared. Please create a new PIN.");
-      location.reload();
+      forgot.style.display = "inline-block";
     }
-  });
-})();
+
+    if (!storedPIN) {
+      title.textContent = "Create a 4-digit PIN";
+      btn.textContent = "Set PIN";
+      forgot.style.display = "none";
+
+      btn.addEventListener("click", () => {
+        const val = input.value;
+        if (val.length !== 4 || isNaN(val)) {
+          error.textContent = "PIN must be 4 digits";
+          return;
+        }
+        localStorage.setItem(PIN_KEY, val);
+        switchToUnlock();
+      });
+    } else {
+      switchToUnlock();
+    }
+
+    forgot.addEventListener("click", () => {
+      if(confirm("Are you sure you want to reset your PIN?")) {
+        localStorage.removeItem(PIN_KEY);
+        alert("PIN cleared. Please create a new PIN.");
+        location.reload();
+      }
+    });
+  })();
+} else {
+  // Public website, no PIN
+  document.getElementById("pw-title").style.display = "none";
+  document.getElementById("pw-input").style.display = "none";
+  document.getElementById("pw-btn").style.display = "none";
+  document.getElementById("pw-forgot").style.display = "none";
+  document.getElementById("pw-error").style.display = "none";
+}
 </script>
 
 </body>
