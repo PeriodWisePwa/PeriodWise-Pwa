@@ -420,3 +420,93 @@ main {
     font-size: 34px;
   }
 }
+
+/* PERIODWISE CYCLE TRACKER */
+
+#cycleForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+#cycleForm label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #444;
+}
+
+#cycleForm input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #e5c5d2;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+#cycleForm input:focus {
+  outline: 2px solid #e91e63;
+  border-color: #e91e63;
+}
+
+#cycleForm .primary-button {
+  margin-top: 10px;
+}
+
+#cycleMessage {
+  font-size: 14px;
+  color: #b01855;
+  font-weight: 600;
+}
+
+.history-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0dce4;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-item strong {
+  display: block;
+  color: #333;
+  font-size: 16px;
+}
+
+.history-item p {
+  color: #777;
+  font-size: 14px;
+  margin: 7px 0 12px;
+}
+
+.secondary-button {
+  padding: 9px 16px;
+  border: 1px solid #e91e63;
+  border-radius: 8px;
+  background: #fff;
+  color: #e91e63;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: #fff0f5;
+}
+
+#nextPeriodDisplay {
+  color: #e91e63;
+  margin: 10px 0 20px;
+}
+
+#fertileWindowDisplay {
+  color: #16865b;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+#cycle .card {
+  margin-bottom: 20px;
+}
