@@ -241,33 +241,210 @@
 
     <!-- FERTILITY TRACKER -->
 
-    <section id="fertility" class="page">
+<section id="fertility" class="page">
 
-      <div class="page-heading">
-        <span class="eyebrow">FERTILITY AWARENESS</span>
-        <h2>Fertility Tracker</h2>
+  <div class="page-heading">
+    <span class="eyebrow">FERTILITY AWARENESS</span>
+    <h2>Fertility Tracker</h2>
+    <p>Record your daily fertility observations and understand your patterns.</p>
+  </div>
 
-        <p>
-          Keep track of your fertility observations
-          and daily changes.
-        </p>
-      </div>
+  <!-- BBT TRACKER -->
 
-      <div class="feature-list card">
+  <div class="card">
 
-        <div>🌡️ Basal Body Temperature (BBT)</div>
-        <div>🧪 LH Ovulation Test Log</div>
-        <div>🌸 Cervical Mucus Observations</div>
-        <div>📅 Ovulation Observations</div>
+    <h3>🌡️ Basal Body Temperature</h3>
 
-      </div>
+    <p>Record your waking temperature each morning.</p>
 
-      <p class="muted">
-        Basic fertility tracking will be available
-        as part of the free PeriodWise experience.
-      </p>
+    <form id="bbtForm">
 
-    </section>
+      <label for="bbtDate">Recording date</label>
+      <input type="date" id="bbtDate" required>
+
+      <label for="bbtTemperature">Temperature</label>
+      <input type="number"
+             id="bbtTemperature"
+             step="0.01"
+             placeholder="Example: 36.50"
+             required>
+
+      <label for="bbtUnit">Temperature unit</label>
+      <select id="bbtUnit">
+        <option value="C">Celsius (°C)</option>
+        <option value="F">Fahrenheit (°F)</option>
+      </select>
+
+      <label for="bbtNotes">Notes (optional)</label>
+      <textarea id="bbtNotes"
+                rows="3"
+                placeholder="Sleep, illness or other observations"></textarea>
+
+      <button type="submit" class="primary-button">
+        Save BBT Reading
+      </button>
+
+      <p id="bbtMessage" role="status"></p>
+
+    </form>
+
+    <h4>BBT History</h4>
+    <div id="bbtHistory">
+      <p class="muted">Your temperature records will appear here.</p>
+    </div>
+
+  </div>
+
+
+  <!-- LH TEST TRACKER -->
+
+  <div class="card">
+
+    <h3>🧪 LH Ovulation Test</h3>
+
+    <p>Record the result of your ovulation test.</p>
+
+    <form id="lhForm">
+
+      <label for="lhDate">Test date</label>
+      <input type="date" id="lhDate" required>
+
+      <label for="lhResult">Test result</label>
+
+      <select id="lhResult" required>
+        <option value="">Select result</option>
+        <option value="negative">Negative</option>
+        <option value="low">Low</option>
+        <option value="high">High</option>
+        <option value="positive">Positive</option>
+      </select>
+
+      <label for="lhNotes">Notes (optional)</label>
+      <textarea id="lhNotes"
+                rows="3"
+                placeholder="Additional observations"></textarea>
+
+      <button type="submit" class="primary-button">
+        Save LH Result
+      </button>
+
+      <p id="lhMessage" role="status"></p>
+
+    </form>
+
+    <h4>LH Test History</h4>
+    <div id="lhHistory">
+      <p class="muted">Your LH test records will appear here.</p>
+    </div>
+
+  </div>
+
+
+  <!-- CERVICAL MUCUS TRACKER -->
+
+  <div class="card">
+
+    <h3>🌸 Cervical Mucus Observations</h3>
+
+    <p>Record your daily cervical mucus observations.</p>
+
+    <form id="mucusForm">
+
+      <label for="mucusDate">Observation date</label>
+      <input type="date" id="mucusDate" required>
+
+      <label for="mucusObservation">Observation</label>
+
+      <select id="mucusObservation" required>
+        <option value="">Select observation</option>
+        <option value="dry">Dry</option>
+        <option value="sticky">Sticky</option>
+        <option value="creamy">Creamy</option>
+        <option value="watery">Watery</option>
+        <option value="egg-white">Egg-white consistency</option>
+      </select>
+
+      <label for="mucusNotes">Notes (optional)</label>
+      <textarea id="mucusNotes"
+                rows="3"
+                placeholder="Describe any additional changes"></textarea>
+
+      <button type="submit" class="primary-button">
+        Save Observation
+      </button>
+
+      <p id="mucusMessage" role="status"></p>
+
+    </form>
+
+  </div>
+
+
+  <!-- OVULATION OBSERVATIONS -->
+
+  <div class="card">
+
+    <h3>💗 Ovulation Observations</h3>
+
+    <p>Record physical changes or signs you notice.</p>
+
+    <form id="ovulationForm">
+
+      <label for="ovulationDate">Observation date</label>
+      <input type="date" id="ovulationDate" required>
+
+      <label for="ovulationObservation">What did you notice?</label>
+
+      <textarea id="ovulationObservation"
+                rows="3"
+                placeholder="Example: Mild pelvic discomfort or breast tenderness"
+                required></textarea>
+
+      <label for="ovulationNotes">Additional notes (optional)</label>
+
+      <textarea id="ovulationNotes"
+                rows="3"
+                placeholder="Additional information"></textarea>
+
+      <button type="submit" class="primary-button">
+        Save Observation
+      </button>
+
+      <p id="ovulationMessage" role="status"></p>
+
+    </form>
+
+  </div>
+
+
+  <!-- FERTILITY OBSERVATION HISTORY -->
+
+  <div class="card">
+
+    <h3>📚 Fertility Observation History</h3>
+
+    <div id="fertilityHistory">
+      <p class="muted">Your saved observations will appear here.</p>
+    </div>
+
+  </div>
+
+
+  <div class="info-card">
+
+    <h3>Understanding your observations</h3>
+
+    <p>
+      BBT changes, LH test results and cervical mucus
+      observations can provide useful fertility information.
+      However, individual observations cannot independently
+      confirm ovulation or guarantee pregnancy.
+    </p>
+
+  </div>
+
+</section>
+
 
 
     <!-- TTC HUB -->
