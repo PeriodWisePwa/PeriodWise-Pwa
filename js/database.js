@@ -1,103 +1,235 @@
 const PeriodWiseDB = {
 
-  databaseName: "PeriodWiseDatabase",
+databaseName: "PeriodWiseDatabase",
+version: 1,
+database: null,
 
-  version: 1,
+// Open or create the database
+open: function () {
 
-  database: null,
+return new Promise((resolve, reject) => {
 
-  open: function() {
+  if (!window.indexedDB) {
+    reject(new Error("IndexedDB is not supported by this browser."));
+    return;
+  }
 
-    return new Promise((resolve, reject) => {
+  const request = indexedDB.open(
+    this.databaseName,
+    this.version
+  );
 
-      const request = indexedDB.open(
-        this.databaseName,
-        this.version
-      );
+  request.onupgradeneeded = function (event) {
 
-      request.onupgradeneeded = function(event) {
+    const db = event.target.result;
 
-        const db = event.target.result;
+    const stores = [
+      "cycleRecords",
+      "bbtRecords",
+      "lhRecords",
+      "symptomRecords",
+      "pregnancyTests",
+      "ttcNotes",
+      "appointments"
+    ];
 
-        const stores = [
-          "cycleRecords",
-          "bbtRecords",
-          "lhRecords",
-          "symptomRecords",
-          "pregnancyTests",
-          "ttcNotes",
-          "appointments"
-        ];
+    stores.forEach(function (storeName) {
 
-        stores.forEach(storeName => {
+      if (!db.objectStoreNames.contains(storeName)) {
 
-          if (!db.objectStoreNames.contains(storeName)) {
-
-            db.createObjectStore(storeName, {
-              keyPath: "id",
-              autoIncrement: true
-            });
-
-          }
-
+        db.createObjectStore(storeName, {
+          keyPath: "id",
+          autoIncrement: true
         });
 
-      };
-
-      request.onsuccess = () => {
-
-        this.database = request.result;
-
-        resolve(this.database);
-
-      };
-
-      request.onerror = () => {
-
-        reject(request.error);
-
-      };
+      }
 
     });
 
-  },
+  };
 
-  save: function(storeName, record) {
+  request.onsuccess = () => {
 
-    return new Promise((resolve, reject) => {
+    this.database = request.result;
 
-      const transaction =
-        this.database.transaction(storeName, "readwrite");
+    this.database.onversionchange = () => {
+      this.database.close();
+      this.database = null;
+    };
 
-      const store = transaction.objectStore(storeName);
+    resolve(this.database);
 
-      const request = store.put(record);
+  };
 
-      request.onsuccess = () => resolve(request.result);
+  request.onerror = () => {
+    reject(request.error);
+  };
 
-      request.onerror = () => reject(request.error);
+});
 
-    });
+},
 
-  },
+// Save a record
+save: function (storeName, record) {
 
-  getAll: function(storeName) {
+return new Promise((resolve, reject) => {
 
-    return new Promise((resolve, reject) => {
-
-      const transaction =
-        this.database.transaction(storeName, "readonly");
-
-      const store = transaction.objectStore(storeName);
-
-      const request = store.getAll();
-
-      request.onsuccess = () => resolve(request.result);
-
-      request.onerror = () => reject(request.error);
-
-    });
-
+  if (!this.database) {
+    reject(new Error("Database is not open."));
+    return;
   }
+
+  if (!this.database.objectStoreNames.contains(storeName)) {
+    reject(new Error("Unknown database store: " + storeName));
+    return;
+  }
+
+  const transaction = this.database.transaction(
+    storeName,
+    "readwrite"
+  );
+
+  const store = transaction.objectStore(storeName);
+
+  const request = store.put(record);
+
+  request.onsuccess = () => {
+    resolve(request.result);
+  };
+
+  request.onerror = () => {
+    reject(request.error);
+  };
+
+  transaction.onabort = () => {
+    reject(transaction.error || new Error("Saving failed."));
+  };
+
+});
+
+},
+
+// Retrieve all records from a store
+getAll: function (storeName) {
+
+return new Promise((resolve, reject) => {
+
+  if (!this.database) {
+    reject(new Error("Database is not open."));
+    return;
+  }
+
+  if (!this.database.objectStoreNames.contains(storeName)) {
+    reject(new Error("Unknown database store: " + storeName));
+    return;
+  }
+
+  const transaction = this.database.transaction(
+    storeName,
+    "readonly"
+  );
+
+  const store = transaction.objectStore(storeName);
+
+  const request = store.getAll();
+
+  request.onsuccess = () => {
+    resolve(request.result);
+  };
+
+  request.onerror = () => {
+    reject(request.error);
+  };
+
+});
+
+},
+
+// Retrieve one record
+get: function (storeName, id) {
+
+return new Promise((resolve, reject) => {
+
+  if (!this.database) {
+    reject(new Error("Database is not open."));
+    return;
+  }
+
+  const transaction = this.database.transaction(
+    storeName,
+    "readonly"
+  );
+
+  const request = transaction.objectStore(storeName).get(id);
+
+  request.onsuccess = () => {
+    resolve(request.result);
+  };
+
+  request.onerror = () => {
+    reject(request.error);
+  };
+
+});
+
+},
+
+// Delete one record
+delete: function (storeName, id) {
+
+return new Promise((resolve, reject) => {
+
+  if (!this.database) {
+    reject(new Error("Database is not open."));
+    return;
+  }
+
+  const transaction = this.database.transaction(
+    storeName,
+    "readwrite"
+  );
+
+  const request = transaction.objectStore(storeName).delete(id);
+
+  request.onsuccess = () => {
+    resolve(true);
+  };
+
+  request.onerror = () => {
+    reject(request.error);
+  };
+
+});
+
+},
+
+// Count records in a store
+count: function (storeName) {
+
+return new Promise((resolve, reject) => {
+
+  if (!this.database) {
+    reject(new Error("Database is not open."));
+    return;
+  }
+
+  const transaction = this.database.transaction(
+    storeName,
+    "readonly"
+  );
+
+  const request = transaction.objectStore(storeName).count();
+
+  request.onsuccess = () => {
+    resolve(request.result);
+  };
+
+  request.onerror = () => {
+    reject(request.error);
+  };
+
+});
+
+}
 
 };
