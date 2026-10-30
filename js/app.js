@@ -1,50 +1,55 @@
-document.addEventListener("DOMContentLoaded", async function() {
+document.addEventListener("DOMContentLoaded", async function () {
 
-  try {
+// 1. Initialize the PeriodWise database
+try {
+await PeriodWiseDB.open();
+console.log("PeriodWise database ready.");
 
-    await PeriodWiseDB.open();
+} catch (error) {
+console.error("Database initialization failed:", error);
 
-    console.log("PeriodWise database ready.");
+alert(
+  "PeriodWise could not initialize its local database. " +
+  "Please try again using an updated browser."
+);
 
-  } catch (error) {
+return;
 
-    console.error("Database initialization failed:", error);
+}
 
-    alert(
-      "PeriodWise could not initialize its local database. " +
-      "Please try again using an updated browser."
-    );
+// 2. Open the correct page when the app loads
+const initialPage =
+window.location.hash.replace("#", "") || "dashboard";
 
-  }
+showPage(initialPage);
 
+// 3. Privacy Centre navigation
+const privacyButton = document.getElementById("privacyButton");
 
-  const initialPage =
-    window.location.hash.replace("#", "") || "dashboard";
+if (privacyButton) {
+privacyButton.addEventListener("click", function () {
+showPage("privacy");
+});
+}
 
-  showPage(initialPage);
+// 4. Register the service worker for offline functionality
+if ("serviceWorker" in navigator) {
 
+window.addEventListener("load", function () {
 
-  const privacyButton =
-    document.getElementById("privacyButton");
-
-  privacyButton.addEventListener("click", function() {
-
-    showPage("privacy");
-
-  });
-
-
-  if ("serviceWorker" in navigator) {
-
-    window.addEventListener("load", function() {
-
-      navigator.serviceWorker.register("./service-worker.js")
-        .catch(error => {
-          console.error("Offline setup failed:", error);
-        });
-
+  navigator.serviceWorker.register("./service-worker.js")
+    .then(function (registration) {
+      console.log(
+        "PeriodWise offline service registered:",
+        registration.scope
+      );
+    })
+    .catch(function (error) {
+      console.error("Offline setup failed:", error);
     });
 
-  }
+});
+
+}
 
 });
