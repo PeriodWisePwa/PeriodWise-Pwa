@@ -623,3 +623,106 @@ main {
   color: #bd3975;
   font-size: 16px;
 }
+
+/* =================================
+   PERIODWISE PREMIUM FERTILITY FORMS
+================================= */
+
+#lhForm,
+#mucusForm,
+#ovulationForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 22px;
+  background: linear-gradient(145deg, #fffafd, #fff3f7);
+  border: 1px solid #f4dce6;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(130, 55, 85, 0.06);
+}
+
+#lhForm label,
+#mucusForm label,
+#ovulationForm label {
+  margin-top: 8px;
+  color: #704256;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#lhForm input,
+#lhForm select,
+#lhForm textarea,
+#mucusForm input,
+#mucusForm select,
+#mucusForm textarea,
+#ovulationForm input,
+#ovulationForm select,
+#ovulationForm textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 50px;
+  padding: 14px 16px;
+  border: 1px solid #ecd4df;
+  border-radius: 13px;
+  background: #fff;
+  color: #49333d;
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+#lhForm textarea,
+#mucusForm textarea,
+#ovulationForm textarea {
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+#lhForm input:focus,
+#lhForm select:focus,
+#lhForm textarea:focus,
+#mucusForm input:focus,
+#mucusForm select:focus,
+#mucusForm textarea:focus,
+#ovulationForm input:focus,
+#ovulationForm select:focus,
+#ovulationForm textarea:focus {
+  border-color: #dc6b99;
+  box-shadow: 0 0 0 4px rgba(220, 107, 153, 0.12);
+}
+
+#lhForm .primary-button,
+#mucusForm .primary-button,
+#ovulationForm .primary-button {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #e45b91, #bd3975);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 7px 16px rgba(189, 57, 117, 0.22);
+  cursor: pointer;
+}
+
+#lhMessage,
+#mucusMessage,
+#ovulationMessage {
+  min-height: 18px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#fertilityHistory .history-item {
+  padding: 17px;
+  margin-bottom: 12px;
+  border: 1px solid #f1dce5;
+  border-radius: 14px;
+  background: #fffafd;
+}
