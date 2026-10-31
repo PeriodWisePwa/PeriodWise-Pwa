@@ -1,4 +1,4 @@
-   document.addEventListener("DOMContentLoaded", async function () {
+document.addEventListener("DOMContentLoaded", async function () {
 
 // =====================================
 // 1. INITIALIZE PERIODWISE DATABASE
@@ -690,4 +690,4 @@ window.addEventListener("load", function () {
 
 }
 
-});   
+});
