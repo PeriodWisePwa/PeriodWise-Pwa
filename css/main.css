@@ -510,3 +510,116 @@ main {
 #cycle .card {
   margin-bottom: 20px;
 }
+
+/* =================================
+   PERIODWISE PREMIUM BBT FORM
+================================= */
+
+#bbtForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 22px;
+  background: linear-gradient(145deg, #fffafd, #fff3f7);
+  border: 1px solid #f4dce6;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(130, 55, 85, 0.06);
+}
+
+#bbtForm label {
+  margin-top: 8px;
+  color: #704256;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+#bbtForm input,
+#bbtForm select,
+#bbtForm textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 16px;
+  border: 1px solid #ecd4df;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #49333d;
+  font-family: inherit;
+  font-size: 15px;
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+#bbtForm input {
+  min-height: 52px;
+}
+
+#bbtForm input[type="number"] {
+  font-size: 23px;
+  font-weight: 700;
+  color: #c13f75;
+}
+
+#bbtForm input:focus,
+#bbtForm select:focus,
+#bbtForm textarea:focus {
+  border-color: #dc6b99;
+  box-shadow: 0 0 0 4px rgba(220, 107, 153, 0.12);
+}
+
+#bbtForm textarea {
+  resize: vertical;
+  min-height: 95px;
+  line-height: 1.6;
+}
+
+#bbtForm input::placeholder,
+#bbtForm textarea::placeholder {
+  color: #b9a4ae;
+  font-size: 13px;
+}
+
+#bbtForm .primary-button {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #e45b91, #bd3975);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 7px 16px rgba(189, 57, 117, 0.22);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#bbtForm .primary-button:active {
+  transform: scale(0.98);
+}
+
+#bbtMessage {
+  min-height: 18px;
+  margin-top: 5px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#fertility #bbtHistory {
+  margin-top: 15px;
+}
+
+#fertility #bbtHistory .history-item {
+  padding: 17px;
+  margin-bottom: 12px;
+  border: 1px solid #f1dce5;
+  border-radius: 14px;
+  background: #fffafd;
+}
+
+#fertility #bbtHistory .history-item strong {
+  color: #bd3975;
+  font-size: 16px;
+}
