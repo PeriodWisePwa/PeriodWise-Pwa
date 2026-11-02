@@ -776,6 +776,30 @@
 <script>
     initializePeriodWiseSupabase();
 </script>
+  
+  <!-- Temporary Supabase Connection Test -->
+<div style="padding:20px; text-align:center;">
+    <button
+        onclick="checkPeriodWiseDatabase()"
+        style="padding:14px 22px; background:#d63384; color:white;
+        border:0; border-radius:10px; font-size:15px;">
+        Test PeriodWise Database
+    </button>
+
+    <p id="databaseTestResult"></p>
+</div>
+
+<script>
+async function checkPeriodWiseDatabase() {
+    const result = document.getElementById("databaseTestResult");
+
+    result.textContent = "Testing connection...";
+
+    const message = await window.testPeriodWiseConnection();
+
+    result.textContent = message;
+}
+</script>
 
 </body>
 </html>
