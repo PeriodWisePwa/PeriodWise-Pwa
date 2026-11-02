@@ -1,6 +1,6 @@
 // PeriodWise Supabase Configuration
 
-const SUPABASE_URL = "https://cqghljmnufxtgifetirl.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://cqghljmnufxtgifetirl.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_8L_vcm4y69cWxE2D7f4MMQ__e9hIEzt";
 
 window.periodWiseSupabase = null;
