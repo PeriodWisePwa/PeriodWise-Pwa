@@ -18,3 +18,21 @@ function initializePeriodWiseSupabase() {
 
     console.log("PeriodWise Supabase connected.");
 }
+
+window.testPeriodWiseConnection = async function () {
+    try {
+        const { data, error } = await window.periodWiseSupabase
+            .from("user_entitlements")
+            .select("id")
+            .limit(1);
+
+        if (error) {
+            console.error("Connection test:", error.message);
+            return "Database response: " + error.message;
+        }
+
+        return "PeriodWise database connection successful!";
+    } catch (error) {
+        return "Connection failed: " + error.message;
+    }
+};
