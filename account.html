@@ -244,7 +244,12 @@ function showDashboard(user) {
 signupForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
+    const button = signupForm.querySelector("button[type='submit']");
+
     try {
+        button.disabled = true;
+        button.textContent = "Creating Account...";
+
         const email = document.getElementById("signupEmail").value.trim();
         const password = document.getElementById("signupPassword").value;
 
@@ -252,13 +257,37 @@ signupForm.addEventListener("submit", async function(event) {
 
         if (data.session) {
             showDashboard(data.user);
-            showMessage("Your account has been created successfully.", true);
+
+            showMessage(
+                "Your PeriodWise account has been created successfully!",
+                true
+            );
+
         } else {
             showMessage(
-                "Registration successful! Please check your email and confirm your account before signing in.",
+                "SUCCESS! Your PeriodWise account has been created. " +
+                "We have sent a verification link to " + email +
+                ". Please check your inbox or spam folder and confirm your email before signing in.",
                 true
             );
         }
+
+        message.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    } catch (error) {
+
+        showMessage(
+            "Account creation failed: " + error.message
+        );
+
+    } finally {
+        button.disabled = false;
+        button.textContent = "Create Account";
+    }
+});
 
     } catch (error) {
         showMessage(error.message);
