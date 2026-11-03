@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PeriodWise | Your Account</title>
+
+<link rel="stylesheet" href="./css/main.css">
+
+<style>
+.account-container {
+    max-width: 460px;
+    margin: 45px auto;
+    padding: 25px;
+}
+
+.account-card {
+    background: #fff;
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.07);
+}
+
+.account-title {
+    text-align: center;
+    color: #e91e63;
+    margin-bottom: 8px;
+}
+
+.account-subtitle {
+    text-align: center;
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.account-card label {
+    display: block;
+    margin-top: 16px;
+    font-weight: 600;
+}
+
+.account-card input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    margin-top: 7px;
+    border: 1px solid #ead5df;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.account-button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg,#e91e63,#c2185b);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.account-links {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.account-links button {
+    border: none;
+    background: none;
+    color: #e91e63;
+    cursor: pointer;
+    margin: 6px;
+}
+
+.account-message {
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: 9px;
+    display: none;
+    overflow-wrap: anywhere;
+}
+
+.account-note {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    margin-top: 22px;
+}
+
+#accountDashboard {
+    display: none;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="account-container">
+
+    <div class="account-card">
+
+        <h1 class="account-title">PeriodWise</h1>
+
+        <p class="account-subtitle">
+            Your personal account. Your journey. Your privacy.
+        </p>
+
+        <div id="authForms">
+
+            <form id="signupForm">
+
+                <h2>Create Your Account</h2>
+
+                <label for="signupEmail">Email Address</label>
+                <input
+                    type="email"
+                    id="signupEmail"
+                    required
+                    autocomplete="email"
+                >
+
+                <label for="signupPassword">Create Password</label>
+                <input
+                    type="password"
+                    id="signupPassword"
+                    required
+                    minlength="8"
+                    autocomplete="new-password"
+                >
+
+                <button class="account-button" type="submit">
+                    Create Account
+                </button>
+
+            </form>
+
+            <hr style="margin:28px 0;border:0;border-top:1px solid #eee;">
+
+            <form id="loginForm">
+
+                <h2>Already Have an Account?</h2>
+
+                <label for="loginEmail">Email Address</label>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    required
+                    autocomplete="email"
+                >
+
+                <label for="loginPassword">Password</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    required
+                    autocomplete="current-password"
+                >
+
+                <button class="account-button" type="submit">
+                    Sign In
+                </button>
+
+            </form>
+
+            <div class="account-links">
+                <button type="button" id="forgotPassword">
+                    Forgot Password?
+                </button>
+            </div>
+
+        </div>
+
+        <div id="accountDashboard">
+
+            <h2>Welcome to PeriodWise!</h2>
+
+            <p id="customerEmail"></p>
+
+            <p>
+                Your account is active.
+                TTC Hub access is granted separately
+                after payment verification.
+            </p>
+
+            <button
+                class="account-button"
+                id="logoutButton"
+                type="button">
+                Sign Out
+            </button>
+
+        </div>
+
+        <div id="accountMessage" class="account-message"></div>
+
+        <p class="account-note">
+            PeriodWise respects your privacy.
+            Creating an account does not automatically
+            unlock paid TTC features.
+        </p>
+
+        <p style="text-align:center;margin-top:20px;">
+            <a href="./index.html" style="color:#e91e63;">
+                Return to PeriodWise App
+            </a>
+        </p>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="./js/supabase-client.js"></script>
+
+<script>
+initializePeriodWiseSupabase();
+</script>
+
+<script src="./js/auth.js"></script>
+
+<script>
+const signupForm = document.getElementById("signupForm");
+const loginForm = document.getElementById("loginForm");
+const message = document.getElementById("accountMessage");
+
+function showMessage(text, success = false) {
+    message.style.display = "block";
+    message.textContent = text;
+    message.style.background = success ? "#e8f5e9" : "#ffebee";
+    message.style.color = success ? "#256029" : "#b71c1c";
+}
+
+function showDashboard(user) {
+    document.getElementById("authForms").style.display = "none";
+    document.getElementById("accountDashboard").style.display = "block";
+    document.getElementById("customerEmail").textContent = user.email;
+}
+
+signupForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    try {
+        const email = document.getElementById("signupEmail").value.trim();
+        const password = document.getElementById("signupPassword").value;
+
+        const data = await PeriodWiseAuth.signUp(email, password);
+
+        if (data.session) {
+            showDashboard(data.user);
+            showMessage("Your account has been created successfully.", true);
+        } else {
+            showMessage(
+                "Registration successful! Please check your email and confirm your account before signing in.",
+                true
+            );
+        }
+
+    } catch (error) {
+        showMessage(error.message);
+    }
+});
+
+loginForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    try {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+
+        const data = await PeriodWiseAuth.signIn(email, password);
+
+        showDashboard(data.user);
+        showMessage("You are now signed in.", true);
+
+    } catch (error) {
+        showMessage(error.message);
+    }
+});
+
+document.getElementById("forgotPassword").addEventListener("click", async function() {
+    const email = document.getElementById("loginEmail").value.trim();
+
+    if (!email) {
+        showMessage("Enter your email address in the sign-in section first.");
+        return;
+    }
+
+    try {
+        await PeriodWiseAuth.resetPassword(email);
+
+        showMessage(
+            "If an account exists for this email, password recovery instructions will be sent.",
+            true
+        );
+
+    } catch (error) {
+        showMessage(error.message);
+    }
+});
+
+document.getElementById("logoutButton").addEventListener("click", async function() {
+    try {
+        await PeriodWiseAuth.signOut();
+
+        document.getElementById("accountDashboard").style.display = "none";
+        document.getElementById("authForms").style.display = "block";
+
+        showMessage("You have signed out successfully.", true);
+
+    } catch (error) {
+        showMessage(error.message);
+    }
+});
+
+// Restore an existing login session
+(async function() {
+    try {
+        const session = await PeriodWiseAuth.getSession();
+
+        if (session && session.user) {
+            showDashboard(session.user);
+        }
+    } catch (error) {
+        showMessage("Unable to check your account session.");
+    }
+})();
+</script>
+
+</body>
+</html>
