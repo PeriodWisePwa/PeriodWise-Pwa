@@ -1,363 +1,733 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>PeriodWise | Your Account</title>
+    <title>My Account | PeriodWise</title>
 
-<link rel="stylesheet" href="./css/main.css">
+    <meta name="theme-color" content="#e91e63">
 
-<style>
-.account-container {
-    max-width: 460px;
-    margin: 45px auto;
-    padding: 25px;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-.account-card {
-    background: #fff;
-    padding: 28px;
-    border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.07);
-}
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #fff5f8;
+            color: #333;
+        }
 
-.account-title {
-    text-align: center;
-    color: #e91e63;
-    margin-bottom: 8px;
-}
+        .container {
+            max-width: 460px;
+            margin: 35px auto;
+        }
 
-.account-subtitle {
-    text-align: center;
-    color: #777;
-    margin-bottom: 25px;
-}
+        .brand {
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-.account-card label {
-    display: block;
-    margin-top: 16px;
-    font-weight: 600;
-}
+        .brand h1 {
+            color: #e91e63;
+            margin-bottom: 8px;
+            font-size: 30px;
+        }
 
-.account-card input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 14px;
-    margin-top: 7px;
-    border: 1px solid #ead5df;
-    border-radius: 10px;
-    font-size: 15px;
-}
+        .brand p {
+            color: #666;
+            font-size: 14px;
+        }
 
-.account-button {
-    width: 100%;
-    padding: 14px;
-    margin-top: 20px;
-    border: none;
-    border-radius: 10px;
-    background: linear-gradient(135deg,#e91e63,#c2185b);
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.07);
+        }
 
-.account-links {
-    text-align: center;
-    margin-top: 20px;
-}
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+        }
 
-.account-links button {
-    border: none;
-    background: none;
-    color: #e91e63;
-    cursor: pointer;
-    margin: 6px;
-}
+        .description {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
 
-.account-message {
-    margin-top: 18px;
-    padding: 12px;
-    border-radius: 9px;
-    display: none;
-    overflow-wrap: anywhere;
-}
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-size: 14px;
+            font-weight: bold;
+        }
 
-.account-note {
-    text-align: center;
-    color: #888;
-    font-size: 13px;
-    margin-top: 22px;
-}
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
 
-#accountDashboard {
-    display: none;
-    text-align: center;
-}
-</style>
+        input:focus {
+            border-color: #e91e63;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 18px;
+            border: none;
+            border-radius: 8px;
+            background: #e91e63;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .link-button {
+            background: none;
+            color: #e91e63;
+            padding: 10px;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+
+        .switch-text {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .switch-text a {
+            color: #e91e63;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .message {
+            display: none;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .success {
+            display: block;
+            background: #e8f5e9;
+            color: #256029;
+        }
+
+        .error {
+            display: block;
+            background: #ffebee;
+            color: #b71c1c;
+        }
+
+        .info {
+            display: block;
+            background: #e3f2fd;
+            color: #155b91;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .dashboard {
+            text-align: center;
+        }
+
+        .dashboard h2 {
+            color: #e91e63;
+        }
+
+        .account-email {
+            background: #fff5f8;
+            padding: 14px;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: #e91e63;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="account-container">
+<div class="container">
 
-    <div class="account-card">
+    <div class="brand">
+        <h1>PeriodWise</h1>
+        <p>Your personal cycle and fertility companion.</p>
+    </div>
 
-        <h1 class="account-title">PeriodWise</h1>
+    <div class="card">
 
-        <p class="account-subtitle">
-            Your personal account. Your journey. Your privacy.
-        </p>
+        <div id="loadingMessage" class="loading">
+            Loading your account...
+        </div>
 
-        <div id="authForms">
+        <div id="accountContent" class="hidden">
 
-            <form id="signupForm">
+            <div id="accountMessage" class="message"></div>
+
+            <!-- REGISTRATION FORM -->
+
+            <section id="signupSection">
 
                 <h2>Create Your Account</h2>
 
-                <label for="signupEmail">Email Address</label>
-                <input
-                    type="email"
-                    id="signupEmail"
-                    required
-                    autocomplete="email"
-                >
+                <p class="description">
+                    Create a PeriodWise account to access and manage
+                    your premium features and purchases.
+                </p>
 
-                <label for="signupPassword">Create Password</label>
-                <input
-                    type="password"
-                    id="signupPassword"
-                    required
-                    minlength="8"
-                    autocomplete="new-password"
-                >
+                <form id="signupForm">
 
-                <button class="account-button" type="submit">
-                    Create Account
+                    <label for="signupEmail">Email Address</label>
+
+                    <input
+                        type="email"
+                        id="signupEmail"
+                        placeholder="Enter your email address"
+                        autocomplete="email"
+                        required
+                    >
+
+                    <label for="signupPassword">Password</label>
+
+                    <input
+                        type="password"
+                        id="signupPassword"
+                        placeholder="At least 8 characters"
+                        minlength="8"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button type="submit">
+                        Create Account
+                    </button>
+
+                </form>
+
+                <p class="switch-text">
+                    Already have an account?
+                    <a href="#" id="showLogin">Sign In</a>
+                </p>
+
+            </section>
+
+
+            <!-- LOGIN FORM -->
+
+            <section id="loginSection" class="hidden">
+
+                <h2>Welcome Back</h2>
+
+                <p class="description">
+                    Sign in to your PeriodWise account.
+                </p>
+
+                <form id="loginForm">
+
+                    <label for="loginEmail">Email Address</label>
+
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        placeholder="Enter your email address"
+                        autocomplete="email"
+                        required
+                    >
+
+                    <label for="loginPassword">Password</label>
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button type="submit">
+                        Sign In
+                    </button>
+
+                </form>
+
+                <button
+                    type="button"
+                    class="link-button"
+                    id="forgotPassword"
+                >
+                    Forgot your password?
                 </button>
 
-            </form>
+                <p class="switch-text">
+                    Don't have an account?
+                    <a href="#" id="showSignup">Create Account</a>
+                </p>
 
-            <hr style="margin:28px 0;border:0;border-top:1px solid #eee;">
+            </section>
 
-            <form id="loginForm">
 
-                <h2>Already Have an Account?</h2>
+            <!-- PASSWORD RESET FORM -->
 
-                <label for="loginEmail">Email Address</label>
-                <input
-                    type="email"
-                    id="loginEmail"
-                    required
-                    autocomplete="email"
+            <section id="resetSection" class="hidden">
+
+                <h2>Reset Password</h2>
+
+                <p class="description">
+                    Enter your registered email address.
+                    We will send you a password reset link.
+                </p>
+
+                <form id="resetForm">
+
+                    <label for="resetEmail">Email Address</label>
+
+                    <input
+                        type="email"
+                        id="resetEmail"
+                        placeholder="Enter your email address"
+                        autocomplete="email"
+                        required
+                    >
+
+                    <button type="submit">
+                        Send Reset Link
+                    </button>
+
+                </form>
+
+                <p class="switch-text">
+                    <a href="#" id="backToLogin">Back to Sign In</a>
+                </p>
+
+            </section>
+
+
+            <!-- CUSTOMER DASHBOARD -->
+
+            <section id="dashboardSection" class="hidden dashboard">
+
+                <h2>Welcome to PeriodWise!</h2>
+
+                <p class="description">
+                    You are successfully signed in.
+                </p>
+
+                <p>Your registered email:</p>
+
+                <div class="account-email" id="customerEmail"></div>
+
+                <p class="description">
+                    Your account can be used to access eligible
+                    PeriodWise premium purchases.
+                </p>
+
+                <button
+                    type="button"
+                    id="logoutButton"
+                    class="secondary-button"
                 >
-
-                <label for="loginPassword">Password</label>
-                <input
-                    type="password"
-                    id="loginPassword"
-                    required
-                    autocomplete="current-password"
-                >
-
-                <button class="account-button" type="submit">
-                    Sign In
+                    Sign Out
                 </button>
 
-            </form>
-
-            <div class="account-links">
-                <button type="button" id="forgotPassword">
-                    Forgot Password?
-                </button>
-            </div>
+            </section>
 
         </div>
-
-        <div id="accountDashboard">
-
-            <h2>Welcome to PeriodWise!</h2>
-
-            <p id="customerEmail"></p>
-
-            <p>
-                Your account is active.
-                TTC Hub access is granted separately
-                after payment verification.
-            </p>
-
-            <button
-                class="account-button"
-                id="logoutButton"
-                type="button">
-                Sign Out
-            </button>
-
-        </div>
-
-        <div id="accountMessage" class="account-message"></div>
-
-        <p class="account-note">
-            PeriodWise respects your privacy.
-            Creating an account does not automatically
-            unlock paid TTC features.
-        </p>
-
-        <p style="text-align:center;margin-top:20px;">
-            <a href="./index.html" style="color:#e91e63;">
-                Return to PeriodWise App
-            </a>
-        </p>
 
     </div>
+
+    <a href="https://app.periodwise.online" class="back-link">
+        ← Return to PeriodWise App
+    </a>
+
 </div>
+
+
+<!-- SUPABASE CONNECTION -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="./js/supabase-client.js"></script>
 
 <script>
-initializePeriodWiseSupabase();
+    initializePeriodWiseSupabase();
 </script>
 
 <script src="./js/auth.js"></script>
 
+
+<!-- ACCOUNT PAGE FUNCTIONALITY -->
+
 <script>
-const signupForm = document.getElementById("signupForm");
-const loginForm = document.getElementById("loginForm");
-const message = document.getElementById("accountMessage");
 
-function showMessage(text, success = false) {
-    message.style.display = "block";
-    message.textContent = text;
-    message.style.background = success ? "#e8f5e9" : "#ffebee";
-    message.style.color = success ? "#256029" : "#b71c1c";
-}
+document.addEventListener("DOMContentLoaded", async function () {
 
-function showDashboard(user) {
-    document.getElementById("authForms").style.display = "none";
-    document.getElementById("accountDashboard").style.display = "block";
-    document.getElementById("customerEmail").textContent = user.email;
-}
+    const loadingMessage = document.getElementById("loadingMessage");
+    const accountContent = document.getElementById("accountContent");
+    const message = document.getElementById("accountMessage");
 
-signupForm.addEventListener("submit", async function(event) {
-    event.preventDefault();
+    const signupSection = document.getElementById("signupSection");
+    const loginSection = document.getElementById("loginSection");
+    const resetSection = document.getElementById("resetSection");
+    const dashboardSection = document.getElementById("dashboardSection");
 
-    const button = signupForm.querySelector("button[type='submit']");
+    const signupForm = document.getElementById("signupForm");
+    const loginForm = document.getElementById("loginForm");
+    const resetForm = document.getElementById("resetForm");
 
-    try {
-        button.disabled = true;
-        button.textContent = "Creating Account...";
+    const logoutButton = document.getElementById("logoutButton");
 
-        const email = document.getElementById("signupEmail").value.trim();
-        const password = document.getElementById("signupPassword").value;
+    function showMessage(text, type = "info") {
 
-        const data = await PeriodWiseAuth.signUp(email, password);
+        message.textContent = text;
 
-        if (data.session) {
-            showDashboard(data.user);
-
-            showMessage(
-                "Your PeriodWise account has been created successfully!",
-                true
-            );
-
-        } else {
-            showMessage(
-                "SUCCESS! Your PeriodWise account has been created. " +
-                "We have sent a verification link to " + email +
-                ". Please check your inbox or spam folder and confirm your email before signing in.",
-                true
-            );
-        }
+        message.className = "message " + type;
 
         message.scrollIntoView({
             behavior: "smooth",
             block: "center"
         });
-
-    } catch (error) {
-
-        showMessage(
-            "Account creation failed: " + error.message
-        );
-
-    } finally {
-        button.disabled = false;
-        button.textContent = "Create Account";
     }
-});
 
-    } catch (error) {
-        showMessage(error.message);
+    function clearMessage() {
+
+        message.textContent = "";
+        message.className = "message";
+
     }
-});
 
-loginForm.addEventListener("submit", async function(event) {
-    event.preventDefault();
+    function showSection(section) {
 
-    try {
+        signupSection.classList.add("hidden");
+        loginSection.classList.add("hidden");
+        resetSection.classList.add("hidden");
+        dashboardSection.classList.add("hidden");
+
+        section.classList.remove("hidden");
+
+        clearMessage();
+
+    }
+
+    function showDashboard(user) {
+
+        document.getElementById("customerEmail").textContent =
+            user.email || "Email unavailable";
+
+        showSection(dashboardSection);
+
+    }
+
+    // Show registration
+
+    document.getElementById("showSignup").addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        showSection(signupSection);
+
+    });
+
+
+    // Show login
+
+    document.getElementById("showLogin").addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        showSection(loginSection);
+
+    });
+
+
+    // Forgot password
+
+    document.getElementById("forgotPassword").addEventListener("click", function() {
+
+        document.getElementById("resetEmail").value =
+            document.getElementById("loginEmail").value;
+
+        showSection(resetSection);
+
+    });
+
+
+    // Return to login
+
+    document.getElementById("backToLogin").addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        showSection(loginSection);
+
+    });
+
+
+    // CREATE ACCOUNT
+
+    signupForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const button = signupForm.querySelector("button[type='submit']");
+
+        const email = document.getElementById("signupEmail").value.trim();
+
+        const password = document.getElementById("signupPassword").value;
+
+        try {
+
+            button.disabled = true;
+            button.textContent = "Creating Account...";
+
+            clearMessage();
+
+            const data = await PeriodWiseAuth.signUp(email, password);
+
+            if (data.session && data.user) {
+
+                showDashboard(data.user);
+
+                showMessage(
+                    "Your PeriodWise account has been created successfully!",
+                    "success"
+                );
+
+            } else {
+
+                signupForm.reset();
+
+                showMessage(
+                    "SUCCESS! Your PeriodWise account has been created. " +
+                    "A verification link has been sent to " + email +
+                    ". Please check your inbox or spam folder and verify your email before signing in.",
+                    "success"
+                );
+
+            }
+
+        } catch (error) {
+
+            showMessage(
+                "Account creation failed: " + error.message,
+                "error"
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.textContent = "Create Account";
+
+        }
+
+    });
+
+
+    // CUSTOMER LOGIN
+
+    loginForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const button = loginForm.querySelector("button[type='submit']");
+
         const email = document.getElementById("loginEmail").value.trim();
+
         const password = document.getElementById("loginPassword").value;
 
-        const data = await PeriodWiseAuth.signIn(email, password);
+        try {
 
-        showDashboard(data.user);
-        showMessage("You are now signed in.", true);
+            button.disabled = true;
+            button.textContent = "Signing In...";
 
-    } catch (error) {
-        showMessage(error.message);
-    }
-});
+            clearMessage();
 
-document.getElementById("forgotPassword").addEventListener("click", async function() {
-    const email = document.getElementById("loginEmail").value.trim();
+            const data = await PeriodWiseAuth.signIn(email, password);
 
-    if (!email) {
-        showMessage("Enter your email address in the sign-in section first.");
-        return;
-    }
+            showDashboard(data.user);
+
+            showMessage(
+                "You have successfully signed in to PeriodWise.",
+                "success"
+            );
+
+        } catch (error) {
+
+            showMessage(
+                "Sign in failed: " + error.message,
+                "error"
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.textContent = "Sign In";
+
+        }
+
+    });
+
+
+    // PASSWORD RESET EMAIL
+
+    resetForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const button = resetForm.querySelector("button[type='submit']");
+
+        const email = document.getElementById("resetEmail").value.trim();
+
+        try {
+
+            button.disabled = true;
+            button.textContent = "Sending...";
+
+            clearMessage();
+
+            await PeriodWiseAuth.resetPassword(email);
+
+            showMessage(
+                "If an account exists for this email, a password reset link has been sent. Please check your inbox and spam folder.",
+                "success"
+            );
+
+            resetForm.reset();
+
+        } catch (error) {
+
+            showMessage(
+                "Unable to send reset email: " + error.message,
+                "error"
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.textContent = "Send Reset Link";
+
+        }
+
+    });
+
+
+    // CUSTOMER LOGOUT
+
+    logoutButton.addEventListener("click", async function() {
+
+        try {
+
+            logoutButton.disabled = true;
+            logoutButton.textContent = "Signing Out...";
+
+            await PeriodWiseAuth.signOut();
+
+            showSection(loginSection);
+
+            showMessage(
+                "You have successfully signed out.",
+                "success"
+            );
+
+        } catch (error) {
+
+            showMessage(
+                "Sign out failed: " + error.message,
+                "error"
+            );
+
+        } finally {
+
+            logoutButton.disabled = false;
+            logoutButton.textContent = "Sign Out";
+
+        }
+
+    });
+
+
+    // RESTORE EXISTING LOGIN SESSION
 
     try {
-        await PeriodWiseAuth.resetPassword(email);
 
-        showMessage(
-            "If an account exists for this email, password recovery instructions will be sent.",
-            true
-        );
-
-    } catch (error) {
-        showMessage(error.message);
-    }
-});
-
-document.getElementById("logoutButton").addEventListener("click", async function() {
-    try {
-        await PeriodWiseAuth.signOut();
-
-        document.getElementById("accountDashboard").style.display = "none";
-        document.getElementById("authForms").style.display = "block";
-
-        showMessage("You have signed out successfully.", true);
-
-    } catch (error) {
-        showMessage(error.message);
-    }
-});
-
-// Restore an existing login session
-(async function() {
-    try {
         const session = await PeriodWiseAuth.getSession();
 
+        loadingMessage.classList.add("hidden");
+        accountContent.classList.remove("hidden");
+
         if (session && session.user) {
+
             showDashboard(session.user);
+
+        } else {
+
+            showSection(signupSection);
+
         }
+
     } catch (error) {
-        showMessage("Unable to check your account session.");
+
+        loadingMessage.classList.add("hidden");
+        accountContent.classList.remove("hidden");
+
+        showSection(signupSection);
+
+        showMessage(
+            "Unable to check your account session. Please try again. " +
+            error.message,
+            "error"
+        );
+
     }
-})();
+
+});
+
 </script>
 
 </body>
