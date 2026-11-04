@@ -816,6 +816,77 @@
 <script src="./js/auth.js"></script>
 <!-- PeriodWise Premium Access -->
 <script src="./js/entitlements.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const checkButton =
+        document.getElementById("checkTtcAccessButton");
+
+    const status =
+        document.getElementById("ttcAccessStatus");
+
+    const accountLink =
+        document.getElementById("ttcAccountLink");
+
+    if (!checkButton || !status) return;
+
+    checkButton.addEventListener("click", async function () {
+
+        checkButton.disabled = true;
+        checkButton.textContent = "Checking Access...";
+
+        status.textContent = "Checking your PeriodWise account...";
+        accountLink.style.display = "none";
+
+        try {
+
+            const result =
+                await window.PeriodWiseEntitlements.checkTtcHubAccess();
+
+            if (result.hasAccess) {
+
+                status.textContent =
+                    "✓ Your Premium TTC Hub access is active!";
+
+                accountLink.style.display = "none";
+
+            } else if (!result.signedIn && !result.error) {
+
+                status.textContent =
+                    "Please sign in to check your premium access.";
+
+                accountLink.style.display = "block";
+
+            } else if (result.error) {
+
+                status.textContent =
+                    result.message;
+
+            } else {
+
+                status.textContent =
+                    "Your account is recognised, but no active TTC Hub purchase was found. Premium purchasing will be available soon.";
+
+            }
+
+        } catch (error) {
+
+            status.textContent =
+                "Unable to check access. Please try again.";
+
+            console.error(error);
+
+        } finally {
+
+            checkButton.disabled = false;
+            checkButton.textContent = "Check My Premium Access";
+
+        }
+
+    });
+
+});
+</script>
   
   <!-- Temporary Supabase Connection Test -->
 <div style="padding:20px; text-align:center;">
