@@ -879,8 +879,10 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
 
                 status.textContent =
-                    "Your account is recognised, but no active TTC Hub purchase was found. Premium purchasing will be available soon.";
-
+                    "status.textContent =
+    "Your account is recognised, but you don't have an active TTC Hub purchase yet. You can purchase lifetime access below.";
+                buyButton.style.display = "block";
+              
             }
 
         } catch (error) {
