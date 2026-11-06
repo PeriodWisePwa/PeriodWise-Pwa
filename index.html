@@ -848,7 +848,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         status.textContent = "Checking your PeriodWise account...";
         accountLink.style.display = "none";
-        buyButton.style.display = "none";
 
         try {
 
@@ -861,6 +860,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     "✓ Your Premium TTC Hub access is active!";
 
                 accountLink.style.display = "none";
+                buyButton.style.display = "none";
 
             } else if (!result.signedIn && !result.error) {
 
@@ -868,11 +868,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Please sign in to check your premium access.";
 
                 accountLink.style.display = "block";
+                buyButton.style.display = "none";
 
             } else if (result.error) {
 
                 status.textContent =
                     result.message;
+                buyButton.style.display = "none";
 
             } else {
 
