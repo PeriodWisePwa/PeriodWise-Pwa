@@ -901,6 +901,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
+      buyButton.addEventListener("click", async function () {
+
+        buyButton.disabled = true;
+        buyButton.textContent = "Opening Secure Checkout...";
+
+        status.textContent =
+            "Preparing your secure TTC Hub checkout...";
+
+        try {
+
+            const { data, error } =
+                await window.periodWiseSupabase.functions.invoke(
+                    "create-ttc-checkout",
+                    {
+                        body: {}
+                    }
+                );
+
+            if (error) {
+                console.error("Checkout error:", error);
+                throw new Error(
+                    "Unable to start checkout. Please try again."
+                );
+            }
+
+            if (!data || !data.checkout_url) {
+                throw new Error(
+                    "Checkout link was not received. Please try again."
+                );
+            }
+
+            window.location.href = data.checkout_url;
+
+        } catch (error) {
+
+            status.textContent = error.message;
+
+            console.error("TTC checkout failed:", error);
+
+            buyButton.disabled = false;
+            buyButton.textContent =
+                "Buy TTC Hub — $9.99 (One-Time Payment)";
+
+        }
+
+    });
+
 });
 </script>
   
