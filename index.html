@@ -810,20 +810,32 @@
 <script src="./js/fertility-tracker.js"></script>
 <script src="./js/app.js"></script>
   
-  <!-- Supabase Library -->
+  
+<!-- 1. SUPABASE LIBRARY -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- PeriodWise Supabase Configuration -->
+<!-- 2. SUPABASE CONFIGURATION -->
 <script src="./js/supabase-client.js"></script>
 
-<!-- Initialize Supabase -->
+<!-- 3. INITIALIZE SUPABASE -->
 <script>
     initializePeriodWiseSupabase();
 </script>
-<!-- PeriodWise Authentication -->
+
+<!-- 4. CUSTOMER AUTHENTICATION -->
 <script src="./js/auth.js"></script>
-<!-- PeriodWise Premium Access -->
+
+<!-- 5. PREMIUM ACCESS CHECKER -->
 <script src="./js/entitlements.js"></script>
+
+<!-- 6. PERIODWISE APP MODULES -->
+<script src="./js/database.js"></script>
+<script src="./js/navigation.js"></script>
+<script src="./js/cycle-tracker.js"></script>
+<script src="./js/fertility-tracker.js"></script>
+<script src="./js/app.js"></script>
+
+<!-- 7. TTC ACCESS AND CHECKOUT -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -836,10 +848,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const accountLink =
         document.getElementById("ttcAccountLink");
 
-  const buyButton =
-    document.getElementById("buyTtcHubButton");
+    const buyButton =
+        document.getElementById("buyTtcHubButton");
 
-    if (!checkButton || !status || !buyButton) return;
+    if (!checkButton || !status || !buyButton || !accountLink) return;
 
     checkButton.addEventListener("click", async function () {
 
@@ -872,18 +884,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
             } else if (result.error) {
 
-                status.textContent =
-                    result.message;
+                status.textContent = result.message;
                 buyButton.style.display = "none";
 
             } else {
 
-    status.textContent =
-        "Your account is recognised, but you don't have an active TTC Hub purchase yet. You can purchase lifetime access below.";
+                status.textContent =
+                    "Your account is recognised, but you don't have an active TTC Hub purchase yet. You can purchase lifetime access below.";
 
-    buyButton.style.display = "block";
+                buyButton.style.display = "block";
 
-}
+            }
 
         } catch (error) {
 
@@ -901,7 +912,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-      buyButton.addEventListener("click", async function () {
+    buyButton.addEventListener("click", async function () {
 
         buyButton.disabled = true;
         buyButton.textContent = "Opening Secure Checkout...";
@@ -921,6 +932,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (error) {
                 console.error("Checkout error:", error);
+
                 throw new Error(
                     "Unable to start checkout. Please try again."
                 );
@@ -950,6 +962,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
   
   <!-- Temporary Supabase Connection Test -->
 <div style="padding:20px; text-align:center;">
