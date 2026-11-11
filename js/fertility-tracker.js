@@ -1,3 +1,4 @@
+
 const PeriodWiseFertility = {
 
   // Save basal body temperature
@@ -55,6 +56,30 @@ const PeriodWiseFertility = {
     };
 
     return await PeriodWiseDB.save("lhRecords", record);
+  },
+
+
+  // Save pregnancy test
+  async savePregnancyTest(date, result, notes = "") {
+
+    const allowedResults = [
+      "positive",
+      "negative",
+      "invalid"
+    ];
+
+    if (!date || !allowedResults.includes(result)) {
+      throw new Error("Enter a valid pregnancy test result.");
+    }
+
+    const record = {
+      date,
+      result,
+      notes,
+      createdAt: new Date().toISOString()
+    };
+
+    return await PeriodWiseDB.save("pregnancyTests", record);
   },
 
 
@@ -126,6 +151,18 @@ const PeriodWiseFertility = {
   },
 
 
+  // Retrieve pregnancy test records
+  async getPregnancyTests() {
+
+    const records =
+      await PeriodWiseDB.getAll("pregnancyTests");
+
+    return records.sort((a, b) =>
+      b.date.localeCompare(a.date)
+    );
+  },
+
+
   // Retrieve fertility observations
   async getObservations() {
 
@@ -146,7 +183,8 @@ const PeriodWiseFertility = {
     const allowedStores = [
       "bbtRecords",
       "lhRecords",
-      "symptomRecords"
+      "symptomRecords",
+      "pregnancyTests"
     ];
 
     if (!allowedStores.includes(storeName)) {
