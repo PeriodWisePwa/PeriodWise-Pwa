@@ -379,6 +379,58 @@
 
   </div>
 
+  
+  <!-- PREGNANCY TEST TRACKER -->
+
+  <div class="card">
+
+    <h3>🤰 Pregnancy Test Tracker</h3>
+
+    <p>Record the results of your home pregnancy tests.</p>
+
+    <form id="pregnancyTestForm">
+
+      <label for="pregnancyTestDate">Test date</label>
+      <input type="date" id="pregnancyTestDate" required>
+
+      <label for="pregnancyTestResult">Test result</label>
+
+      <select id="pregnancyTestResult" required>
+        <option value="">Select result</option>
+        <option value="positive">Positive</option>
+        <option value="negative">Negative</option>
+        <option value="invalid">Invalid</option>
+      </select>
+
+      <label for="pregnancyTestNotes">Notes (optional)</label>
+      <textarea id="pregnancyTestNotes"
+                rows="3"
+                placeholder="Additional observations"></textarea>
+
+      <button type="submit" class="primary-button">
+        Save Pregnancy Test
+      </button>
+
+      <p id="pregnancyTestMessage" role="status"></p>
+
+    </form>
+
+    <h4>Pregnancy Test History</h4>
+
+    <p class="muted">
+      Your latest 7 pregnancy test records are available in the free tracker.
+      Subscribe to Fertility Records & Reports to access and download
+      your complete fertility history.
+    </p>
+
+    <div id="pregnancyTestHistory">
+      <p class="muted">Your pregnancy test records will appear here.</p>
+    </div>
+
+    <div id="pregnancyTestHistoryAccessMessage" class="muted"></div>
+
+  </div>
+
 
   <!-- CERVICAL MUCUS TRACKER -->
 
