@@ -471,51 +471,83 @@ lhForm.addEventListener("submit", async function (event) {
 
 }
 
+
 async function loadLHHistory() {
 
-const container =
-  document.getElementById("lhHistory");
+  const container =
+    document.getElementById("lhHistory");
 
-if (!container) return;
+  const accessMessage =
+    document.getElementById("lhHistoryAccessMessage");
 
-try {
+  if (!container) return;
 
-  const records =
-    await PeriodWiseFertility.getLH();
+  try {
 
-  container.innerHTML = "";
+    const records =
+      await PeriodWiseFertility.getLH();
 
-  if (records.length === 0) {
+    container.innerHTML = "";
+
+    if (records.length === 0) {
+
+      container.textContent =
+        "Your LH test records will appear here.";
+
+      if (accessMessage) {
+        accessMessage.textContent = "";
+      }
+
+      return;
+    }
+
+    // Show only the latest 7 LH test records.
+    const visibleRecords = records.slice(0, 7);
+
+    visibleRecords.forEach(function (record) {
+
+      createHistoryEntry(
+        container,
+        formatDate(record.date),
+        "Test result: " + record.result +
+        (record.notes ? " · " + record.notes : ""),
+        "lhRecords",
+        record.id
+      );
+
+    });
+
+    const olderRecordsCount =
+      records.length - visibleRecords.length;
+
+    if (accessMessage) {
+
+      if (olderRecordsCount > 0) {
+
+        accessMessage.textContent =
+          olderRecordsCount +
+          " older LH test record(s) are saved. Subscribe to Fertility Records & Reports to access and download your complete fertility history.";
+
+      } else {
+
+        accessMessage.textContent =
+          "Your latest 7 LH test records are displayed here.";
+
+      }
+
+    }
+
+  } catch (error) {
+
+    console.error("LH history error:", error);
 
     container.textContent =
-      "Your LH test records will appear here.";
+      "Unable to load LH history.";
 
-    return;
   }
 
-  records.forEach(function (record) {
-
-    createHistoryEntry(
-      container,
-      formatDate(record.date),
-      "Test result: " + record.result +
-      (record.notes ? " · " + record.notes : ""),
-      "lhRecords",
-      record.id
-    );
-
-  });
-
-} catch (error) {
-
-  console.error("LH history error:", error);
-
-  container.textContent =
-    "Unable to load LH history.";
-
 }
 
-}
 
 // =====================================
 // 7. CERVICAL MUCUS TRACKER
