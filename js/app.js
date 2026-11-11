@@ -178,55 +178,65 @@ cycleForm.addEventListener("submit", async function (event) {
 
 }
 
+
 async function loadCycleHistory() {
+  const container = document.getElementById("cycleHistory");
+  const accessMessage = document.getElementById("cycleHistoryAccessMessage");
 
-const container =
-  document.getElementById("cycleHistory");
+  if (!container) return;
 
-if (!container) return;
+  try {
+    const records = await PeriodWiseCycle.getHistory();
 
-try {
+    container.innerHTML = "";
 
-  const records =
-    await PeriodWiseCycle.getHistory();
+    if (records.length === 0) {
+      container.textContent = "Your saved periods will appear here.";
 
-  container.innerHTML = "";
+      if (accessMessage) {
+        accessMessage.textContent = "";
+      }
 
-  if (records.length === 0) {
+      updateCycleOverview(null);
+      return;
+    }
 
-    container.textContent =
-      "Your saved periods will appear here.";
+    // Show only the latest 3 cycles in the free tracker.
+    const visibleRecords = records.slice(0, 3);
 
-    updateCycleOverview(null);
+    visibleRecords.forEach(function (record) {
+      createHistoryEntry(
+        container,
+        formatDate(record.startDate),
+        record.periodLength + " period days · " +
+        record.cycleLength + " cycle days",
+        "cycleRecords",
+        record.id
+      );
+    });
 
-    return;
+    // Inform users when older records are available.
+    const olderRecordsCount = records.length - visibleRecords.length;
+
+    if (accessMessage) {
+      if (olderRecordsCount > 0) {
+        accessMessage.textContent =
+          olderRecordsCount +
+          " older cycle record(s) are saved. Subscribe to Cycle History Reports to access your complete history and download your report.";
+      } else {
+        accessMessage.textContent =
+          "Your latest 3 cycles are displayed here.";
+      }
+    }
+
+    updateCycleOverview(records[0]);
+
+  } catch (error) {
+    console.error("Cycle history error:", error);
+    container.textContent = "Unable to load your period history.";
   }
-
-  records.forEach(function (record) {
-
-    createHistoryEntry(
-      container,
-      formatDate(record.startDate),
-      record.periodLength + " period days · " +
-      record.cycleLength + " cycle days",
-      "cycleRecords",
-      record.id
-    );
-
-  });
-
-  updateCycleOverview(records[0]);
-
-} catch (error) {
-
-  console.error("Cycle history error:", error);
-
-  container.textContent =
-    "Unable to load your period history.";
-
 }
 
-}
 
 function updateCycleOverview(record) {
 
