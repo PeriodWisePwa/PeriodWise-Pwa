@@ -333,51 +333,83 @@ bbtForm.addEventListener("submit", async function (event) {
 
 }
 
+
 async function loadBBTHistory() {
 
-const container =
-  document.getElementById("bbtHistory");
+  const container =
+    document.getElementById("bbtHistory");
 
-if (!container) return;
+  const accessMessage =
+    document.getElementById("bbtHistoryAccessMessage");
 
-try {
+  if (!container) return;
 
-  const records =
-    await PeriodWiseFertility.getBBT();
+  try {
 
-  container.innerHTML = "";
+    const records =
+      await PeriodWiseFertility.getBBT();
 
-  if (records.length === 0) {
+    container.innerHTML = "";
+
+    if (records.length === 0) {
+
+      container.textContent =
+        "Your temperature records will appear here.";
+
+      if (accessMessage) {
+        accessMessage.textContent = "";
+      }
+
+      return;
+    }
+
+    // Show only the latest 7 BBT readings.
+    const visibleRecords = records.slice(0, 7);
+
+    visibleRecords.forEach(function (record) {
+
+      createHistoryEntry(
+        container,
+        formatDate(record.date),
+        record.temperature + " °" + record.unit +
+        (record.notes ? " · " + record.notes : ""),
+        "bbtRecords",
+        record.id
+      );
+
+    });
+
+    const olderRecordsCount =
+      records.length - visibleRecords.length;
+
+    if (accessMessage) {
+
+      if (olderRecordsCount > 0) {
+
+        accessMessage.textContent =
+          olderRecordsCount +
+          " older BBT record(s) are saved. Subscribe to Fertility Records & Reports to access and download your complete fertility history.";
+
+      } else {
+
+        accessMessage.textContent =
+          "Your latest 7 BBT readings are displayed here.";
+
+      }
+
+    }
+
+  } catch (error) {
+
+    console.error("BBT history error:", error);
 
     container.textContent =
-      "Your temperature records will appear here.";
+      "Unable to load BBT history.";
 
-    return;
   }
 
-  records.forEach(function (record) {
-
-    createHistoryEntry(
-      container,
-      formatDate(record.date),
-      record.temperature + " °" + record.unit +
-      (record.notes ? " · " + record.notes : ""),
-      "bbtRecords",
-      record.id
-    );
-
-  });
-
-} catch (error) {
-
-  console.error("BBT history error:", error);
-
-  container.textContent =
-    "Unable to load BBT history.";
-
 }
 
-}
 
 // =====================================
 // 6. LH OVULATION TEST TRACKER
