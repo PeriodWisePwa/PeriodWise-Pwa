@@ -549,6 +549,72 @@ async function loadLHHistory() {
 }
 
 
+  
+// =====================================
+// PREGNANCY TEST FORM
+// =====================================
+
+const pregnancyTestForm =
+  document.getElementById("pregnancyTestForm");
+
+const pregnancyTestDate =
+  document.getElementById("pregnancyTestDate");
+
+const pregnancyTestResult =
+  document.getElementById("pregnancyTestResult");
+
+const pregnancyTestNotes =
+  document.getElementById("pregnancyTestNotes");
+
+if (pregnancyTestDate) {
+  pregnancyTestDate.max =
+    new Date().toLocaleDateString("en-CA");
+}
+
+if (pregnancyTestForm) {
+
+  pregnancyTestForm.addEventListener("submit", async function (event) {
+
+    event.preventDefault();
+
+    setMessage(
+      "pregnancyTestMessage",
+      "Saving pregnancy test..."
+    );
+
+    try {
+
+      await PeriodWiseFertility.savePregnancyTest(
+        pregnancyTestDate.value,
+        pregnancyTestResult.value,
+        pregnancyTestNotes.value
+      );
+
+      setMessage(
+        "pregnancyTestMessage",
+        "Your pregnancy test result has been saved."
+      );
+
+      pregnancyTestForm.reset();
+
+      await loadPregnancyTestHistory();
+
+    } catch (error) {
+
+      console.error("Pregnancy test saving error:", error);
+
+      setMessage(
+        "pregnancyTestMessage",
+        error.message || "Unable to save pregnancy test."
+      );
+
+    }
+
+  });
+
+}
+
+
 // =====================================
 // 7. CERVICAL MUCUS TRACKER
 // =====================================
