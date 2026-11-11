@@ -614,6 +614,84 @@ if (pregnancyTestForm) {
 
 }
 
+  
+async function loadPregnancyTestHistory() {
+
+  const container =
+    document.getElementById("pregnancyTestHistory");
+
+  const accessMessage =
+    document.getElementById("pregnancyTestHistoryAccessMessage");
+
+  if (!container) return;
+
+  try {
+
+    const records =
+      await PeriodWiseFertility.getPregnancyTests();
+
+    container.innerHTML = "";
+
+    if (records.length === 0) {
+
+      container.textContent =
+        "Your pregnancy test records will appear here.";
+
+      if (accessMessage) {
+        accessMessage.textContent = "";
+      }
+
+      return;
+    }
+
+    // Show only the latest 7 pregnancy test records.
+    const visibleRecords = records.slice(0, 7);
+
+    visibleRecords.forEach(function (record) {
+
+      createHistoryEntry(
+        container,
+        formatDate(record.date),
+        "Test result: " + record.result +
+        (record.notes ? " · " + record.notes : ""),
+        "pregnancyTests",
+        record.id
+      );
+
+    });
+
+    const olderRecordsCount =
+      records.length - visibleRecords.length;
+
+    if (accessMessage) {
+
+      if (olderRecordsCount > 0) {
+
+        accessMessage.textContent =
+          olderRecordsCount +
+          " older pregnancy test record(s) are saved. Subscribe to Fertility Records & Reports to access and download your complete fertility history.";
+
+      } else {
+
+        accessMessage.textContent =
+          "Your latest 7 pregnancy test records are displayed here.";
+
+      }
+
+    }
+
+  } catch (error) {
+
+    console.error("Pregnancy test history error:", error);
+
+    container.textContent =
+      "Unable to load pregnancy test history.";
+
+  }
+
+}
+
+
 
 // =====================================
 // 7. CERVICAL MUCUS TRACKER
