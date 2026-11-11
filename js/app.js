@@ -681,56 +681,87 @@ ovulationForm.addEventListener("submit", async function (event) {
 
 async function loadFertilityHistory() {
 
-const container =
-  document.getElementById("fertilityHistory");
+  const container =
+    document.getElementById("fertilityHistory");
 
-if (!container) return;
+  const accessMessage =
+    document.getElementById("fertilityHistoryAccessMessage");
 
-try {
+  if (!container) return;
 
-  const records =
-    await PeriodWiseFertility.getObservations();
+  try {
 
-  container.innerHTML = "";
+    const records =
+      await PeriodWiseFertility.getObservations();
 
-  if (records.length === 0) {
+    container.innerHTML = "";
+
+    if (records.length === 0) {
+
+      container.textContent =
+        "Your fertility observations will appear here.";
+
+      if (accessMessage) {
+        accessMessage.textContent = "";
+      }
+
+      return;
+    }
+
+    // Show only the latest 7 observations.
+    const visibleRecords = records.slice(0, 7);
+
+    visibleRecords.forEach(function (record) {
+
+      const title =
+        record.category === "cervical-mucus"
+          ? "Cervical mucus · " + record.observation
+          : "Ovulation observation";
+
+      const details =
+        (record.notes || record.observation) || "";
+
+      createHistoryEntry(
+        container,
+        formatDate(record.date) + " · " + title,
+        details,
+        "symptomRecords",
+        record.id
+      );
+
+    });
+
+    const olderRecordsCount =
+      records.length - visibleRecords.length;
+
+    if (accessMessage) {
+
+      if (olderRecordsCount > 0) {
+
+        accessMessage.textContent =
+          olderRecordsCount +
+          " older fertility observation(s) are saved. Subscribe to Fertility Records & Reports to access and download your complete fertility history.";
+
+      } else {
+
+        accessMessage.textContent =
+          "Your latest 7 fertility observations are displayed here.";
+
+      }
+
+    }
+
+  } catch (error) {
+
+    console.error("Fertility history error:", error);
 
     container.textContent =
-      "Your fertility observations will appear here.";
+      "Unable to load fertility history.";
 
-    return;
   }
 
-  records.forEach(function (record) {
-
-    const title =
-      record.category === "cervical-mucus"
-        ? "Cervical mucus · " + record.observation
-        : "Ovulation observation";
-
-    const details =
-      (record.notes || record.observation) || "";
-
-    createHistoryEntry(
-      container,
-      formatDate(record.date) + " · " + title,
-      details,
-      "symptomRecords",
-      record.id
-    );
-
-  });
-
-} catch (error) {
-
-  console.error("Fertility history error:", error);
-
-  container.textContent =
-    "Unable to load fertility history.";
-
 }
 
-}
 
 // =====================================
 // 10. LOAD SAVED INFORMATION
