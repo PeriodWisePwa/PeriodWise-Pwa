@@ -624,6 +624,121 @@ main {
   font-size: 16px;
 }
 
+
+/* =====================================
+   PREMIUM PREGNANCY TEST TRACKER
+===================================== */
+
+#pregnancyTestForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 22px;
+  background: linear-gradient(145deg, #fffafd, #fff3f7);
+  border: 1px solid #f4dce6;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(130, 55, 85, 0.06);
+}
+
+#pregnancyTestForm label {
+  display: block;
+  margin-top: 8px;
+  color: #704256;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+#pregnancyTestForm input,
+#pregnancyTestForm select,
+#pregnancyTestForm textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 16px;
+  border: 1px solid #ecd4df;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #49333d;
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+#pregnancyTestForm input,
+#pregnancyTestForm select {
+  min-height: 52px;
+}
+
+#pregnancyTestForm input:focus,
+#pregnancyTestForm select:focus,
+#pregnancyTestForm textarea:focus {
+  border-color: #dc6b99;
+  box-shadow: 0 0 0 4px rgba(220, 107, 153, 0.12);
+}
+
+#pregnancyTestForm textarea {
+  resize: vertical;
+  min-height: 95px;
+  line-height: 1.6;
+}
+
+#pregnancyTestForm input::placeholder,
+#pregnancyTestForm textarea::placeholder {
+  color: #b9a4ae;
+  font-size: 13px;
+}
+
+#pregnancyTestForm .primary-button {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #e45b91, #bd3975);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 7px 16px rgba(189, 57, 117, 0.22);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#pregnancyTestForm .primary-button:active {
+  transform: scale(0.98);
+}
+
+#pregnancyTestMessage {
+  min-height: 18px;
+  margin-top: 5px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Pregnancy test history */
+
+#fertility #pregnancyTestHistory {
+  margin-top: 15px;
+}
+
+#fertility #pregnancyTestHistory .history-item {
+  padding: 17px;
+  margin-bottom: 12px;
+  border: 1px solid #f1dce5;
+  border-radius: 14px;
+  background: #fffafd;
+}
+
+#fertility #pregnancyTestHistory .history-item strong {
+  color: #bd3975;
+  font-size: 16px;
+}
+
+
 /* =================================
    PERIODWISE PREMIUM FERTILITY FORMS
 ================================= */
