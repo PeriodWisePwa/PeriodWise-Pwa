@@ -919,6 +919,8 @@ await loadLHHistory();
 
 await loadFertilityHistory();
 
+await loadPregnancyTestHistory();
+
 // =====================================
 // 11. SERVICE WORKER
 // =====================================
