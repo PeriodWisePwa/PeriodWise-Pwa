@@ -67,53 +67,67 @@ return date.toLocaleDateString(undefined, {
 
 function createHistoryEntry(container, title, details, storeName, id) {
 
-const item = document.createElement("div");
-item.className = "history-item";
+  const item = document.createElement("div");
+  item.className = "history-item";
 
-const heading = document.createElement("strong");
-heading.textContent = title;
+  const heading = document.createElement("strong");
+  heading.textContent = title;
 
-const description = document.createElement("p");
-description.textContent = details;
+  const description = document.createElement("p");
+  description.textContent = details;
 
-const deleteButton = document.createElement("button");
+  const deleteButton = document.createElement("button");
 
-deleteButton.type = "button";
-deleteButton.textContent = "Delete";
-deleteButton.className = "secondary-button";
+  deleteButton.type = "button";
+  deleteButton.textContent = "Delete";
+  deleteButton.className = "secondary-button";
 
-deleteButton.addEventListener("click", async function () {
+  deleteButton.addEventListener("click", async function () {
 
-  const confirmed = window.confirm(
-    "Are you sure you want to delete this record?"
-  );
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this record?"
+    );
 
-  if (!confirmed) return;
+    if (!confirmed) return;
 
-  try {
+    try {
 
-    await PeriodWiseDB.delete(storeName, id);
+      await PeriodWiseDB.delete(storeName, id);
 
-    await loadCycleHistory();
-    await loadFertilityHistory();
+      if (storeName === "cycleRecords") {
+        await loadCycleHistory();
 
-  } catch (error) {
+      } else if (storeName === "bbtRecords") {
+        await loadBBTHistory();
 
-    console.error("Record deletion failed:", error);
+      } else if (storeName === "lhRecords") {
+        await loadLHHistory();
 
-    alert("Unable to delete this record. Please try again.");
+      } else if (storeName === "pregnancyTests") {
+        await loadPregnancyTestHistory();
 
-  }
+      } else if (storeName === "symptomRecords") {
+        await loadFertilityHistory();
+      }
 
-});
+    } catch (error) {
 
-item.appendChild(heading);
-item.appendChild(description);
-item.appendChild(deleteButton);
+      console.error("Record deletion failed:", error);
 
-container.appendChild(item);
+      alert("Unable to delete this record. Please try again.");
+
+    }
+
+  });
+
+  item.appendChild(heading);
+  item.appendChild(description);
+  item.appendChild(deleteButton);
+
+  container.appendChild(item);
 
 }
+
 
 // =====================================
 // 4. CYCLE TRACKER
