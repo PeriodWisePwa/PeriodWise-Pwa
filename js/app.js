@@ -780,58 +780,82 @@ document.getElementById("ovulationForm");
 const ovulationDate =
 document.getElementById("ovulationDate");
 
-const ovulationObservation =
-document.getElementById("ovulationObservation");
-
 const ovulationNotes =
 document.getElementById("ovulationNotes");
 
+const ovulationOther =
+document.getElementById("ovulationOther");
+
 if (ovulationDate) {
-ovulationDate.max = new Date().toLocaleDateString("en-CA");
+  ovulationDate.max =
+    new Date().toLocaleDateString("en-CA");
 }
 
 if (ovulationForm) {
 
-ovulationForm.addEventListener("submit", async function (event) {
+  ovulationForm.addEventListener("submit", async function (event) {
 
-  event.preventDefault();
-
-  setMessage(
-    "ovulationMessage",
-    "Saving your observation..."
-  );
-
-  try {
-
-    await PeriodWiseFertility.saveOvulation(
-      ovulationDate.value,
-      ovulationObservation.value,
-      ovulationNotes.value
-    );
+    event.preventDefault();
 
     setMessage(
       "ovulationMessage",
-      "Your ovulation observation has been saved."
+      "Saving your observation..."
     );
 
-    ovulationForm.reset();
+    try {
 
-    await loadFertilityHistory();
+      const selectedSigns = Array.from(
+        ovulationForm.querySelectorAll(
+          'input[name="ovulationSigns"]:checked'
+        )
+      ).map(input => input.value);
 
-  } catch (error) {
+      if (selectedSigns.length === 0) {
+        throw new Error(
+          "Please select at least one observation."
+        );
+      }
 
-    console.error("Ovulation saving error:", error);
+      let observation = selectedSigns.join(", ");
 
-    setMessage(
-      "ovulationMessage",
-      error.message || "Unable to save observation."
-    );
+      if (
+        selectedSigns.includes("Other") &&
+        ovulationOther.value.trim()
+      ) {
+        observation +=
+          ": " + ovulationOther.value.trim();
+      }
 
-  }
+      await PeriodWiseFertility.saveOvulation(
+        ovulationDate.value,
+        observation,
+        ovulationNotes.value
+      );
 
-});
+      setMessage(
+        "ovulationMessage",
+        "Your ovulation observation has been saved."
+      );
+
+      ovulationForm.reset();
+
+      await loadFertilityHistory();
+
+    } catch (error) {
+
+      console.error("Ovulation saving error:", error);
+
+      setMessage(
+        "ovulationMessage",
+        error.message || "Unable to save observation."
+      );
+
+    }
+
+  });
 
 }
+
 
 // =====================================
 // 9. FERTILITY OBSERVATION HISTORY
