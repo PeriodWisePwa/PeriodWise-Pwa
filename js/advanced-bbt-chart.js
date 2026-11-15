@@ -184,18 +184,77 @@
             ctx.lineWidth = 2.5;
             ctx.stroke();
 
-            // Reading points
-            readings.forEach((reading, index) => {
+            // Interactive reading points
+const points = [];
 
-                const x = xPosition(index);
-                const y = yPosition(reading.temperature);
+readings.forEach((reading, index) => {
 
-                ctx.beginPath();
-                ctx.arc(x, y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = "#e91e63";
-                ctx.fill();
+    const x = xPosition(index);
+    const y = yPosition(reading.temperature);
 
-            });
+    points.push({
+        x,
+        y,
+        reading
+    });
+
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "#e91e63";
+    ctx.fill();
+
+});
+
+// Display selected reading
+const details = document.getElementById(
+    "bbtReadingDetails"
+);
+
+if (details) {
+
+    details.textContent =
+        "Select a chart point to view its reading.";
+
+    canvas.onclick = function(event) {
+
+        const rect = canvas.getBoundingClientRect();
+
+        const scaleX = width / rect.width;
+        const scaleY = height / rect.height;
+
+        const clickX = (event.clientX - rect.left) * scaleX;
+        const clickY = (event.clientY - rect.top) * scaleY;
+
+        let selectedPoint = null;
+        let shortestDistance = 18;
+
+        points.forEach(point => {
+
+            const distance = Math.hypot(
+                clickX - point.x,
+                clickY - point.y
+            );
+
+            if (distance < shortestDistance) {
+                shortestDistance = distance;
+                selectedPoint = point;
+            }
+
+        });
+
+        if (selectedPoint) {
+
+            details.textContent =
+                "Date: " + selectedPoint.reading.date +
+                " | Temperature: " +
+                selectedPoint.reading.temperature.toFixed(2) +
+                " °C";
+
+        }
+
+    };
+
+}
 
             // Date and cycle-day labels
             const labelStep = Math.max(
