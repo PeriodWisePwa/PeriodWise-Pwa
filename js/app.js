@@ -804,26 +804,28 @@ if (ovulationForm) {
 
     try {
 
-      const selectedSigns = Array.from(
+      const selectedOptions = Array.from(
         ovulationForm.querySelectorAll(
           'input[name="ovulationSigns"]:checked'
         )
       ).map(input => input.value);
 
-      if (selectedSigns.length === 0) {
-        throw new Error(
-          "Please select at least one observation."
-        );
+      if (selectedOptions.length === 0) {
+        throw new Error("Please select an observation.");
       }
 
-      let observation = selectedSigns.join(", ");
+      const observation = selectedOptions
+        .filter(option => option !== "Other")
+        .concat(
+          selectedOptions.includes("Other") &&
+          ovulationOther.value.trim()
+            ? [ovulationOther.value.trim()]
+            : []
+        )
+        .join(", ");
 
-      if (
-        selectedSigns.includes("Other") &&
-        ovulationOther.value.trim()
-      ) {
-        observation +=
-          ": " + ovulationOther.value.trim();
+      if (!observation) {
+        throw new Error("Please describe your observation.");
       }
 
       await PeriodWiseFertility.saveOvulation(
@@ -855,6 +857,7 @@ if (ovulationForm) {
   });
 
 }
+
 
 
 // =====================================
