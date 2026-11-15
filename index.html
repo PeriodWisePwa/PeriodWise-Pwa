@@ -472,41 +472,79 @@
   </div>
 
 
-  <!-- OVULATION OBSERVATIONS -->
 
-  <div class="card">
+<!-- OVULATION OBSERVATIONS -->
 
-    <h3>💗 Ovulation Observations</h3>
+<div class="card">
 
-    <p>Record physical changes or signs you notice.</p>
+  <h3>💗 Ovulation Observations</h3>
 
-    <form id="ovulationForm">
+  <p>Record physical changes or signs you notice.</p>
 
-      <label for="ovulationDate">Observation date</label>
-      <input type="date" id="ovulationDate" required>
+  <form id="ovulationForm">
 
-      <label for="ovulationObservation">What did you notice?</label>
+    <label for="ovulationDate">Observation date</label>
+    <input type="date" id="ovulationDate" required>
 
-      <textarea id="ovulationObservation"
-                rows="3"
-                placeholder="Example: Mild pelvic discomfort or breast tenderness"
-                required></textarea>
+    <label>What did you notice?</label>
 
-      <label for="ovulationNotes">Additional notes (optional)</label>
+    <div class="checkbox-group">
 
-      <textarea id="ovulationNotes"
-                rows="3"
-                placeholder="Additional information"></textarea>
+      <label>
+        <input type="checkbox" name="ovulationSigns" value="Mild pelvic discomfort">
+        Mild pelvic discomfort
+      </label>
 
-      <button type="submit" class="primary-button">
-        Save Observation
-      </button>
+      <label>
+        <input type="checkbox" name="ovulationSigns" value="Breast tenderness">
+        Breast tenderness
+      </label>
 
-      <p id="ovulationMessage" role="status"></p>
+      <label>
+        <input type="checkbox" name="ovulationSigns" value="Increased cervical mucus">
+        Increased cervical mucus
+      </label>
 
-    </form>
+      <label>
+        <input type="checkbox" name="ovulationSigns" value="Bloating">
+        Bloating
+      </label>
 
-  </div>
+      <label>
+        <input type="checkbox" name="ovulationSigns" value="Increased sexual desire">
+        Increased sexual desire
+      </label>
+
+      <label>
+        <input type="checkbox" name="ovulationSigns" value="Other">
+        Other
+      </label>
+
+    </div>
+
+    <label for="ovulationOther">Describe other observations (optional)</label>
+    <textarea
+      id="ovulationOther"
+      rows="3"
+      placeholder="Describe anything else you noticed">
+    </textarea>
+
+    <label for="ovulationNotes">Additional notes (optional)</label>
+    <textarea
+      id="ovulationNotes"
+      rows="3"
+      placeholder="Additional information">
+    </textarea>
+
+    <button type="submit" class="primary-button">
+      Save Observation
+    </button>
+
+    <p id="ovulationMessage" role="status"></p>
+
+  </form>
+
+</div>
 
 
   <!-- FERTILITY OBSERVATION HISTORY -->
