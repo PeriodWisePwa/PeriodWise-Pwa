@@ -905,9 +905,6 @@ async function loadFertilityHistory() {
 
 const details = record.notes || "";
 
-      const details =
-        (record.notes || record.observation) || "";
-
       createHistoryEntry(
         container,
         formatDate(record.date) + " · " + title,
