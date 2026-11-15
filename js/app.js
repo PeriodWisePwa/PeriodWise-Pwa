@@ -896,9 +896,11 @@ async function loadFertilityHistory() {
     visibleRecords.forEach(function (record) {
 
       const title =
-        record.category === "cervical-mucus"
-          ? "Cervical mucus · " + record.observation
-          : "Ovulation observation";
+  record.category === "cervical-mucus"
+    ? "Cervical mucus · " + record.observation
+    : "Ovulation observation · " + record.observation;
+
+const details = record.notes || "";
 
       const details =
         (record.notes || record.observation) || "";
