@@ -21,6 +21,14 @@ return;
 
 }
 
+  // =====================================
+// INITIALIZE TTC JOURNAL
+// =====================================
+
+if (window.PeriodWiseTtcJournal) {
+  window.PeriodWiseTtcJournal.init();
+}
+
 // =====================================
 // 2. NAVIGATION
 // =====================================
