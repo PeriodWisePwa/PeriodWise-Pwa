@@ -585,6 +585,123 @@
 
 </section>
 
+    
+<!-- =====================================
+     PERIODWISE TTC JOURNAL
+===================================== -->
+
+<div class="card" id="ttcJournalSection">
+
+  <h3>📖 My TTC Journal</h3>
+
+  <p class="muted">
+    A private space to document your trying-to-conceive
+    journey, fertility experiences and personal reflections.
+  </p>
+
+  <div id="ttcJournalAccessStatus" role="status"></div>
+
+  <form id="ttcJournalForm">
+
+    <input
+      type="hidden"
+      id="ttcJournalEntryId"
+    >
+
+    <label for="ttcJournalDate">
+      Entry date
+    </label>
+
+    <input
+      type="date"
+      id="ttcJournalDate"
+      required
+    >
+
+    <label for="ttcJournalTitle">
+      Entry title
+    </label>
+
+    <input
+      type="text"
+      id="ttcJournalTitle"
+      placeholder="e.g. My thoughts today"
+      maxlength="100"
+      required
+    >
+
+    <label for="ttcJournalCategory">
+      Journal category
+    </label>
+
+    <select id="ttcJournalCategory" required>
+
+      <option value="">Choose a category</option>
+      <option value="Daily Reflection">Daily Reflection</option>
+      <option value="Symptoms">Symptoms</option>
+      <option value="Fertility Observations">Fertility Observations</option>
+      <option value="Emotional Wellbeing">Emotional Wellbeing</option>
+      <option value="Questions for Healthcare Professional">
+        Questions for Healthcare Professional
+      </option>
+      <option value="Other">Other</option>
+
+    </select>
+
+    <label for="ttcJournalContent">
+      Your journal entry
+    </label>
+
+    <textarea
+      id="ttcJournalContent"
+      rows="7"
+      placeholder="Write about your experiences, observations, feelings or questions..."
+      required
+    ></textarea>
+
+    <button
+      type="submit"
+      class="primary-button"
+      id="ttcJournalSaveButton"
+    >
+      Save Journal Entry
+    </button>
+
+    <button
+      type="button"
+      id="ttcJournalCancelEdit"
+      class="secondary-button"
+      hidden
+    >
+      Cancel Editing
+    </button>
+
+    <p
+      id="ttcJournalMessage"
+      role="status"
+    ></p>
+
+  </form>
+
+  <hr>
+
+  <h3>📚 My Previous Entries</h3>
+
+  <p class="muted">
+    Review, edit or delete your previous journal entries.
+  </p>
+
+  <div id="ttcJournalHistory">
+
+    <p class="muted">
+      Your saved journal entries will appear here.
+    </p>
+
+  </div>
+
+</div>
+
+
 
 
     <!-- TTC HUB -->
