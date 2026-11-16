@@ -51,6 +51,8 @@ window.PeriodWiseTtcJournal = {
       status.textContent =
         "Your private TTC Journal is ready.";
 
+      document.getElementById("ttcJournalSection").style.display = "block";
+
       if (dateInput) {
         dateInput.value =
           new Date().toLocaleDateString("en-CA");
