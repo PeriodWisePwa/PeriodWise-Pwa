@@ -411,27 +411,24 @@ window.PeriodWiseAppointments = {
     }
   },
 
-  resetForm() {
-    const form =
-      document.getElementById("appointmentForm");
+resetForm() {
+  const form =
+    document.getElementById("appointmentForm");
 
-    form.reset();
+  form.reset();
 
-    document.getElementById("appointmentEntryId").value =
-      "";
+  document.getElementById("appointmentEntryId").value =
+    "";
 
-    document.getElementById("appointmentDate").value =
-      new Date().toLocaleDateString("en-CA");
+  document.getElementById("appointmentDate").value =
+    new Date().toLocaleDateString("en-CA");
 
-    document.getElementById("appointmentSaveButton")
-      .textContent = "Save Appointment";
+  document.getElementById("appointmentSaveButton")
+    .textContent = "Save Appointment";
 
-    document.getElementById("appointmentCancelEdit").hidden =
-      true;
-
-    document.getElementById("appointmentMessage")
-      .textContent = "";
-  }
+  document.getElementById("appointmentCancelEdit").hidden =
+    true;
+},
 
 };
 
