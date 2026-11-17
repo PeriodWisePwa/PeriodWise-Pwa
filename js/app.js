@@ -29,6 +29,11 @@ if (window.PeriodWiseTtcJournal) {
   window.PeriodWiseTtcJournal.init();
 }
 
+  // INITIALIZE MEDICAL APPOINTMENT TRACKER
+if (window.PeriodWiseAppointments) {
+  window.PeriodWiseAppointments.init();
+}
+
 // =====================================
 // 2. NAVIGATION
 // =====================================
