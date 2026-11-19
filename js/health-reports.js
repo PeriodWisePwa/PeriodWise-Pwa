@@ -257,3 +257,34 @@ const PeriodWiseHealthReports = {
   },
 
 };
+
+
+// Connect Cycle History Report preview button
+document.addEventListener("click", async function(event) {
+
+  if (event.target.id !== "generateCycleReportButton") {
+    return;
+  }
+
+  const preview =
+    document.getElementById("cycleReportPreview");
+
+  try {
+
+    await PeriodWiseHealthReports.renderCycleReportPreview();
+
+  } catch (error) {
+
+    console.error("Cycle report preview failed:", error);
+
+    if (preview) {
+      preview.hidden = false;
+      preview.textContent =
+        error.message || "Unable to generate cycle report.";
+    }
+
+  }
+
+});
+
+
