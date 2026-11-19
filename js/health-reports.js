@@ -92,14 +92,12 @@ const PeriodWiseHealthReports = {
       ).length,
 
       totalObservations: records.observations.length
-    };
+        };
 
-  }
+  },
 
-  
   // Display report summaries on the Health Reports page
   async renderSummaries() {
-
     try {
 
       if (!PeriodWiseDB.database) {
