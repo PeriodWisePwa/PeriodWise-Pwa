@@ -71,6 +71,31 @@ const PeriodWiseHealthReports = {
       averagePeriodLength: average(periodLengths)
     };
 
+  // Calculate fertility record summaries
+  async getFertilitySummary() {
+
+    const records = await this.getFertilityRecords();
+
+    return {
+      totalBBTRecords: records.bbt.length,
+
+      totalLHTests: records.lh.length,
+
+      positiveLHTests: records.lh.filter(
+        record => record.result === "positive"
+      ).length,
+
+      totalPregnancyTests: records.pregnancyTests.length,
+
+      positivePregnancyTests: records.pregnancyTests.filter(
+        record => record.result === "positive"
+      ).length,
+
+      totalObservations: records.observations.length
+    };
+
+  }, 
+
   },
 
 
