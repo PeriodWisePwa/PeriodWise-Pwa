@@ -71,6 +71,31 @@ const PeriodWiseHealthReports = {
 
   },
 
+  // Generate printable cycle history report
+  async generateCycleReport() {
+
+    const records = await this.getCycleRecords();
+
+    if (!records.length) {
+      throw new Error("No cycle records available for this report.");
+    }
+
+    const summary = await this.getCycleSummary();
+
+    return {
+      generatedAt: new Date().toISOString(),
+
+      summary,
+
+      records: records.map(record => ({
+        startDate: record.startDate,
+        periodLength: Number(record.periodLength),
+        cycleLength: Number(record.cycleLength)
+      }))
+    };
+
+  },
+
   // Calculate fertility record summaries
   async getFertilitySummary() {
 
