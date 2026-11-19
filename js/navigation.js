@@ -13,11 +13,17 @@ function showPage(pageId) {
   selectedPage.classList.add("active");
 
   // Load Health Reports when the page is opened
-if (
-  pageId === "reports" &&
-  typeof PeriodWiseHealthReports !== "undefined"
-) {
-  PeriodWiseHealthReports.renderSummaries();
+if (pageId === "reports") {
+
+  console.log("Reports page opened.");
+
+  if (typeof PeriodWiseHealthReports !== "undefined") {
+    console.log("Health Reports module found.");
+    PeriodWiseHealthReports.renderSummaries();
+  } else {
+    console.log("Health Reports module NOT found.");
+  }
+
 }
 
   document.querySelectorAll(".nav-item").forEach(button => {
