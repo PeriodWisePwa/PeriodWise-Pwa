@@ -96,6 +96,63 @@ const PeriodWiseHealthReports = {
 
   },
 
+  // Display cycle report preview
+  async renderCycleReportPreview() {
+
+    const report = await this.generateCycleReport();
+
+    const preview =
+      document.getElementById("cycleReportPreview");
+
+    if (!preview) return;
+
+    const formatDate = date =>
+      new Date(date + "T12:00:00").toLocaleDateString();
+
+    preview.innerHTML = `
+      <hr>
+
+      <h3>PeriodWise Cycle History Report</h3>
+
+      <p><strong>Generated:</strong>
+        ${new Date(report.generatedAt).toLocaleDateString()}
+      </p>
+
+      <h4>Cycle Summary</h4>
+
+      <p>Total recorded cycles: ${report.summary.totalCycles}</p>
+      <p>Average cycle length: ${report.summary.averageCycleLength} days</p>
+      <p>Shortest cycle: ${report.summary.shortestCycle} days</p>
+      <p>Longest cycle: ${report.summary.longestCycle} days</p>
+      <p>Average period duration: ${report.summary.averagePeriodLength} days</p>
+
+      <h4>Recorded Cycle History</h4>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Period start date</th>
+            <th>Period duration</th>
+            <th>Cycle length</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          ${report.records.map(record => `
+            <tr>
+              <td>${formatDate(record.startDate)}</td>
+              <td>${record.periodLength} days</td>
+              <td>${record.cycleLength} days</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+
+    preview.hidden = false;
+
+  },
+
   // Calculate fertility record summaries
   async getFertilitySummary() {
 
