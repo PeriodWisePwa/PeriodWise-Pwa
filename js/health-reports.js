@@ -32,3 +32,45 @@ const PeriodWiseHealthReports = {
   }
 
 };
+
+
+  // Calculate cycle history statistics
+  async getCycleSummary() {
+
+    const records = await this.getCycleRecords();
+
+    if (!records.length) {
+      return {
+        totalCycles: 0,
+        averageCycleLength: null,
+        shortestCycle: null,
+        longestCycle: null,
+        averagePeriodLength: null
+      };
+    }
+
+    const cycleLengths = records.map(record =>
+      Number(record.cycleLength)
+    );
+
+    const periodLengths = records.map(record =>
+      Number(record.periodLength)
+    );
+
+    const average = values =>
+      Math.round(
+        (values.reduce((sum, value) => sum + value, 0) /
+        values.length) * 10
+      ) / 10;
+
+    return {
+      totalCycles: records.length,
+      averageCycleLength: average(cycleLengths),
+      shortestCycle: Math.min(...cycleLengths),
+      longestCycle: Math.max(...cycleLengths),
+      averagePeriodLength: average(periodLengths)
+    };
+
+  },
+
+
