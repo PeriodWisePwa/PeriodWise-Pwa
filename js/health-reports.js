@@ -23,16 +23,14 @@ const PeriodWiseHealthReports = {
 
     ]);
 
-        return {
+    return {
       bbt,
       lh,
       pregnancyTests,
       observations
     };
+
   },
-
-};
-
 
   // Calculate cycle history statistics
   async getCycleSummary() {
@@ -71,6 +69,8 @@ const PeriodWiseHealthReports = {
       averagePeriodLength: average(periodLengths)
     };
 
+  },
+
   // Calculate fertility record summaries
   async getFertilitySummary() {
 
@@ -94,8 +94,6 @@ const PeriodWiseHealthReports = {
       totalObservations: records.observations.length
     };
 
-  }, 
+  }
 
-  },
-
-
+};
