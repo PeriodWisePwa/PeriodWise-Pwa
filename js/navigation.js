@@ -15,13 +15,28 @@ function showPage(pageId) {
   // Load Health Reports when the page is opened
 if (pageId === "reports") {
 
-  console.log("Reports page opened.");
+  const cycleBox =
+    document.getElementById("cycleReportSummary");
+
+  if (cycleBox) {
+    cycleBox.textContent = "Navigation reached Reports page.";
+  }
 
   if (typeof PeriodWiseHealthReports !== "undefined") {
-    console.log("Health Reports module found.");
+
+    if (cycleBox) {
+      cycleBox.textContent = "Health Reports module found. Loading...";
+    }
+
     PeriodWiseHealthReports.renderSummaries();
+
   } else {
-    console.log("Health Reports module NOT found.");
+
+    if (cycleBox) {
+      cycleBox.textContent = "Health Reports module NOT found.";
+
+    }
+
   }
 
 }
