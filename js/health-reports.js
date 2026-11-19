@@ -23,13 +23,13 @@ const PeriodWiseHealthReports = {
 
     ]);
 
-    return {
+        return {
       bbt,
       lh,
       pregnancyTests,
       observations
     };
-  }
+  },
 
 };
 
