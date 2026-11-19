@@ -12,6 +12,14 @@ function showPage(pageId) {
 
   selectedPage.classList.add("active");
 
+  // Load Health Reports when the page is opened
+if (
+  pageId === "reports" &&
+  typeof PeriodWiseHealthReports !== "undefined"
+) {
+  PeriodWiseHealthReports.renderSummaries();
+}
+
   document.querySelectorAll(".nav-item").forEach(button => {
 
     button.classList.toggle(
