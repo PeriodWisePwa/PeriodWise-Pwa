@@ -112,7 +112,10 @@ const PeriodWiseHealthReports = {
     preview.innerHTML = `
       <hr>
 
-      <h3>PeriodWise Cycle History Report</h3>
+      <h2>PeriodWise</h2>
+<p><strong>Understand Your Cycle. Understand Your Health.</strong></p>
+
+<h3>Cycle History Report</h3>
 
       <p><strong>Generated:</strong>
         ${new Date(report.generatedAt).toLocaleDateString()}
