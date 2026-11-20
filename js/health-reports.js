@@ -294,4 +294,80 @@ document.addEventListener("click", async function(event) {
 
 });
 
+// Connect Cycle History Report print button
+document.addEventListener("click", function(event) {
+
+  if (event.target.id !== "printCycleReportButton") {
+    return;
+  }
+
+  const preview =
+    document.getElementById("cycleReportPreview");
+
+  if (!preview || preview.hidden) {
+    return;
+  }
+
+  const printWindow = window.open("", "_blank");
+
+  if (!printWindow) {
+    alert("Please allow pop-ups to print your report.");
+    return;
+  }
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>PeriodWise Cycle History Report</title>
+
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 30px;
+          color: #333;
+        }
+
+        h3, h4 {
+          color: #e91e63;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 15px;
+        }
+
+        th, td {
+          border: 1px solid #ddd;
+          padding: 10px;
+          text-align: left;
+        }
+
+        th {
+          background: #fce4ec;
+        }
+
+        @media print {
+          body {
+            padding: 10px;
+          }
+        }
+      </style>
+    </head>
+
+    <body>
+      ${preview.innerHTML}
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+
+  printWindow.onload = function() {
+    printWindow.focus();
+    printWindow.print();
+  };
+
+});
 
