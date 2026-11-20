@@ -151,6 +151,13 @@ const PeriodWiseHealthReports = {
 
     preview.hidden = false;
 
+    const printButton =
+  document.getElementById("printCycleReportButton");
+
+if (printButton) {
+  printButton.hidden = false;
+}
+
   },
 
   // Calculate fertility record summaries
