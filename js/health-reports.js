@@ -196,6 +196,34 @@ if (printButton) {
 
   },
 
+  // Generate fertility records report
+  async generateFertilityReport() {
+
+    const records = await this.getFertilityRecords();
+
+    const summary = await this.getFertilitySummary();
+
+    const hasRecords =
+      records.bbt.length ||
+      records.lh.length ||
+      records.pregnancyTests.length ||
+      records.observations.length;
+
+    if (!hasRecords) {
+      throw new Error(
+        "No fertility records available for this report."
+      );
+    }
+
+    return {
+      generatedAt: new Date().toISOString(),
+      summary,
+      records
+    };
+
+  },
+
+
   // Display report summaries on the Health Reports page
   async renderSummaries() {
     try {
