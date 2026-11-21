@@ -171,6 +171,128 @@ if (printButton) {
 
   },
 
+  
+  // Display fertility report preview
+  async renderFertilityReportPreview() {
+    const report = await this.generateFertilityReport();
+    const preview = document.getElementById("fertilityReportPreview");
+
+    if (!preview) {
+      throw new Error("Fertility report preview area not found.");
+    }
+
+    const escapeHtml = (value) =>
+      String(value ?? "").replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[character]);
+
+    const formatDate = (date) => {
+      if (!date) return "Not available";
+      return new Date(date + "T12:00:00").toLocaleDateString();
+    };
+
+    const formatTable = (headers, rows) => {
+      if (!rows.length) {
+        return "<p>No records available.</p>";
+      }
+
+      return `
+        <table>
+          <thead>
+            <tr>${headers.map(header => `<th>${header}</th>`).join("")}</tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => `
+              <tr>
+                ${row.map(value => `<td>${escapeHtml(value)}</td>`).join("")}
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    };
+
+    const records = report.records;
+    const summary = report.summary;
+
+    preview.innerHTML = `
+      <h2>PeriodWise</h2>
+      <p>Understand Your Cycle. Understand Your Health.</p>
+      <h3>Fertility Records &amp; Reports</h3>
+      <p>Generated: ${escapeHtml(new Date(report.generatedAt).toLocaleString())}</p>
+
+      <h4>Fertility Records Summary</h4>
+      <p>BBT records: ${summary.totalBBTRecords}</p>
+      <p>LH tests: ${summary.totalLHTests}</p>
+      <p>Positive LH tests: ${summary.positiveLHTests}</p>
+      <p>Pregnancy tests: ${summary.totalPregnancyTests}</p>
+      <p>Positive pregnancy tests: ${summary.positivePregnancyTests}</p>
+      <p>Fertility observations: ${summary.totalObservations}</p>
+
+      <h4>Basal Body Temperature (BBT) Records</h4>
+      ${formatTable(
+        ["Date", "Temperature", "Unit", "Notes"],
+        records.bbt.map(record => [
+          formatDate(record.date),
+          record.temperature,
+          record.unit,
+          record.notes
+        ])
+      )}
+
+      <h4>LH Test Records</h4>
+      ${formatTable(
+        ["Date", "Result", "Notes"],
+        records.lh.map(record => [
+          formatDate(record.date),
+          record.result,
+          record.notes
+        ])
+      )}
+
+      <h4>Pregnancy Test Records</h4>
+      ${formatTable(
+        ["Date", "Result", "Notes"],
+        records.pregnancyTests.map(record => [
+          formatDate(record.date),
+          record.result,
+          record.notes
+        ])
+      )}
+
+      <h4>Fertility Observations</h4>
+      ${formatTable(
+        ["Date", "Category", "Observation", "Notes"],
+        records.observations.map(record => [
+          formatDate(record.date),
+          record.category,
+          record.observation,
+          record.notes
+        ])
+      )}
+
+      <p>
+        <strong>Important information:</strong>
+        This report summarises fertility information recorded by the user.
+        Test results and observations are personal records and should not
+        be interpreted as medical diagnoses.
+      </p>
+    `;
+
+    preview.hidden = false;
+
+    const printButton =
+      document.getElementById("printFertilityReportButton");
+
+    if (printButton) {
+      printButton.hidden = false;
+    }
+  },
+
   // Calculate fertility record summaries
   async getFertilitySummary() {
 
