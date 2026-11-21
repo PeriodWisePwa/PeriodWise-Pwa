@@ -150,6 +150,14 @@ const PeriodWiseHealthReports = {
           `).join("")}
         </tbody>
       </table>
+
+      <p>
+        <strong>Important information:</strong>
+        This report summarises information recorded by the user.
+        Cycle lengths are based on user-entered values and are
+        not medical diagnoses or predictions.
+      </p>
+      
     `;
 
     preview.hidden = false;
