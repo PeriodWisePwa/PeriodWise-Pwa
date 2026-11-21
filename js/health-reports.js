@@ -318,33 +318,43 @@ if (printButton) {
 
   },
 
-  // Generate fertility records report
+  // Generate combined cycle and fertility records report
   async generateFertilityReport() {
+    const cycleRecords = await this.getCycleRecords();
+    const cycleSummary = await this.getCycleSummary();
 
     const records = await this.getFertilityRecords();
-
     const summary = await this.getFertilitySummary();
 
-    const hasRecords =
+    const hasCycleRecords = cycleRecords.length > 0;
+
+    const hasFertilityRecords =
       records.bbt.length ||
       records.lh.length ||
       records.pregnancyTests.length ||
       records.observations.length;
 
-    if (!hasRecords) {
+    if (!hasCycleRecords && !hasFertilityRecords) {
       throw new Error(
-        "No fertility records available for this report."
+        "No cycle or fertility records available for this report."
       );
     }
 
     return {
       generatedAt: new Date().toISOString(),
+
+      cycleSummary,
+
+      cycleRecords: cycleRecords.map(record => ({
+        startDate: record.startDate,
+        periodLength: Number(record.periodLength),
+        cycleLength: Number(record.cycleLength)
+      })),
+
       summary,
       records
     };
-
   },
-
 
   // Display report summaries on the Health Reports page
   async renderSummaries() {
