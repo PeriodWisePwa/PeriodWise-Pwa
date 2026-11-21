@@ -218,6 +218,13 @@ if (printButton) {
 
     const records = report.records;
     const summary = report.summary;
+    const cycleSummary = report.cycleSummary;
+
+    const cycleHistoryRows = report.cycleRecords.map(record => [
+      formatDate(record.startDate),
+      `${record.periodLength} days`,
+      `${record.cycleLength} days`
+    ]);
 
     preview.innerHTML = `
       <h2>PeriodWise</h2>
