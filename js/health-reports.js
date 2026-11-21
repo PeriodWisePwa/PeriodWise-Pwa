@@ -532,3 +532,24 @@ document.addEventListener("click", function(event) {
 
 });
 
+
+// Connect Fertility Records & Reports preview button
+document.addEventListener("click", async function(event) {
+  if (event.target.id !== "generateFertilityReportButton") return;
+
+  const preview = document.getElementById("fertilityReportPreview");
+
+  try {
+    await PeriodWiseHealthReports.renderFertilityReportPreview();
+  } catch (error) {
+    console.error("Fertility report preview failed:", error);
+
+    if (preview) {
+      preview.hidden = false;
+      preview.textContent =
+        error.message || "Unable to generate fertility report.";
+    }
+  }
+});
+
+
