@@ -232,6 +232,19 @@ if (printButton) {
       <h3>Fertility Records &amp; Reports</h3>
       <p>Generated: ${escapeHtml(new Date(report.generatedAt).toLocaleString())}</p>
 
+      <h4>Cycle History Summary</h4>
+      <p>Total recorded cycles: ${cycleSummary.totalCycles}</p>
+      <p>Average cycle length: ${cycleSummary.averageCycleLength ?? "Not available"} days</p>
+      <p>Shortest cycle: ${cycleSummary.shortestCycle ?? "Not available"} days</p>
+      <p>Longest cycle: ${cycleSummary.longestCycle ?? "Not available"} days</p>
+      <p>Average period duration: ${cycleSummary.averagePeriodLength ?? "Not available"} days</p>
+
+      <h4>Recorded Cycle History</h4>
+      ${formatTable(
+        ["Period start date", "Period duration", "Cycle length"],
+        cycleHistoryRows
+      )}
+
       <h4>Fertility Records Summary</h4>
       <p>BBT records: ${summary.totalBBTRecords}</p>
       <p>LH tests: ${summary.totalLHTests}</p>
