@@ -210,6 +210,24 @@ window.PeriodWiseAppointments = {
     }
   },
 
+  // Retrieve appointment records for the TTC Health Report
+async getReportAppointments() {
+
+  await this.verifyAccess();
+
+  const records =
+    await PeriodWiseDB.getAll("appointments");
+
+  return records
+    .filter(record =>
+      record.userId === this.currentUserId
+    )
+    .sort((a, b) =>
+      new Date(b.date) - new Date(a.date)
+    );
+
+},
+
   async loadAppointments() {
     await this.verifyAccess();
 
