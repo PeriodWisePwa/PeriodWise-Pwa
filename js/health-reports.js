@@ -32,6 +32,32 @@ const PeriodWiseHealthReports = {
 
   },
 
+    // Retrieve all records for the TTC Health Report
+  async getTtcHealthRecords() {
+
+    const [
+      cycleRecords,
+      fertilityRecords,
+      journalEntries,
+      appointments
+    ] = await Promise.all([
+
+      this.getCycleRecords(),
+      this.getFertilityRecords(),
+      PeriodWiseTtcJournal.getReportEntries(),
+      PeriodWiseAppointments.getReportAppointments()
+
+    ]);
+
+    return {
+      cycleRecords,
+      fertilityRecords,
+      journalEntries,
+      appointments
+    };
+
+  },
+
   // Calculate cycle history statistics
   async getCycleSummary() {
 
