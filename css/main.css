@@ -1162,3 +1162,139 @@ main {
 }
 
 
+/* =====================================
+   PERIODWISE HEALTH REPORT DESIGN
+===================================== */
+
+#cycleReportPreview,
+#fertilityReportPreview,
+#ttcHealthReportPreview {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  background: #ffffff;
+  color: #333333;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #f3d5df;
+  border-radius: 12px;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* Report headings */
+
+#cycleReportPreview h2,
+#fertilityReportPreview h2,
+#ttcHealthReportPreview h2 {
+  color: #e91e63;
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+
+#cycleReportPreview h3,
+#fertilityReportPreview h3,
+#ttcHealthReportPreview h3 {
+  color: #c2185b;
+  font-size: 21px;
+  margin-top: 20px;
+}
+
+#cycleReportPreview h4,
+#fertilityReportPreview h4,
+#ttcHealthReportPreview h4 {
+  color: #ad1457;
+  font-size: 17px;
+  margin-top: 25px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #f3c4d5;
+}
+
+/* Report paragraphs */
+
+#cycleReportPreview p,
+#fertilityReportPreview p,
+#ttcHealthReportPreview p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+/* Responsive report tables */
+
+#cycleReportPreview table,
+#fertilityReportPreview table,
+#ttcHealthReportPreview table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 15px 0 25px;
+  font-size: 13px;
+  -webkit-overflow-scrolling: touch;
+}
+
+#cycleReportPreview th,
+#cycleReportPreview td,
+#fertilityReportPreview th,
+#fertilityReportPreview td,
+#ttcHealthReportPreview th,
+#ttcHealthReportPreview td {
+  border: 1px solid #f0d5df;
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  min-width: 90px;
+}
+
+#cycleReportPreview th,
+#fertilityReportPreview th,
+#ttcHealthReportPreview th {
+  background: #fce4ec;
+  color: #880e4f;
+  font-weight: 700;
+}
+
+#cycleReportPreview tr:nth-child(even),
+#fertilityReportPreview tr:nth-child(even),
+#ttcHealthReportPreview tr:nth-child(even) {
+  background: #fff8fa;
+}
+
+/* Small-screen report layout */
+
+@media screen and (max-width: 600px) {
+  #cycleReportPreview,
+  #fertilityReportPreview,
+  #ttcHealthReportPreview {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  #cycleReportPreview h2,
+  #fertilityReportPreview h2,
+  #ttcHealthReportPreview h2 {
+    font-size: 23px;
+  }
+
+  #cycleReportPreview h3,
+  #fertilityReportPreview h3,
+  #ttcHealthReportPreview h3 {
+    font-size: 19px;
+  }
+
+  #cycleReportPreview th,
+  #cycleReportPreview td,
+  #fertilityReportPreview th,
+  #fertilityReportPreview td,
+  #ttcHealthReportPreview th,
+  #ttcHealthReportPreview td {
+    padding: 8px;
+    font-size: 12px;
+  }
+}
+
+/* END PERIODWISE HEALTH REPORT DESIGN */
+
