@@ -1420,3 +1420,126 @@ main {
 
 /* END TTC HUB APPOINTMENT DESIGN */
 
+
+/* =====================================
+   PERIODWISE TTC JOURNAL DESIGN
+===================================== */
+
+#ttcJournalSection {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #f3d5df;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+#ttcJournalSection h3 {
+  color: #c2185b;
+  font-size: 20px;
+  line-height: 1.4;
+  margin: 12px 0;
+}
+
+#ttcJournalSection .muted {
+  color: #777777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+#ttcJournalForm {
+  width: 100%;
+  margin-top: 20px;
+}
+
+#ttcJournalForm label {
+  display: block;
+  width: 100%;
+  margin: 17px 0 7px;
+  color: #444444;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#ttcJournalForm input:not([type="hidden"]),
+#ttcJournalForm select,
+#ttcJournalForm textarea {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #e8c5d2;
+  border-radius: 9px;
+  background: #fffafd;
+  color: #333333;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+#ttcJournalForm textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+#ttcJournalForm input:focus,
+#ttcJournalForm select:focus,
+#ttcJournalForm textarea:focus {
+  outline: none;
+  border-color: #e91e63;
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.10);
+}
+
+#ttcJournalForm button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+#ttcJournalMessage,
+#ttcJournalAccessStatus {
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+#ttcJournalHistory {
+  width: 100%;
+  margin-top: 18px;
+  overflow-wrap: anywhere;
+}
+
+#ttcJournalSection hr {
+  border: 0;
+  border-top: 1px solid #f3d5df;
+  margin: 25px 0;
+}
+
+@media screen and (max-width: 600px) {
+  #ttcJournalSection {
+    padding: 14px;
+  }
+
+  #ttcJournalSection h3 {
+    font-size: 18px;
+  }
+
+  #ttcJournalForm input:not([type="hidden"]),
+  #ttcJournalForm select,
+  #ttcJournalForm textarea {
+    font-size: 14px;
+    padding: 11px;
+  }
+}
+
+/* END TTC JOURNAL DESIGN */
+
