@@ -224,6 +224,22 @@ window.PeriodWiseTtcJournal = {
 
   },
 
+  // Retrieve journal entries for the TTC Health Report
+async getReportEntries() {
+
+  await this.verifyAccess();
+
+  const records =
+    await PeriodWiseDB.getAll("ttcNotes");
+
+  return records
+    .filter(record => record.userId === this.currentUserId)
+    .sort((a, b) =>
+      new Date(b.date) - new Date(a.date)
+    );
+
+},
+
   // Retrieve and display journal entries
   async loadEntries() {
 
