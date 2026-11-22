@@ -339,6 +339,240 @@ if (printButton) {
     }
   },
 
+    // Display complete TTC Health Report preview
+  async renderTtcHealthReportPreview() {
+
+    const report = await this.generateTtcHealthReport();
+
+    const preview =
+      document.getElementById("ttcHealthReportPreview");
+
+    if (!preview) {
+      throw new Error("TTC Health Report preview area not found.");
+    }
+
+    const escapeHtml = (value) =>
+      String(value ?? "").replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[character]);
+
+    const formatDate = (date) => {
+      if (!date) return "Not available";
+
+      const parsedDate = new Date(date + "T12:00:00");
+
+      return Number.isNaN(parsedDate.getTime())
+        ? "Not available"
+        : parsedDate.toLocaleDateString();
+    };
+
+    const formatTable = (headers, rows) => {
+
+      if (!rows.length) {
+        return "<p>No records available.</p>";
+      }
+
+      return `
+        <table>
+          <thead>
+            <tr>
+              ${headers.map(header =>
+                `<th>${escapeHtml(header)}</th>`
+              ).join("")}
+            </tr>
+          </thead>
+
+          <tbody>
+            ${rows.map(row => `
+              <tr>
+                ${row.map(value =>
+                  `<td>${escapeHtml(value)}</td>`
+                ).join("")}
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    };
+
+    const cycle = report.cycleSummary;
+    const fertility = report.fertilitySummary;
+    const records = report.fertilityRecords;
+
+    const cycleRows = report.cycleRecords.map(record => [
+      formatDate(record.startDate),
+      `${record.periodLength} days`,
+      `${record.cycleLength} days`
+    ]);
+
+    const journalRows = report.journalEntries.map(entry => [
+      formatDate(entry.date),
+      entry.title,
+      entry.category,
+      entry.content
+    ]);
+
+    const appointmentRows = report.appointments.map(appointment => [
+      formatDate(appointment.date),
+      appointment.time || "Not recorded",
+      appointment.professional || "Not recorded",
+      appointment.type,
+      appointment.questions,
+      appointment.notes,
+      appointment.followUp
+    ]);
+
+    preview.innerHTML = `
+
+      <h2>PeriodWise</h2>
+
+      <p>Understand Your Cycle. Understand Your Health.</p>
+
+      <h3>TTC Health Report</h3>
+
+      <p>
+        Generated:
+        ${escapeHtml(new Date(report.generatedAt).toLocaleString())}
+      </p>
+
+      <hr>
+
+      <h4>1. Cycle History Summary</h4>
+
+      <p>Total recorded cycles: ${cycle.totalCycles}</p>
+      <p>Average cycle length: ${cycle.averageCycleLength ?? "Not available"} days</p>
+      <p>Shortest cycle: ${cycle.shortestCycle ?? "Not available"} days</p>
+      <p>Longest cycle: ${cycle.longestCycle ?? "Not available"} days</p>
+      <p>Average period duration: ${cycle.averagePeriodLength ?? "Not available"} days</p>
+
+      <h4>Recorded Cycle History</h4>
+
+      ${formatTable(
+        ["Period start date", "Period duration", "Cycle length"],
+        cycleRows
+      )}
+
+      <hr>
+
+      <h4>2. Fertility Records Summary</h4>
+
+      <p>BBT records: ${fertility.totalBBTRecords}</p>
+      <p>LH tests: ${fertility.totalLHTests}</p>
+      <p>Positive LH tests: ${fertility.positiveLHTests}</p>
+      <p>Pregnancy tests: ${fertility.totalPregnancyTests}</p>
+      <p>Positive pregnancy tests: ${fertility.positivePregnancyTests}</p>
+      <p>Fertility observations: ${fertility.totalObservations}</p>
+
+      <h4>Basal Body Temperature Records</h4>
+
+      ${formatTable(
+        ["Date", "Temperature", "Unit", "Notes"],
+        records.bbt.map(record => [
+          formatDate(record.date),
+          record.temperature,
+          record.unit,
+          record.notes
+        ])
+      )}
+
+      <h4>LH Test Records</h4>
+
+      ${formatTable(
+        ["Date", "Result", "Notes"],
+        records.lh.map(record => [
+          formatDate(record.date),
+          record.result,
+          record.notes
+        ])
+      )}
+
+      <h4>Pregnancy Test Records</h4>
+
+      ${formatTable(
+        ["Date", "Result", "Notes"],
+        records.pregnancyTests.map(record => [
+          formatDate(record.date),
+          record.result,
+          record.notes
+        ])
+      )}
+
+      <h4>Fertility Observations</h4>
+
+      ${formatTable(
+        ["Date", "Category", "Observation", "Notes"],
+        records.observations.map(record => [
+          formatDate(record.date),
+          record.category,
+          record.observation,
+          record.notes
+        ])
+      )}
+
+      <hr>
+
+      <h4>3. TTC Personal Journal</h4>
+
+      ${formatTable(
+        ["Date", "Title", "Category", "Journal Entry"],
+        journalRows
+      )}
+
+      <hr>
+
+      <h4>4. Medical Appointment Records</h4>
+
+      ${formatTable(
+        [
+          "Date",
+          "Time",
+          "Healthcare Professional",
+          "Appointment Type",
+          "Questions",
+          "Notes",
+          "Follow-up"
+        ],
+        appointmentRows
+      )}
+
+      <hr>
+
+      <h4>Important Medical Disclaimer</h4>
+
+      <p>
+        This report contains information recorded by the user.
+        It is intended for personal organisation and discussion
+        with a qualified healthcare professional.
+      </p>
+
+      <p>
+        It does not provide medical diagnoses, confirm ovulation,
+        diagnose infertility or guarantee pregnancy.
+        Test results and fertility observations should be
+        interpreted with appropriate medical guidance.
+      </p>
+
+      <p>
+        <strong>PeriodWise — Understand Your Cycle.
+        Understand Your Health.</strong>
+      </p>
+    `;
+
+    preview.hidden = false;
+
+    const printButton =
+      document.getElementById("printTtcHealthReportButton");
+
+    if (printButton) {
+      printButton.hidden = false;
+    }
+
+  },
+
   // Calculate fertility record summaries
   async getFertilitySummary() {
 
