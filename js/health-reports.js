@@ -899,6 +899,32 @@ document.addEventListener("click", async function(event) {
   }
 });
 
+// Connect TTC Health Report preview button
+document.addEventListener("click", async function(event) {
+
+  if (event.target.id !== "generateTtcHealthReportButton") return;
+
+  const preview =
+    document.getElementById("ttcHealthReportPreview");
+
+  try {
+
+    await PeriodWiseHealthReports.renderTtcHealthReportPreview();
+
+  } catch (error) {
+
+    console.error("TTC Health Report preview failed:", error);
+
+    if (preview) {
+      preview.hidden = false;
+      preview.textContent =
+        error.message || "Unable to generate TTC Health Report.";
+    }
+
+  }
+
+});
+
 
 // Connect Fertility Records & Reports print button
 document.addEventListener("click", function(event) {
