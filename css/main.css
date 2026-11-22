@@ -1298,3 +1298,125 @@ main {
 
 /* END PERIODWISE HEALTH REPORT DESIGN */
 
+
+/* =====================================
+   PERIODWISE TTC HUB APPOINTMENT DESIGN
+===================================== */
+
+#appointmentsSection {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #f3d5df;
+  border-radius: 14px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+#appointmentsSection h3 {
+  color: #c2185b;
+  font-size: 20px;
+  margin: 10px 0 14px;
+  line-height: 1.4;
+}
+
+#appointmentsSection .muted {
+  color: #777777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+#appointmentForm {
+  width: 100%;
+  margin-top: 20px;
+}
+
+#appointmentForm label {
+  display: block;
+  width: 100%;
+  margin: 17px 0 7px;
+  color: #444444;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#appointmentForm input:not([type="hidden"]),
+#appointmentForm select,
+#appointmentForm textarea {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #e8c5d2;
+  border-radius: 9px;
+  background: #fffafd;
+  color: #333333;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+#appointmentForm textarea {
+  min-height: 95px;
+  resize: vertical;
+}
+
+#appointmentForm input:focus,
+#appointmentForm select:focus,
+#appointmentForm textarea:focus {
+  outline: none;
+  border-color: #e91e63;
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.10);
+}
+
+#appointmentForm button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+#appointmentMessage,
+#appointmentAccessStatus {
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+#appointmentHistory {
+  width: 100%;
+  margin-top: 15px;
+  overflow-wrap: anywhere;
+}
+
+#appointmentsSection hr {
+  border: 0;
+  border-top: 1px solid #f3d5df;
+  margin: 25px 0;
+}
+
+@media screen and (max-width: 600px) {
+  #appointmentsSection {
+    padding: 14px;
+  }
+
+  #appointmentsSection h3 {
+    font-size: 18px;
+  }
+
+  #appointmentForm input:not([type="hidden"]),
+  #appointmentForm select,
+  #appointmentForm textarea {
+    font-size: 14px;
+    padding: 11px;
+  }
+}
+
+/* END TTC HUB APPOINTMENT DESIGN */
+
