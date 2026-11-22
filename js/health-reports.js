@@ -805,16 +805,12 @@ document.addEventListener("click", async function(event) {
 // Connect Cycle History Report print button
 document.addEventListener("click", function(event) {
 
-  if (event.target.id !== "printCycleReportButton") {
-    return;
-  }
+  if (event.target.id !== "printCycleReportButton") return;
 
   const preview =
     document.getElementById("cycleReportPreview");
 
-  if (!preview || preview.hidden) {
-    return;
-  }
+  if (!preview || preview.hidden) return;
 
   const printWindow = window.open("", "_blank");
 
@@ -827,38 +823,86 @@ document.addEventListener("click", function(event) {
     <!DOCTYPE html>
     <html>
     <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>PeriodWise Cycle History Report</title>
 
       <style>
-        body {
-          font-family: Arial, sans-serif;
-          padding: 30px;
-          color: #333;
+        * {
+          box-sizing: border-box;
         }
 
-        h3, h4 {
+        body {
+          font-family: Arial, sans-serif;
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 35px;
+          color: #333;
+          line-height: 1.6;
+          background: #fff;
+        }
+
+        h2 {
           color: #e91e63;
+          font-size: 30px;
+          margin-bottom: 0;
+        }
+
+        h3 {
+          color: #c2185b;
+          margin-top: 25px;
+        }
+
+        h4 {
+          color: #ad1457;
+          border-bottom: 1px solid #f3c4d5;
+          padding-bottom: 7px;
+          margin-top: 25px;
+        }
+
+        p {
+          font-size: 14px;
+          margin: 8px 0;
         }
 
         table {
           width: 100%;
           border-collapse: collapse;
-          margin-top: 15px;
+          margin: 18px 0 25px;
+          font-size: 13px;
         }
 
         th, td {
-          border: 1px solid #ddd;
+          border: 1px solid #f0d5df;
           padding: 10px;
           text-align: left;
+          vertical-align: top;
+          overflow-wrap: anywhere;
         }
 
         th {
           background: #fce4ec;
+          color: #880e4f;
+        }
+
+        tr {
+          page-break-inside: avoid;
+        }
+
+        @page {
+          size: A4;
+          margin: 15mm;
         }
 
         @media print {
           body {
-            padding: 10px;
+            padding: 0;
+            max-width: none;
+          }
+
+          h2, h3, h4, th {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
         }
       </style>
@@ -878,7 +922,6 @@ document.addEventListener("click", function(event) {
   };
 
 });
-
 
 // Connect Fertility Records & Reports preview button
 document.addEventListener("click", async function(event) {
