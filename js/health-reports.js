@@ -402,6 +402,63 @@ if (printButton) {
     };
   },
 
+    // Generate complete TTC Health Report
+  async generateTtcHealthReport() {
+
+    const data = await this.getTtcHealthRecords();
+
+    const {
+      cycleRecords,
+      fertilityRecords,
+      journalEntries,
+      appointments
+    } = data;
+
+    const hasCycleRecords = cycleRecords.length > 0;
+
+    const hasFertilityRecords =
+      fertilityRecords.bbt.length > 0 ||
+      fertilityRecords.lh.length > 0 ||
+      fertilityRecords.pregnancyTests.length > 0 ||
+      fertilityRecords.observations.length > 0;
+
+    const hasJournalEntries = journalEntries.length > 0;
+
+    const hasAppointments = appointments.length > 0;
+
+    if (
+      !hasCycleRecords &&
+      !hasFertilityRecords &&
+      !hasJournalEntries &&
+      !hasAppointments
+    ) {
+      throw new Error(
+        "No records available for this TTC Health Report."
+      );
+    }
+
+    return {
+      generatedAt: new Date().toISOString(),
+
+      cycleSummary: await this.getCycleSummary(),
+
+      cycleRecords: cycleRecords.map(record => ({
+        startDate: record.startDate,
+        periodLength: Number(record.periodLength),
+        cycleLength: Number(record.cycleLength)
+      })),
+
+      fertilitySummary: await this.getFertilitySummary(),
+
+      fertilityRecords,
+
+      journalEntries,
+
+      appointments
+    };
+
+  },
+
   // Display report summaries on the Health Reports page
   async renderSummaries() {
     try {
