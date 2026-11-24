@@ -311,49 +311,63 @@ if (details) {
         }
 
     }
+    
+async function checkAndDisplayAdvancedBBTChart() {
 
-    function initialiseAdvancedBBTChart() {
+    const card = document.getElementById(
+        "advancedBbtChartCard"
+    );
 
-        const checkButton = document.getElementById(
-            "checkTtcAccessButton"
+    if (!card) return;
+
+    // Keep the chart hidden until access is verified
+    card.style.display = "none";
+
+    try {
+
+        const access =
+            await window.PeriodWiseEntitlements
+                .checkTtcHubAccess();
+
+        if (!access.hasAccess) return;
+
+        // Show chart only after confirmed premium access
+        card.style.display = "block";
+
+        await drawAdvancedBBTChart();
+
+    } catch (error) {
+
+        console.error(
+            "Unable to verify BBT chart access:",
+            error
         );
 
-        const card = document.getElementById(
-            "advancedBbtChartCard"
-        );
-
-        if (!checkButton || !card) return;
-
-        checkButton.addEventListener("click", async function () {
-
-            card.style.display = "none";
-
-            try {
-
-                const access =
-                    await window.PeriodWiseEntitlements
-                        .checkTtcHubAccess();
-
-                if (!access.hasAccess) return;
-
-                card.style.display = "block";
-
-                await drawAdvancedBBTChart();
-
-            } catch (error) {
-
-                console.error(
-                    "Unable to verify BBT chart access:",
-                    error
-                );
-
-                card.style.display = "none";
-
-            }
-
-        });
+        card.style.display = "none";
 
     }
+
+}
+
+function initialiseAdvancedBBTChart() {
+
+    const checkButton = document.getElementById(
+        "checkTtcAccessButton"
+    );
+
+    if (!checkButton) return;
+
+    // Automatically check access when TTC Hub loads
+    checkAndDisplayAdvancedBBTChart();
+
+    // Keep the manual button working
+    checkButton.addEventListener("click", async function () {
+
+        await checkAndDisplayAdvancedBBTChart();
+
+    });
+
+}
 
     if (document.readyState === "loading") {
 
